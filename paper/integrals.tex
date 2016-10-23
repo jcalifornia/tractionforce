@@ -3,7 +3,7 @@
 \usepackage{amsmath,amssymb,amsthm}
 \newcommand{\dd}{\mathrm{d}}
 \newcommand{\br}{\mathbf{r}}
-
+\newcommand{\bp}{\mathbf{p}}
 \begin{document}
 \section{Forward problem}
 
@@ -217,9 +217,21 @@ U_x^{(1)} &= \frac{\nu+1}{2\pi E} (2\cos\theta + (2-2\nu)\sin\theta) \int_\Omega
 U_x^{(2)} &=  \frac{\nu+1}{2\pi E}\int_\Omega (2\cos\theta + (2-2\nu)\sin\theta)\frac{3}{2}(-2(x'\cos\theta+y'\sin\theta)) \sigma_{xz}(x',y') \dd x' \dd y' \nonumber \\
 &\quad+\frac{\nu(\nu+1)}{\pi E} \int_\Omega \cos\theta\sin\theta\frac{3}{2}(-2(x'\cos\theta+y'\sin\theta)) \sigma_{yz}(x',y') \dd x' \dd y' \nonumber \\
 &=-\frac{3(\nu+1)}{\pi E}(\cos\theta + (1-2\nu)\sin\theta) \int_{\Omega} (x'\cos\theta + y'\sin\theta ) \sigma_{xz}(x',y') \dd x' \dd y' \nonumber \\ 
-&\quad - \frac{3\nu(\nu+1)}{2\pi E}\sin(2\theta) \int_\Omega(x'\cos\theta + y'\sin\theta ) \sigma_{yz}(x',y') \dd x' \dd y' .
+&\quad - \frac{3\nu(\nu+1)}{2\pi E}\sin(2\theta) \int_\Omega(x'\cos\theta + y'\sin\theta ) \sigma_{yz}(x',y') \dd x' \dd y' .\label{eq:Ux2}
 \end{align}
-So we see that $u_x(r,\theta)\sim r^{-2}$ for $r\gg r'$.
+So we see that $u_x(r,\theta)\sim r^{-2}$ for $r\gg r'$. The term within the integral in Eq.~\ref{eq:Ux2} is related to the dipole moment of the stress field. We may write now the asymptotic expansion for $u_x$ outside of the support of $\boldsymbol\sigma$,
+
+\begin{equation}
+u_x(\br)  = -\left[ \frac{3(\nu+1)}{\pi E}(\cos\theta + (1-2\nu)\sin\theta) \right] \frac{\br\cdot \bp_x}{r^3} -\left[ \frac{3\nu(\nu+1)}{2\pi E}\sin(2\theta)  \right] \frac{\br\cdot \bp_y}{r^3} + \mathcal{O}(r^{-3}),
+\end{equation}
+%
+where the dipole moments $\bp_x,\bp_y$ are
+%
+\begin{equation}
+\bp_{(\cdot)}  = \left[ \begin{matrix} \displaystyle\int_{\Omega} x' \sigma_{\cdot z} \dd y' \dd x' \\ \displaystyle\int_{\Omega} y' \sigma_{\cdot z} \dd y' \dd x'  \end{matrix} \right].
+\end{equation}
+
+
 
 \subsection{Reconstruction error}
 

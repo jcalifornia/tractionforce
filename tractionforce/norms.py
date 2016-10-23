@@ -31,7 +31,26 @@ def tvnorm2d(value,  Dx, Dy):
     stack = vstack( *[reshape(diff, 1, len) for diff in diffs])
     return sum_entries(norm(stack, p='fro', axis=0))
 
-def detnorm(value, *args):
+def detnorm(value, Dx, Dy):
+    """Total variation of a vector, matrix, or list of matrices.
+    Uses L1 norm of discrete gradients for vectors and
+    L2 norm of discrete gradients for matrices.
+    Parameters
+    ----------
+    value : Expression or numeric constant
+        The value to take the total variation of.
+    Returns
+    -------
+    Expression
+        An Expression representing the total variation.
+    """
+    value = Expression.cast_to_const(value)
+    len = value.size[0]
+
+    diffs = [ Dx*value , Dy*value]
+
+    stack = vstack( *[reshape(diff, 1, len) for diff in diffs])
+    return sum_entries(norm(stack, p='fro', axis=0))
     pass
 
 def tv(value, *args):
