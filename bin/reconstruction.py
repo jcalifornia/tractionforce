@@ -8,10 +8,9 @@ import sys, argparse
 from scipy import ndimage
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
-from elasticity import *
-from multiprocessing import Pool
+from tractionforce.elasticity import *
 import gc
-from norms import *
+from tractionforce.norms import *
 
 def read_data(filename):
 
@@ -43,7 +42,7 @@ def main():
                         help="threshold distance", metavar="THRESHOLD")
 
     parser.add_argument("-r", "--regularization", dest="regularization",
-                        help = "tv, divergence, determinant", metavar="REGULARIZATION")
+                        help = "tv, tviso, divergence, determinant", metavar="REGULARIZATION")
 
     parser.add_argument("-n","--nsolutions", dest="nsolutions",
                         help = "number of solutions", metavar = "NSOLUTIONS")
@@ -106,6 +105,12 @@ def main():
     n_out = len(x_out)
 
     print("Size of the problem is " + str( n_in + n_out))
+
+    """
+    Setting up the problem
+    ======================
+    We compute the coefficient matrices for the linear problem
+    """
 
 
     deltax_in_in = x_in[...,np.newaxis] - x_in[np.newaxis, ...]  # should be x-x'
@@ -208,10 +213,14 @@ def main():
     del l2_out_plus_in_plus, l2_out_plus_in_minus, l2_out_minus_in_plus, l2_out_minus_in_minus
     gc.collect()
 
-    # central differences
-    # c
 
-    # Fix the edge behavior
+
+    """
+    Setting up the optimization problem
+    ===================================
+
+    Define norms
+    """
 
     gamma = Parameter(sign="positive",value=1)
 
@@ -221,7 +230,8 @@ def main():
     predicted_out =  A_out_in*sigma_xz + D_out_in*sigma_yz
 
     error = sum_squares(u_x_in - predicted_in) + sum_squares(u_x_out - predicted_out)
-    tv_norm_aniso = norm(Dx*sigma_xz/dx,1) + norm(Dy*sigma_xz/dy,1) + norm(Dx*sigma_yz/dx,1) + norm(Dy*sigma_yz/dy,1)
+    tv_norm_aniso = tvnorm2d(sigma_xz, Dx, Dy) + tvnorm2d(sigma_yz, Dx, Dy)
+
     tv_norm = norm(Dx * sigma_xz / dx, 1) + norm(Dy * sigma_xz / dy, 1) + norm(Dx * sigma_yz / dx, 1) + norm(
         Dy * sigma_yz / dy, 1)
     divergence_norm = norm(Dx*sigma_xz/dx + Dy*sigma_yz/dy,1)
@@ -231,8 +241,10 @@ def main():
         regularity_penalty = divergence_norm
     elif REGULARIZATION == "determinant":
         regularity_penalty = determinant_norm
-    else:
+    elif REGULARIZATION == "tviso":
         regularity_penalty = tv_norm
+    elif REGULARIZATION == "tv":
+        regularity_penalty = tv_norm_aniso
 
     forceconstraints = [sum_entries(sigma_xz)==0, sum_entries(sigma_yz)==0] # add torque-free constraint here
     net_torque = sum_entries(mul_elemwise(x_in-x_center,sigma_yz) - mul_elemwise(y_in-y_center,sigma_xz))

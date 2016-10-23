@@ -1,17 +1,6 @@
 
 """
-Copyright 2013 Steven Diamond
-This file is part of CVXPY.
-CVXPY is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-CVXPY is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with CVXPY.  If not, see <http://www.gnu.org/licenses/>.
+Modified from tv method in cvxpy
 """
 
 from cvxpy.expressions.expression import Expression
@@ -21,7 +10,31 @@ from cvxpy.atoms.affine.sum_entries import sum_entries
 from cvxpy.atoms.affine.reshape import reshape
 
 
-def tvnorm(value,  *args):
+def tvnorm2d(value,  Dx, Dy):
+    """Total variation of a vector, matrix, or list of matrices.
+    Uses L1 norm of discrete gradients for vectors and
+    L2 norm of discrete gradients for matrices.
+    Parameters
+    ----------
+    value : Expression or numeric constant
+        The value to take the total variation of.
+    Returns
+    -------
+    Expression
+        An Expression representing the total variation.
+    """
+    value = Expression.cast_to_const(value)
+    len = value.size[0]
+
+    diffs = [ Dx*value , Dy*value]
+
+    stack = vstack( *[reshape(diff, 1, len) for diff in diffs])
+    return sum_entries(norm(stack, p='fro', axis=0))
+
+def detnorm(value, *args):
+    pass
+
+def tv(value, *args):
     """Total variation of a vector, matrix, or list of matrices.
     Uses L1 norm of discrete gradients for vectors and
     L2 norm of discrete gradients for matrices.
@@ -56,7 +69,3 @@ def tvnorm(value,  *args):
         length = diffs[0].size[0]*diffs[1].size[1]
         stacked = vstack(*[reshape(diff, 1, length) for diff in diffs])
         return sum_entries(norm(stacked, p='fro', axis=0))
-
-def detnorm(value, *args):
-    pass
-
