@@ -1,0 +1,228 @@
+\documentclass{article}
+\usepackage{fullpage}
+\usepackage{amsmath,amssymb,amsthm}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\br}{\mathbf{r}}
+
+\begin{document}
+\section{Forward problem}
+
+We are interested in computing the displacements by evaluating the integrals
+\begin{align}
+u_x(x,y) &= \int_{-\infty}^\infty \int_{-\infty}^\infty \left[ G_{xx}(x-x',y-y') \sigma_{xz}(x',y') + G_{xy}(x-x',y-y') \sigma_{yz}(x',y')  \right] \dd x'\dd y' \\
+u_y(x,y) &= \int_{-\infty}^\infty \int_{-\infty}^\infty \left[ G_{yx}(x-x',y-y') \sigma_{xz}(x',y') + G_{yy}(x-x',y-y') \sigma_{yz}(x',y')  \right] \dd x'\dd y',
+\label{eq:ux}
+\end{align}
+where the Greens functions $G_{(\cdot,\cdot)}:\mathbb{R}^2\to\mathbb{R}$ are
+\begin{equation}
+G_{xx}(x,y) =  \frac{\nu+1}{2\pi E}\left[ \frac{2\nu x^2}{(x^2+y^2)^{3/2}} + \frac{2-2\nu}{\sqrt{x^2+y^2}}  \right],
+\end{equation}
+\begin{equation}
+G_{yy}(x,y) =  \frac{\nu+1}{2\pi E}\left[ \frac{2\nu y^2}{(x^2+y^2)^{3/2}} + \frac{2-2\nu}{\sqrt{x^2+y^2}}  \right],
+\end{equation}
+and
+\begin{equation}
+G_{yx}(x,y) = G_{xy}(x,y) = \frac{\nu(\nu+1)}{\pi E} \frac{xy}{ (x^2+y^2)^{3/2}}.
+\end{equation}
+The functions $\sigma_{xz}$ and $\sigma_{yz}$ constitute the components of the in-plane stress perpendicular to the vertical axis.
+
+\subsection{Approximation of the stress tensor}
+
+ Let us consider the first-order approximation of $\sigma_{xz}$ and $\sigma_{yz}$ using central finite differences, for $x\in[x_j - \delta x/2, x_j+\delta x/2) \cap y\in[y_j-\delta y/2, y_j + \delta y /2)$,
+\begin{align}
+\sigma_{xz}(x,y) &= \sigma_{xz}(x_i , y_j) + (x-x_i)\frac{\sigma_{xz}(x_{i+1},y_j) -\sigma_{xz}(x_{i-1},y_j) }{2\delta x}  \nonumber\\
+&\qquad + (y-y_j)\frac{\sigma_{xz}(x_i,y_{j+1}) - \sigma_{xz}(x_i,y_{j-1}) }{2\delta y} + \mathcal{O}(\delta x)^2 + \mathcal{O}(\delta y)^2,\label{eq:sigma_affine}
+\end{align}
+where $i,j$ denotes a tuple of grid coordinates. The stress tensor $\boldsymbol{\sigma}$ has compact support within the region $\Omega$. For this reason, the domain of integration within Eq.~\ref{eq:ux} is compact. Noting that our approximation for the stress fields is piecewise affine, we may rewrite Eq.~\ref{eq:ux}, decomposing the integral into a sum of integrals over grid cells
+\begin{align}
+\lefteqn{ u_x(x,y) = \sum_{(x_j,y_k)\in\Omega} \Bigg\{ \Bigg[\sigma_{xz}(x_j,y_k) -x_j\left(\frac{\sigma_{xz}(x_{j+1},y_k) - \sigma_{xz}(x_{j-1},y_k) }{2\delta x }    \right)   } \nonumber\\
+&\quad -y_k\left( \frac{\sigma_{xz}(x_j,y_{k+1}) -  \sigma_{xz}(x_j,y_{k-1}) }{2\delta y}\right) \Bigg]  \int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{xx}(x-x',y-y')  \dd x' \dd y' \nonumber \\
+&\quad+\left[ \frac{\sigma_{xz}(x_{j+1},y_k) -  \sigma_{xz}(x_{j-1},y_k) }{2\delta x}   \right]  \int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2}  G_{xx}(x-x',y-y')   x'\dd x' \dd y'  \nonumber\\
+&\quad + \left[  \frac{\sigma_{xz}(x_j,y_{k+1}) - \sigma_{xz}(x_j,y_{k-1}) }{2\delta y} \right] \int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2}  G_{xx}(x-x',y-y')  y'\dd x' \dd y' \nonumber\\
+&\quad+  \Bigg[\sigma_{yz}(x_j,y_k) -x_j\left(\frac{\sigma_{yz}(x_{j+1},y_k) - \sigma_{yz}(x_{j-1},y_k) }{2\delta x}    \right)    \nonumber\\
+&\qquad -y_k\left( \frac{\sigma_{yz}(x_j,y_{k+1}) - \sigma_{yz}(x_j,y_{k-1}) }{2\delta y}\right) \Bigg]  \int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{xy}(x-x',y-y')  \dd x' \dd y' \nonumber \\
+&\qquad +\left[ \frac{\sigma_{yz}(x_{j+1},y_k) -  \sigma_{yz}(x_{j-1},y_k) }{2\delta x}   \right]  \int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2}  G_{xy}(x-x',y-y')   x'\dd x' \dd y'  \nonumber\\
+&\qquad+ \left[  \frac{\sigma_{yz}(x_j,y_{k+1}) - \sigma_{yz}(x_j,y_{k-1}) }{2\delta y} \right] \int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2}  G_{xy}(x-x',y-y')  y'\dd x' \dd y'  \Bigg\},
+\label{eq:ux_decomposed}
+\end{align}
+except that at the edges we will use one-sided differences so that we are only differentiating within the support.
+
+\subsection{Exact piecewise solution of the forward problem}
+
+To compute Eq.~\ref{eq:ux_decomposed}, it remains to evaluate all of the integrals within the grid cells. First we do the computation over domains not containing $(x,y)$, so that there are no singularities and we may freely iterate the integrals. Let $\Delta x_j^+ = x-(x_j + \delta x/2)$, $\Delta x_j^- = x-(x_j-\delta x/2)$, $\Delta y_k^+ = y-(y_k + \delta y/2)$, and $\Delta y_k^- = y-(y_k-\delta y/2)$. 
+
+\begin{description}
+
+\item[$G_{xx}:$]
+\begin{align}
+\lefteqn{
+\int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{xx}(x-x',y-y')\dd x'  \dd y'=  \int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} G_{xx}(u,v) \dd u \dd v} \nonumber \\
+&= \frac{\nu+1}{2\pi E}\int_{\Delta y_{k}^-}^{\Delta y_k^+}\left[ 2\log\left( \sqrt{ (\Delta x_j^+)^2 + v^2 } \right) - \frac{2\nu \Delta x_j^+}{\sqrt{ (\Delta x_j^+)^2 + v^2 }}  \right] \dd v \nonumber \\
+& \quad -  \frac{\nu+1}{2\pi E}\int_{\Delta y_{k}^-}^{\Delta y_k^+}\left[ 2\log\left( \sqrt{ (\Delta x_j^-)^2 + v^2 } \right) - \frac{2\nu \Delta x_j^-}{\sqrt{ (\Delta x_j^-)^2 + v^2 }}  \right] \dd v \nonumber \\
+&= f_{xx}( \Delta x_j^+,\Delta y_k^+) - f_{xx}( \Delta x_j^+,\Delta y_k^-) -f_{xx}(\Delta x_j^-, \Delta y_k^+) + f_{xx}(\Delta x_j^- , \Delta y_k^-)
+\end{align}
+where
+\begin{equation}
+f_{xx}(x,y) = \frac{\nu+1}{\pi E}\left[ x(1-\nu ) \log\left( \sqrt{x^2+y^2}+y\right) + y \log\left(\sqrt{x^2+y^2} +x\right)-y  \right].
+\end{equation}
+
+\item[$G_{xx}x$:]
+
+We also need to evaluate first moments
+\begin{align}
+\lefteqn{
+\int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{xx}(x-x',y-y')x'\dd x'  \dd y'=  \int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} G_{xx}(u,v)(x-u) \dd u \dd v} \nonumber \\
+&\qquad\qquad\qquad\qquad=\int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} G_{xx}(u,v)(x-u) \dd u \dd v \nonumber\\
+&\qquad\qquad\qquad\qquad= x \int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} G_{xx}(u,v) - \int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} uG_{xx}(u,v)  \dd u \dd v.
+\end{align}
+The first integral was already evaluated. The second integral we compute here:
+\begin{align}
+\lefteqn{\int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} uG_{xx}(u,v)  \dd u \dd v =} \nonumber \\
+&=\frac{\nu+1}{\pi E}\int_{\Delta y_{k}^-}^{\Delta y_k^+} \left[ \frac{(\nu+1)v^2 + (\Delta x_j^+)^2}{\sqrt{(\Delta x_j^-)^2 + v^2}} -\frac{(\nu+1)v^2 + (\Delta x_j^-)^2}{\sqrt{(\Delta x_j^-)^2 + v^2}}  \right] \dd v \nonumber \\
+&= f^x_{xx}( \Delta x_j^+ , \Delta y_k^+) - f^x_{xx}( \Delta x_j^+ , \Delta y_k^-)-f^x_{xx}(\Delta x_j^-, \Delta y_k^+) + f^x_{xx}(\Delta x_j^- , \Delta y_k^-)
+\end{align}
+where
+\begin{equation}
+f^x_{xx}(x,y) = \frac{\nu+1}{2\pi E} \left[ (\nu+1)y\sqrt{x^2 + y^2} - (\nu-1) x^2\log\left(\sqrt{x^2 + y^2} +y  \right)  \right],
+\end{equation}
+so that
+\begin{align}
+\lefteqn{\int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{xx}(x-x',y-y')x'\dd x'  \dd y'=}\nonumber\\
+&\qquad = x\left( f_{xx}( \Delta x_j^+,\Delta y_k^+) - f_{xx}( \Delta x_j^+,\Delta y_k^-) -f_{xx}(\Delta x_j^-, \Delta y_k^+) + f_{xx}(\Delta x_j^- , \Delta y_k^-)\right) \nonumber \\
+&\qquad - ( f^x_{xx}( \Delta x_j^+ , \Delta y_k^+) - f^x_{xx}( \Delta x_j^+ , \Delta y_k^-)-f^x_{xx}(\Delta x_j^-, \Delta y_k^+) + f^x_{xx}(\Delta x_j^- , \Delta y_k^-)).
+\end{align}
+
+\item[$yG_{xx}$]
+
+\begin{align}
+\lefteqn{\int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{xx}(x-x',y-y')y'\dd x'  \dd y'}\nonumber\\
+&\qquad =\int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+}(y-v) G_{xx}(u,v)\dd u \dd v 
+\end{align}
+
+\begin{align}
+\lefteqn{ \int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+}v G_{xx}(u,v)\dd u \dd v  } \nonumber\\
+&= \frac{\nu+1}{\pi E} \int_{\Delta y_{k}^-}^{\Delta y_k^+} v\left[ \log\left( \sqrt{(\Delta x_j^+)^2 + v^2 }+\Delta x_j^+ \right) -\frac{\nu \Delta x_j^+}{\sqrt{(\Delta x_j^+)^2+v^2}}\right]\dd v \nonumber \\
+&\qquad-\frac{\nu+1}{\pi E} \int_{\Delta y_{k}^-}^{\Delta y_k^+} v\left[ \log\left( \sqrt{(\Delta x_j^-)^2 + v^2 }+\Delta x_j^- \right) -\frac{\nu \Delta x_j^-}{\sqrt{(\Delta x_j^-)^2+v^2}}\right]\dd v \nonumber\\
+&= f^y_{xx}(\Delta x_j^+,\Delta y_k^+) - f^y_{xx}(\Delta x_j^+,\Delta y_k^-) - f^y_{xx}(\Delta x_j^-,\Delta y_k^+) + f^y_{xx}(\Delta x_j^-,\Delta y_k^-) 
+\end{align}
+where
+\begin{align}
+f^y_{xx}(x,y) =\frac{\nu+1}{2\pi E} \left[y^2\log\left(\sqrt{x^2+y^2}+x \right) - \sqrt{x^2+y^2}\left((2\nu-1)x + \frac{1}{2}\sqrt{x^2+y^2} \right)  \right],
+\end{align}
+so
+\begin{align}
+\lefteqn{\int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{xx}(x-x',y-y')y'\dd x'  \dd y' =} \nonumber\\
+&\qquad\qquad  y\left(f_{xx}( \Delta x_j^+,\Delta y_k^+) - f_{xx}( \Delta x_j^+,\Delta y_k^-) -f_{xx}(\Delta x_j^-, \Delta y_k^+) + f_{xx}(\Delta x_j^- , \Delta y_k^-)  \right) \nonumber\\
+&\qquad\qquad - ( f^y_{xx}(\Delta x_j^+,\Delta y_k^+) - f^y_{xx}(\Delta x_j^+,\Delta y_k^-) - f^y_{xx}(\Delta x_j^-,\Delta y_k^+) + f^y_{xx}(\Delta x_j^-,\Delta y_k^-)  )
+\end{align}
+
+
+\item[$G_{xy}$]
+
+\begin{align}
+\lefteqn{
+\int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{xy}(x-x',y-y')\dd x'  \dd y'= } \nonumber\\
+&= \int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} G_{xy}(u,v)\dd u \dd v \nonumber\\
+&=\frac{\nu(\nu+1)}{\pi E}\int_{\Delta y_{k}^-}^{\Delta y_k^+} \left[ \frac{v}{\sqrt{(\Delta x_j^-)^2 + v^2}} -\frac{v}{\sqrt{(\Delta x_j^+)^2+ v^2}}\right] \dd v \nonumber\\
+&= f_{xy}(\Delta x_j^+,\Delta y_k^+) - f_{xy} (\Delta x_j^+,\Delta y_k^-)  - f_{xy}(\Delta x_j^-, \Delta y_k^+) +f_{xy}(\Delta x_j^-,\Delta y_k^-) 
+\end{align}
+where
+\begin{equation}
+f_{xy}(x,y) =-\frac{\nu(\nu+1)}{\pi E} \sqrt{ x^2+y^2}.
+\end{equation}
+
+\item[$xG_{xy}$]
+
+\begin{align}
+\lefteqn{
+\int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2} x'G_{xy}(x-x',y-y')\dd x'  \dd y'= } \nonumber\\
+&= \int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} (x-u)G_{xy}(u,v)\dd u \dd v \nonumber\\
+&=x\int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} G_{xy}(u,v)\dd u \dd v - \int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} uG_{xy}(u,v)\dd u \dd v 
+\end{align}
+
+\begin{align}
+\lefteqn{\int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} uG_{xy}(u,v)\dd u \dd v =}\nonumber\\
+&=\frac{\nu(\nu+1)}{\pi E}\int_{\Delta y_{k}^-}^{\Delta y_k^+} \Bigg[ v\log\left( \sqrt{ (\Delta x_j^+)^2 + v^2} + \Delta x_j^+ \right)  \nonumber\\
+&\qquad- \frac{\Delta x_j^+ v}{\sqrt{ (\Delta x_j^+)^2 + v^2} } - v\log\left( \sqrt{ (\Delta x_j^-)^2 + v^2} + \Delta x_j^- \right) +\frac{\Delta x_j^- v}{\sqrt{ (\Delta x_j^-)^2 + v^2} } \Bigg] \dd v \nonumber\\
+&= f_{xy}^x(\Delta x_j^+,\Delta y_j^+) - f_{xy}^x(\Delta x_j^+,\Delta y_j^-) - f_{xy}^x(\Delta x_j^,\Delta y_j^+) + f_{xy}^x(\Delta x_j^-,\Delta y_j^-)
+\end{align} 
+where
+\begin{equation}
+f_{xy}^x(x,y) =\frac{\nu(\nu+1)}{\pi E}\left[ \frac{y^2}{2}\log\left(\sqrt{x^2+y^2} +x \right) -\frac{1}{4}\sqrt{x^2+y^2}\left(\sqrt{x^2+y^2}+2x\right) \right]
+\end{equation}
+As a result,
+\begin{align}
+\lefteqn{\int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{xy}(x-x',y-y') x' \dd x'  \dd y'= } \nonumber\\
+&=x\left[ f_{xy}(\Delta x_j^-, \Delta y_k^+) - f_{xy}(\Delta x_j^-,\Delta y_k^-) - f_{xy}(\Delta x_j^+,\Delta y_k^+) + f_{xy} (\Delta x_j^+,\Delta y_k^-) \right]\nonumber\\
+&\qquad -   \left( f_{xy}^x(\Delta x_j^+,\Delta y_j^+) - f_{xy}^x(\Delta x_j^+,\Delta y_j^-) - f_{xy}^x(\Delta x_j^-,\Delta y_j^+) + f_{xy}^x(\Delta x_j^-,\Delta y_j^-)\right).
+\end{align}
+
+\end{description}
+
+These calculations are sufficient to integrate over all cells $\Omega_{ij}$ where $(x,y)\not\in\Omega_{ij}$. Now suppose that $(x,y)\in\Omega_{ij}$. Without loss of generality let us assume that $(x,y)=(0,0)$, and look at these integrals where $\Omega_0 = \{ (x',y') : x'\in[-\delta x/2,\delta x/2] \textrm{ and } y\in[-\delta y/2,\delta y/2] \}$.
+
+\subsection{Specification of linear problem}
+
+In order to compare with the available data, we need to solve for the displacement $u_x$ at all grid positions $(x_n,y_m)$. These values take the form
+\begin{align}
+\lefteqn{u_x^{n,m} = u_x(x_n,y_m) }\nonumber\\
+ &= \sum_{j,k} A^{n,m,j,k}\left[ \sigma_{xz}^{j,k} - \frac{x_j}{2\delta x} \left(\sigma_{xz}^{j+1,k}  -  \sigma_{xz}^{j-1,k} \right) -\frac{y_k}{2\delta y}\left( \sigma_{xz}^{j,k+1}- \sigma_{xz}^{j,k-1} \right) \right] \nonumber\\
+ &\quad + \sum_{j,k} \frac{B^{n,m,j,k}}{2\delta x} \left(\sigma_{xz}^{j+1,k}  - \sigma_{xz}^{j-1,k} \right) + \sum_{j,k} \frac{C^{n,m,j,k}}{2\delta y}\left( \sigma_{xz}^{j,k+1} -  \sigma_{xz}^{j,k-1} \right)\nonumber\\
+  &+ \sum_{j,k} D^{n,m,j,k}\left[ \sigma_{yz}^{j,k} - \frac{x_j}{2\delta x} \left(\sigma_{yz}^{j+1,k}  -  \sigma_{yz}^{j-1,k} \right) -\frac{y_k}{2\delta y}\left( \sigma_{yz}^{j,k+1}- \sigma_{yz}^{j,k-1} \right) \right] \nonumber\\
+ &\quad + \sum_{j,k} \frac{E^{n,m,j,k}}{2\delta x} \left(\sigma_{yz}^{j+1,k}  -   \sigma_{yz}^{j-1,k} \right) + \sum_{j,k} \frac{F^{n,m,j,k}}{2\delta y}\left( \sigma_{yz}^{j,k+1} -   \sigma_{yz}^{j,k-1} \right)\nonumber\\
+ &= \sum_{j,k} X^{n,m,j,k} \sigma_{xz}^{j,k} +  \sum_{j,k}Y^{n,m,j,k} \sigma_{yz}^{j,k} 
+\end{align}
+where 
+\begin{align}
+X^{n,m,j,k} &= A^{n,m,j,k} - A^{n,m,j-1,k}\frac{x_{j-1}}{2\delta x} +A^{n,m,j+1,k}\frac{x_{j+1}}{2\delta x} - A^{n,m,j,k-1}\frac{y_{k-1}}{2\delta y} +A^{n,m,j,k+1}\frac{y_{k+1}}{2\delta y} \nonumber\\
+&\quad-\frac{B^{n,m,j-1,k}}{2\delta x} +\frac{B^{n,m,j+1,k}}{2\delta x} - \frac{C^{n,m,j,k-1}}{2\delta y} +\frac{C^{n,m,j,k+1}}{2\delta y}
+\end{align}
+and
+\begin{align}
+Y^{n,m,j,k} &= D^{n,m,j,k} - D^{n,m,j-1,k}\frac{x_{j-1}}{2\delta x} +D^{n,m,j+1,k}\frac{x_{j+1}}{2\delta x} - D^{n,m,j,k-1}\frac{y_{k-1}}{2\delta y} +D^{n,m,j,k+1}\frac{y_{k+1}}{2\delta y} \nonumber\\
+&\quad-\frac{E^{n,m,j-1,k}}{2\delta x} +\frac{E^{n,m,j+1,k}}{2\delta x} - \frac{F^{n,m,j,k-1}}{2\delta y} +\frac{F^{n,m,j,k+1}}{2\delta y}
+\end{align}
+
+\section{Error analysis}
+
+The Greens functions can be seen to scale as $1/r$, where $r$ is the two-dimensional Euclidean distance. However, due to the force-free and torque-free conditions, the actual scaling is more rapid. By analogy with electrostatics, we employ the multipole expansion to determine the decay rate for the displacement going away from the support of the stress distribution. From this analysis, we determine the reconstruction error as a function of the distance cut-off used in incorporation of measurements.
+
+
+\subsection{$r^{-2}$ scaling}
+
+Let $supp(\sigma_{xz}) \subseteq \Omega$ and $supp(\sigma_{yz}) \subseteq\Omega$, and  $\sigma_{xz}, \sigma_{yz} \in C^1(\Omega)$.
+We assume that our coordinate system is centered at a point $(0,0)\in\Omega$, which we will set later.  Also, let $r=\sqrt{x^2+y^2}$.
+We rewrite Eq.~\ref{eq:ux} explicitly
+\begin{align}
+u_x(x,y) &=\frac{\nu+1}{2\pi E} \int_\Omega \left(\frac{2\nu (x-x')^2}{( (x-x')^2+(y-y')^2)^{3/2}} + \frac{2-2\nu}{\sqrt{(x-x')^2+(y-y')^2}}   \right)
+ \sigma_{xz}(x',y') \dd x'\dd y' \nonumber\\
+ &\qquad+  \frac{\nu(\nu+1)}{\pi E} \int_\Omega   \frac{(x-x')(y-y')}{ ( (x-x')^2+(y-y')^2)^{3/2}} \sigma_{yz}(x',y')  \dd x'\dd y'  \nonumber\\
+ &= \frac{\nu+1}{2\pi E r}   \int_\Omega \left[  \frac{  2(\cos\theta-x'/r) + (2-2\nu)(\sin\theta-y'/r) }{ [1-2(x'\cos\theta +y'\sin\theta)/r + (x'^2+y'^2)/r^2)]^{3/2} }\right] \sigma_{xz}(x',y')  \dd x' \dd y' \nonumber\\
+ &\qquad +  \frac{\nu(\nu+1)}{\pi E r} \int_\Omega \frac{(\cos\theta - x'/r)(\sin\theta - y'/r)}{[ 1-2(x'\cos\theta +y'\sin\theta)/r + (x'^2+y'^2)/r^2)]^{3/2} }\sigma_{yz}(x',y')\dd x' \dd y'
+\label{eq:ux1}
+\end{align}
+We now look at the behavior of Eq.~\ref{eq:ux1} as $r\gg r' = \sqrt{x'^2+y'^2}$, by expanding the denominator of the integrand in series
+\begin{align}
+\left[1-2(x'\cos\theta +y'\sin\theta)/r + (x'^2+y'^2)/r^2)\right]^{-3/2} &= \sum_{n=0}^\infty {{\frac{3}{2}+k-1}\choose{k}}\frac{1}{r^k}\left( -2(x'\cos\theta + y'\sin\theta) + \frac{r'^2}{r}  \right)^k,
+\end{align}
+to find the expansion for the overall integral expressed in polar coordinates
+\begin{align}
+u_x(r,\theta) &= \sum_{n=0}^\infty \frac{U_x^{(n)}(\theta)}{r^n}.
+\end{align}
+
+\begin{align}
+U_x^{(1)} &= \frac{\nu+1}{2\pi E} (2\cos\theta + (2-2\nu)\sin\theta) \int_\Omega \sigma_{xz}(x',y')\dd x' \dd y' \nonumber\\
+&\quad+\frac{\nu(\nu+1)}{\pi E}\cos\theta\sin\theta \int_\Omega \sigma_{yz}(x',y')\dd x' \dd y' \nonumber \\
+&=0 \\
+U_x^{(2)} &=  \frac{\nu+1}{2\pi E}\int_\Omega (2\cos\theta + (2-2\nu)\sin\theta)\frac{3}{2}(-2(x'\cos\theta+y'\sin\theta)) \sigma_{xz}(x',y') \dd x' \dd y' \nonumber \\
+&\quad+\frac{\nu(\nu+1)}{\pi E} \int_\Omega \cos\theta\sin\theta\frac{3}{2}(-2(x'\cos\theta+y'\sin\theta)) \sigma_{yz}(x',y') \dd x' \dd y' \nonumber \\
+&=-\frac{3(\nu+1)}{\pi E}(\cos\theta + (1-2\nu)\sin\theta) \int_{\Omega} (x'\cos\theta + y'\sin\theta ) \sigma_{xz}(x',y') \dd x' \dd y' \nonumber \\ 
+&\quad - \frac{3\nu(\nu+1)}{2\pi E}\sin(2\theta) \int_\Omega(x'\cos\theta + y'\sin\theta ) \sigma_{yz}(x',y') \dd x' \dd y' .
+\end{align}
+So we see that $u_x(r,\theta)\sim r^{-2}$ for $r\gg r'$.
+
+\subsection{Reconstruction error}
+
+On the basis of the previous analysis, we investigate the effect of the incorporation of a hard cut-off for observations. Usage of a cut-off greatly improves the computational complexity of the problem by decreasing the size of the system of equations to solve. We note here that we have explicit expressions for $u_x,u_y$, so the solution of each of these displacements can be found point-wise with no dependence on neighborhood points. In effect, by imposing a cut-off, we do not sacrifice any precision in the computation of these quantities at the points where we chose to make the computation.
+
+\end{document}
