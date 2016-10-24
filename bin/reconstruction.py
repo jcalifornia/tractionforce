@@ -230,18 +230,15 @@ def main():
     predicted_out =  A_out_in*sigma_xz + D_out_in*sigma_yz
 
     error = sum_squares(u_x_in - predicted_in) + sum_squares(u_x_out - predicted_out)
-    tv_norm = tvnorm2d(sigma_xz, Dx, Dy) + tvnorm2d(sigma_yz, Dx, Dy)
-    tv_norm_aniso = norm(Dx * sigma_xz / dx, 1) + norm(Dy * sigma_xz / dy, 1) + norm(Dx * sigma_yz / dx, 1) + norm(
+    tv_norm_aniso = tvnorm2d(sigma_xz, Dx, Dy) + tvnorm2d(sigma_yz, Dx, Dy)
+    tv_norm_iso = norm(Dx * sigma_xz / dx, 1) + norm(Dy * sigma_xz / dy, 1) + norm(Dx * sigma_yz / dx, 1) + norm(
         Dy * sigma_yz / dy, 1)
-    determinant_norm = tv_norm #norm(sigma_xz.T*Dx.T*Dy*sigma_yz - sigma_xz.T*Dy.T * Dx * sigma_xz , 1)
     tv_trace_norm = tvnorm_trace_2d(sigma_xz,sigma_yz,Dx,Dy)
 
     if REGULARIZATION == "tvtrace":
         regularity_penalty = tv_trace_norm
-    elif REGULARIZATION == "determinant":
-        regularity_penalty = determinant_norm
     elif REGULARIZATION == "tviso":
-        regularity_penalty = tv_norm
+        regularity_penalty = tv_norm_iso
     elif REGULARIZATION == "tv":
         regularity_penalty = tv_norm_aniso
 

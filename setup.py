@@ -10,7 +10,7 @@ def extract_version():
     Extracts version from ggplot/__init__.py
     without importing ggplot, which requires dependencies to be installed.
     """
-    with open('cpmstools/__init__.py') as fd:
+    with open('tractionforce/__init__.py') as fd:
         ns = {}
         for line in fd:
             if line.startswith('__version__'):
@@ -53,10 +53,7 @@ setup(
         'Programming Language :: Python :: 3.5'
     ],
     scripts=[
-        'bin/batchmodel.py',
-        'bin/rundea.py',
-        'bin/runsuperdea.py',
-        'bin/queuingreport.py'
+        'bin/reconstruction.py'
     ],
     zip_safe=False
 )
