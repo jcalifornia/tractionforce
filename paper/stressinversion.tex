@@ -215,7 +215,7 @@ $\u(\r) \equiv [u_x \ u_y\  u_z]^\intercal = {\bf G^0}\Conv\F$, where
 {\bf G^0} = \left[ \begin{matrix} G^0_{xx}(x,y,z) & G^0_{xy}(x,y,z) & G^0_{xz}(x,y,z) \\
 	G^0_{yx}(x,y,z) & G^0_{xy}(x,y,z) & G^0_{yz}(x,y,z) \\
 	G^0_{zx}(x,y,z) & G^0_{zy}(x,y,z) & G^0_{zz}(x,y,z) 
- \end{matrix} \right]
+ \end{matrix} \right].
 \end{equation}
 
 
@@ -270,8 +270,7 @@ and by abuse of notation,
 \begin{equation}
 \sigma_{xz}(x,y) = \sigma_{xz}(x,y,z=0) \quad \sigma_{yz}(x,y) = \sigma_{yz}(x,y,z=0) .
 \end{equation}
-In Eqs~\ref{eq:UMODEL1x} and~\ref{eq:UMODEL1}, we have restricted the domain of integration to the extent of the cell, $\Omega$, to emphasize that 
-$\boldsymbol\sigma$ has compact support. Note that tangential stresses can lead to displacement data in the normal direction.
+Note that tangential stresses can lead to displacement data in the normal direction.
 
 %
 
@@ -295,18 +294,43 @@ measurement positions at $\r_{i}$:
 %
 Since $\u^{\rm data}(\r_{i})$ is given, and $\u(\r_{i})$, is given by
 Eqs.~\ref{eq:UMODEL1x} and~\ref{eq:UMODEL1y}, this contribution to the objective function is a
-functional over the surface-stress function $\bs(\r_{\perp})$. 
+functional over the surface-stress function $\bs(\r_{\perp})$.  For simplicity, we will assume that 
+the data points are sampled over an uniform grid with coordinates given $\{ (x_j,y_k) : j\in[1,2,\ldots,J], k\in[1,2,\ldots,K] \}.$
 
-We solve Eqs.~\ref{eq:UMODEL1x} and~\ref{eq:UMODEL1y} \emph{exactly} given
-an approximation of the stress field.
-  Let us consider the first-order approximation of $\sigma_{xz}$ and $\sigma_{yz}$ using central finite differences, for $x\in[x_j - \delta x/2, x_j+\delta x/2) \cap y\in[y_j-\delta y/2, y_j + \delta y /2)$,
+In Eqs~\ref{eq:UMODEL1x} and~\ref{eq:UMODEL1y}, we have restricted the domain of integration to the extent of the cell, $\Omega$, to emphasize that  $\boldsymbol\sigma$ has compact support. As a consequence of compact support, for a fixed, discretized approximation of $\sigma_{xz},\sigma_{yz}$, the displacements can be obtained exactly by solving an equivalent system of linear equations of finite dimension.
+
+Here we explicitely define this system of linear equations given a piecewise-affine approximation of the stress field. Let us consider the first-order approximation of $\sigma_{xz}$ and $\sigma_{yz}$ using central finite differences, for $x\in[x_j - \delta x/2, x_j+\delta x/2) \cap y\in[y_j-\delta y/2, y_j + \delta y /2)$,
 \begin{align}
 \lefteqn{\sigma_{xz}(x,y) =\sigma_{xz}(x_i , y_j)  }\nonumber \\
 & \qquad+ (x-x_i)\frac{\sigma_{xz}(x_{i+1},y_j) -\sigma_{xz}(x_{i-1},y_j) }{2\delta x}  \nonumber\\
 &\qquad + (y-y_j)\frac{\sigma_{xz}(x_i,y_{j+1}) - \sigma_{xz}(x_i,y_{j-1}) }{2\delta y} \nonumber\\
 &\qquad + \mathcal{O}(\delta x)^2 + \mathcal{O}(\delta y)^2,\label{eq:sigma_affine}
 \end{align}
-where $i,j$ denotes a tuple of grid coordinates. The stress tensor $\boldsymbol{\sigma}$ has compact support within the region $\Omega$. For this reason, the domain of integration within Eq.~\ref{eq:ux} is compact. Noting that our approximation for the stress fields is piecewise affine, we may rewrite Eq.~\ref{eq:ux}, decomposing the integral into a sum of integrals over grid cells
+where $i,j$ denotes a tuple of grid coordinates. 
+
+Now we may rewrite Eq.~\ref{eq:UMODEL1x}, for instance, to solve for the displacement at a location $(x_n,y_m)$, by decomposing the integral into a sum of integrals over grid cells
+%
+\begin{widetext}
+\begin{align}
+ \lefteqn{u_x(x_n,y_m) =} \nonumber\\
+ & \sum_{(x_j,y_k)\in\Omega} \Bigg\{ \Bigg[\sigma_{xz}(x_j,y_k)  - x_j\left(\frac{\sigma_{xz}(x_{j+1},y_k) - \sigma_{xz}(x_{j-1},y_k) }{2\delta x }    \right)    -y_k\left( \frac{\sigma_{xz}(x_j,y_{k+1}) -  \sigma_{xz}(x_j,y_{k-1}) }{2\delta y}\right) \Bigg]{ \langle G_{xx} \rangle}^{nmjk} \nonumber \\
+&\quad+\left[ \frac{\sigma_{xz}(x_{j+1},y_k) -  \sigma_{xz}(x_{j-1},y_k) }{2\delta x}   \right]\langle x'G_{xx} \rangle^{nmjk} + \left[  \frac{\sigma_{xz}(x_j,y_{k+1}) - \sigma_{xz}(x_j,y_{k-1}) }{2\delta y} \right] \langle y'G_{xx} \rangle^{nmjk}\nonumber\\
+&\quad+  \Bigg[\sigma_{yz}(x_j,y_k) -x_j\left(\frac{\sigma_{yz}(x_{j+1},y_k) - \sigma_{yz}(x_{j-1},y_k) }{2\delta x}    \right)    -y_k\left( \frac{\sigma_{yz}(x_j,y_{k+1}) - \sigma_{yz}(x_j,y_{k-1}) }{2\delta y}\right) \Bigg] \langle G_{xy} \rangle^{nmjk}\nonumber \\
+&\qquad +\left[ \frac{\sigma_{yz}(x_{j+1},y_k) -  \sigma_{yz}(x_{j-1},y_k) }{2\delta x}   \right]  \int_{y_k-\delta y/2}^{y_k+\delta y/2}  \langle x'G_{xy} \rangle^{nmjk} + \left[  \frac{\sigma_{yz}(x_j,y_{k+1}) - \sigma_{yz}(x_j,y_{k-1}) }{2\delta y} \right] \langle y'G_{xy} \rangle^{nmjk} \Bigg\},
+\label{eq:ux_decomposed}
+\end{align}
+\end{widetext}
+where
+\begin{align}
+\lefteqn{\langle G_{st} \rangle^{nmjk} = }\nonumber\\
+&\qquad    \int_{y_k-\delta y/2}^{y_k+\delta y/2} \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{st}(x_n-x',y_m-y') \dd x' \dd y' \label{eq:G_ave} \\
+\lefteqn{\langle uG_{st} \rangle^{nmjk} =}  \nonumber\\
+&\qquad  \int_{y_k-\delta y/2}^{y_k+\delta y/2} \int_{x_j-\delta x/2}^{x_j+\delta x/2} uG_{st}(x_n-x',y_m-y') \dd x' \dd y', \label{eq:G_ave2} 
+\end{align}
+except that at the edges where we use one-sided differences so that we are only differentiating within $\Omega$. Explicit 
+closed-form expressions for the integrals represented in Eqs.~\ref{eq:G_ave} and~\ref{eq:G_ave2} are given in the Supplemental Materials. A similar expression can be found for solving for $u_y$ (not shown).
+
+From the equation-counting perspective, the system of equations is exactly determined given that one has at least as many measurement points as grid cells in the resolution that one wishes to reconstruct the stress field, provided that one is able to measure displacements in both principle directions. However, in line experiments this is not the case. Furthermore, even if one is able to measure both displacements, the problem may still be highly ill-conditioned.
 
 \subsection{Regularization}
 
@@ -327,6 +351,7 @@ quadratic cone solver
 
 \section{Results}
 
+\subsection{Comparison of norms}
 \section{summary and Conclusions}
 
 
@@ -337,320 +362,3 @@ quadratic cone solver
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-where 
-
-\begin{equation}
-G_{xx} =-\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)R_{\perp}+z}{R_{\perp}(R_{\perp}+z)} + 
-\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]x^{2}}{R_{\perp}^{3}(R_{\perp}+z)^{2}}\right]
-\end{equation}
-\begin{equation} 
-G_{xy} =-\frac{1+\nu}{2\pi E}\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]xy}{R_{\perp}^{3}
-(R_{\perp}+z)^{2}}
-\end{equation}
-\begin{equation}
-G_{xz} =-\frac{1+\nu}{2\pi E}\left(\frac{xz}{R_{\perp}^{3}}-\frac{(1-2\nu)x}{R_{\perp}
-(R_{\perp}+z)}\right)
-\end{equation}
-\begin{equation}
-G_{yx} =-\frac{1+\nu}{2\pi E}\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]xy}{R_{\perp}^{3}(R_{\perp}
-+z)^{2}}
-\end{equation}
-\begin{equation}
-G_{yy} =-\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)R_{\perp}+z}{R_{\perp}(R_{\perp}+z)}
-+\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]y^{2}}{R_{\perp}^{3}(R_{\perp}+z)^{2}}\right]
-\end{equation}
-\begin{equation}
-G_{yz} =-\frac{1+\nu}{2\pi E}\left[\frac{yz}{R_{\perp}^{3}}-\frac{(1-2\nu)y}
-{R_{\perp}(R_{\perp}+z)}\right]
-\end{equation}
-\begin{equation}
-G_{zx} =-\frac{1+\nu}{2\pi E}\left(\frac{1-2\nu}{R_{\perp}(R_{\perp}+z)}+\frac{z}{R_{\perp}^{3}}
-\right)x
-\end{equation}
-\begin{equation}
-G_{zy} =-\frac{1+\nu}{2\pi E}\left(\frac{1-2\nu}{R_{\perp}(R_{\perp}+z)}+\frac{z}{R_{\perp}^{3}}\right)y
-\end{equation}
-\begin{equation}
-G_{zz} =-\frac{1+\nu}{2\pi E}\left(\frac{2(1-\nu)}{R_{\perp}}+\frac{z^{2}}{R_{\perp}^{3}}\right)
-\end{equation}
-\begin{equation}
-R_{\perp} \equiv \sqrt{x^{2} +y^{2} +z^{2}}
-\end{equation}
-Here,\,\,$E$\, is Young's modulus and\,\,\,$\nu$\,\,\,is Poission's ratio.
-%
-
-
-
-
-
-
-\begin{equation}
-G_{xx} =-\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)R_{\perp}+z}{R_{\perp}(R_{\perp}+z)} + 
-\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]X^{2}}{R_{\perp}^{3}(R_{\perp}+z)^{2}}\right]
-\end{equation}
-\begin{equation} 
-G_{xy} =-\frac{1+\nu}{2\pi E}\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]XY}{R_{\perp}^{3}
-(R_{\perp}+z)^{2}}
-\end{equation}
-\begin{equation}
-G_{xz} =-\frac{1+\nu}{2\pi E}\left(\frac{Xz}{R_{\perp}^{3}}-\frac{(1-2\nu)X}{R_{\perp}
-(R_{\perp}+z)}\right)
-\end{equation}
-\begin{equation}
-G_{yx} =-\frac{1+\nu}{2\pi E}\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]XY}{R_{\perp}^{3}(R_{\perp}
-+z)^{2}}
-\end{equation}
-\begin{equation}
-G_{yy} =-\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)R_{\perp}+z}{R_{\perp}(R_{\perp}+z)}
-+\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2})]Y^{2}}{R_{\perp}^{3}(R_{\perp}+z)^{2}}\right]
-\end{equation}
-\begin{equation}
-G_{yz} =-\frac{1+\nu}{2\pi E}\left(\frac{z}{R_{\perp}^{3}}-\frac{1-2\nu}
-{R_{\perp}(R_{\perp}+z)}\right)Y
-\end{equation}
-\begin{equation}
-G_{zx} =-\frac{1+\nu}{2\pi E}\left(\frac{1-2\nu}{R_{\perp}(R_{\perp}+z)}+\frac{z}{R_{\perp}^{3}}
-\right)X
-\end{equation}
-\begin{equation}
-G_{zy} =-\frac{1+\nu}{2\pi E}\left(\frac{1-2\nu}{R_{\perp}(R_{\perp}+z)}+\frac{z}{R_{\perp}^{3}}\right)Y
-\end{equation}
-\begin{equation}
-G_{zz} =-\frac{1+\nu}{2\pi E}\left(\frac{2(1-\nu)}{R_{\perp}}+\frac{z^{2}}{R_{\perp}^{3}}\right)
-\end{equation}
-\begin{equation}
-R_{\perp} \equiv \sqrt{(x-x')^{2} +(y-y')^{2} +z^{2}}, \,\,\, X\equiv x-x', \,\,\, Y\equiv y-y'
-\end{equation}
-
-\noindent\section{Surface stresses only}
-Particularly,if we set\,\,$z=0$,\,these coefficients become:
-%
-\begin{equation}
-G_{xx} =-\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)}{R_{\perp}}+ 
-\frac{2\nu X^{2}}{R_{\perp}^{3}}\right]
-\end{equation}
-\begin{equation} 
-G_{xy} =-\frac{1+\nu}{2\pi E}\frac{2\nu XY}{R_{\perp}^{3}}
-\end{equation}
-\begin{equation}
-G_{xz} =-\frac{1+\nu}{2\pi E}\frac{2 \nu -1}{R_{\perp}^{2}}X
-\end{equation}
-\begin{equation}
-G_{yx} =-\frac{1+\nu}{2\pi E}\frac{2\nu XY}{R_{\perp}^{3}}
-\end{equation}
-\begin{equation}
-G_{yy} =-\frac{1+\nu}{2\pi E}\left(\frac{2(1-\nu)}{R_{\perp}}
-+\frac{2\nu Y^{2}}{R_{\perp}^{3}}\right)
-\end{equation}
-\begin{equation}
-G_{yz} =-\frac{1+\nu}{2\pi E}\frac{2 \nu -1}
-{R_{\perp}^2}Y
-\end{equation}
-\begin{equation}
-G_{zx} =-\frac{1+\nu}{2\pi E}\frac{1-2\nu}{R_{\perp}^2}
-X
-\end{equation}
-\begin{equation}
-G_{zy} =-\frac{1+\nu}{2\pi E}\frac{1-2\nu}{R_{\perp}^2}Y
-\end{equation}
-\begin{equation}
-G_{zz} =-\frac{1+\nu}{2\pi E}\frac{2(1-\nu)}{R_{\perp}}
-\end{equation}
-\begin{equation}
-R_{\perp} \equiv \sqrt{(x-x')^{2} +(y-y')^{2}}, \,\,\, X\equiv x-x', \,\,\, Y\equiv y-y'
-\end{equation}
-
-%
-%
-%
-
-\section{Incompressible Limit} 
-When the medium is considered
-incompressible,ie,\,\,\,$\nu =\frac{1}{2},$\,\,\,we have simplified
-results.
-
-Throughout the medium,these coefficients would be:
-\begin{equation}
-G_{xx} =-\frac{3}{4\pi E}\left[\frac{1}{R_{\perp}} + 
-\frac{[R_{\perp}(R_{\perp}+2z)+z^{2}]X^{2}}{R_{\perp}^{3}(R_{\perp}+z)^{2}}\right]
-\end{equation}
-\begin{equation} 
-G_{xy} =-\frac{3}{4\pi E}\frac{[R_{\perp}(R_{\perp}+2z)+z^{2}]XY}{R_{\perp}^{3}
-(R_{\perp}+z)^{2}}
-\end{equation}
-\begin{equation}
-G_{xz} =-\frac{3}{4\pi E}\left(\frac{z}{R_{\perp}^{3}}\right)X
-\end{equation}
-\begin{equation}
-G_{yx} =-\frac{3}{4\pi E}\frac{[R_{\perp}(R_{\perp}+2z)+z^{2}]XY}{R_{\perp}^{3}(R_{\perp}
-+z)^{2}}
-\end{equation}
-\begin{equation}
-G_{yy} =-\frac{3}{4\pi E}\left[\frac{1}{R_{\perp}}
-+\frac{[R_{\perp}(R_{\perp}+2z)+z^{2}]Y^{2}}{R_{\perp}^{3}(R_{\perp}+z)^{2}}\right]
-\end{equation}
-\begin{equation}
-G_{yz} =-\frac{3}{4\pi E}\left(\frac{z}{R_{\perp}^{3}}\right)Y
-\end{equation}
-\begin{equation}
-G_{zx} =-\frac{3}{4\pi E}\left(\frac{z}{R_{\perp}^{3}}
-\right)X
-\end{equation}
-\begin{equation}
-G_{zy} =-\frac{3}{4\pi E}\left(\frac{z}{R_{\perp}^{3}}\right)Y
-\end{equation}
-\begin{equation}
-G_{zz} =-\frac{3}{4\pi E}\left(\frac{1}{R_{\perp}}+\frac{z^{2}}{R_{\perp}^{3}}\right)
-\end{equation}
-\begin{equation}
-R_{\perp} \equiv\sqrt{(x'-x)^{2} +(y'-y)^{2} +z^{2}}, \,\,\, X\equiv x-x', \,\,\, Y\equiv y-y'
-\end{equation}
-%
-And on the surface:
-\begin{equation}
-G_{xx} =-\frac{3}{4\pi E}\left(\frac{1}{R_{\perp}}+ 
-\frac{X^{2}}{R_{\perp}^{3}}\right)
-\end{equation}
-\begin{equation} 
-G_{xy} =-\frac{3}{4\pi E}\frac{XY}{R_{\perp}^{3}}
-\end{equation}
-\begin{equation}
-G_{xz} =0
-\end{equation}
-\begin{equation}
-G_{yx} =-\frac{3}{4\pi E}\frac{XY}{R_{\perp}^{3}}
-\end{equation}
-\begin{equation}
-G_{yy} =-\frac{3}{4\pi E}\left(\frac{1}{R_{\perp}}
-+\frac{Y^{2}}{R_{\perp}^{3}}\right)
-\end{equation}
-\begin{equation}
-G_{yz} =0
-\end{equation}
-\begin{equation}
-G_{zx} =0
-\end{equation}
-\begin{equation}
-G_{zy} =0
-\end{equation}
-\begin{equation}
-G_{zz} =-\frac{3}{4\pi E}\frac{1}{R_{\perp}}
-\end{equation}
-\begin{equation}
-R_{\perp} \equiv \sqrt{(x-x')^{2} +(y-y')^{2}}, \,\,\, X\equiv x-x', \,\,\, Y\equiv y-y'
-\end{equation}
-
-
-
-
-The optimization problem using TV can be formally defined by minimization of two possible 
-objective functions
-
-\begin{equation}
-\Phi_{1} = \sum_{i}\bigg| \u^{\rm data}(\r_{i})- 
-\u^{\rm model}(\r_i)\bigg|^{2} + \gamma \int_{\Omega}
-\vert \nabla_{\perp} F_{x}(\r_{\perp})\vert^{p} \dd \r_{\perp} + \gamma \int_{\Omega}
-\vert \nabla_{\perp} F_{y}(\r_{\perp})\vert^{p} \dd \r_{\perp} +
-\int_{\Omega}(\lambda_{x}F_{x}+\lambda_{y}F_{y})\dd \r_{\perp},
-\end{equation}
-%
-where $p=1,2$ and 
-\begin{equation}
-\Phi_{2} = \sum_{i}\bigg| u_{x}^{\rm data}(\r_{\perp}(i))- u_{x}^{\rm model}(\r_{\perp}(i))
-\bigg|^{2} + \gamma \int_{\Omega}
-\vert \nabla_{\perp} \cdot {\bf F}_{\perp}(\r_{\perp})\vert^{p} \dd \r_{\perp} +
-\int_{\Omega}(\lambda_{x}F_{x}+\lambda_{y}F_{y})\dd \r_{\perp},
-\end{equation}
-
-Where the displacement derived from the model is
-
-\begin{equation}
-u_{x}^{\rm model}(\r_{\perp}(i)) = 
-\int_{\Omega}G_{xj}(\r_{\perp}(i)-\r_{\perp}')
-F_{j}(\r_{\perp}')\dd \r_{\perp}', \quad j=1,2.
-\end{equation}
-
-In this problem, $\Omega$ is the foot print of the cell, $\gamma$ is the
-regularization parameter, and $\lambda$ is the Lagrange multiplier
-used to enforce the total zero force condition $\int {\bf
-  F}(\r_{\perp}) \dd \r_{\perp} =0$, and the points $\r_{\perp}(i)$ are
-those at which data is measured.  These data points are discrete in
-the $x-$direction since the surface fluorescence comes from discretely
-spaces lines.  However, there can be a continuous set of data points
-along the $y-$direction of the lines.
-
-During the optimization of $\Phi$ to find the best ${\bf
-  F}_{\perp}(\r_{\perp})$ is performed on the interior, under the cell
-only.  The boundary condition ${\bf F}_{\perp}(\r_{\perp} \in \partial
-\Omega) = 0$ is imposed.
-
-
-
-There is yet another constraint. The total torque has to be zero since
-the cell cannot exert a net torque from the air. 
-So another constraint should be:
-
-
-\begin{equation}
-\int_{\Omega}\rp\times {\bf F}_{\perp}(\rp) \,\dd \rp = 0,
-\end{equation}
-%
-where the origin of $\rp$ is arbitrary since 
-the total force is also constrained to vanish.
-
-I wonder if it is better to use a Helmhotz decomposition
-
-\begin{equation}
-{\bf F}_{\perp} = \nabla_{\perp} \varphi(\rp) + \nabla\times (\psi(\rp)\hat{z}).
-\end{equation}
-%
-In this picture, the no net force constraint gives
-
-\begin{equation}
-\int_{\Omega} \nabla_{\perp} \varphi \,\dd \rp +
-\int_{\Omega}\nabla_{\perp}\times(\psi\hat{z}) \,\dd \rp = 0.
-\end{equation}
-%
-The no-torque condition then becomes
-
-\begin{equation}
-\int_{\partial \Omega} \left[(\rp\times\nabla_{\perp})\varphi - 
-(\rp\cdot\nabla_{\perp})\psi(\rp)\right]\,\dd\rp = 0.
-\end{equation}
-
-
- 
-\noindent The objective function for our problem is:
-\begin{equation}
-\Phi = \sum_{i}\bigg| u_{x}^{\rm data}(\r_{\perp}(i))- 
-u_{x}^{\rm model}(\r_{\perp}(i))\bigg|^{2} + \gamma \int_{\Omega}
-\vert \nabla_{\perp} P_{x}(\r_{\perp})\vert^{p} \dd \r_{\perp} + \gamma \int_{\Omega}
-\vert \nabla_{\perp} P_{y}(\r_{\perp})\vert^{p} \dd \r_{\perp}
-\end{equation}
-Where\,\,$\gamma$\,\, is a regularization parameter, $\Omega$\,\,is
-the area where we assume that there are no stresses outside.  Because
-the data is collected on the plane\,\,$z=0$\,\,,and the substrate is
-incompressible, i.e., $\nu=0.5$, plug these two conditions into
-Equation(5) and (8), we have\,\,$G_{xz}=G_{yz}=0$\,\,, which means
-that the gravity of the cells have no effect on the strain in x- and
-y- direction on the surface of the substrate. When\,\,$p=1$, if we
-use the anisotropic l1-norm of the derivatives for the TV norm
-instead, the objective function would be:
-\begin{equation}
-\begin{split}
-\Phi = \sum_{i}\bigg| u_{x}^{\rm data}(\r_{\perp}(i))- 
-u_{x}^{\rm model}(\r_{\perp}(i))\bigg|^{2} + \gamma \int_{\Omega}
-\mid \frac{\partial P_{x}(\r_{\perp})}{\partial x}\mid \dd \r_{\perp} + \gamma \int_{\Omega}
-\mid \frac{\partial P_{x}(\r_{\perp})}{\partial y}\mid \dd \r_{\perp}\\+\gamma \int_{\Omega}
-\mid \frac{\partial P_{y}(\r_{\perp})}{\partial x}\mid \dd \r_{\perp} + \gamma \int_{\Omega}
-\mid \frac{\partial P_{y}(\r_{\perp})}{\partial y}\mid \dd \r_{\perp}
-\end{split}
-\end{equation}
-Both the isotropic one and the anisotropic one are used in image
-processing. Another consideration is that the total force and the
-total torque are nearly zero. Which are equivalent to the constraints:
-\begin{equation}
-\int_{\Omega}\F\dd \r_{\perp}=0\,\,\,\int_{\Omega}\r_{\perp} \times \F\dd\r_{\perp}=0
-\end{equation}
