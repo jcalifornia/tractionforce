@@ -52,3 +52,25 @@ def tvnorm_trace_2d(value1, value2,  Dx, Dy):
 
     stack = vstack( *[reshape(diff, 1, len) for diff in diffs])
     return sum_entries(cvxnorm(stack, p='fro', axis=0))
+
+def tvnorm_det_2d(value1, value2,  Dx, Dy):
+    """Total variation of a vector, matrix, or list of matrices.
+    Uses L1 norm of discrete gradients for vectors and
+    L2 norm of discrete gradients for matrices.
+    Parameters
+    ----------
+    value : Expression or numeric constant
+        The value to take the total variation of.
+    Returns
+    -------
+    Expression
+        An Expression representing the total variation.
+    """
+    value1 = Expression.cast_to_const(value1)
+    value2 = Expression.cast_to_const(value2)
+    len = value1.size[0]
+
+    diffs = [ Dx*(value1 + value2) , Dy*(value1+value2)]
+
+    stack = vstack( *[reshape(diff, 1, len) for diff in diffs])
+    return sum_entries(cvxnorm(stack, p='fro', axis=0))

@@ -1,0 +1,656 @@
+\RequirePackage{lineno}
+\documentclass[aps,prl,reprint,twocolumn,groupedaddress,showpacs]{revtex4-1}
+%\documentclass[aps,prl,reprint,twocolumn,groupedaddress,showpacs]{revtex4}
+%\documentclass[10pt,reprint]{iopart}
+%\documentclass[11pt]{article}
+%\documentclass{pnastwo}
+%\usepackage{color}
+\usepackage[pdftex]{graphicx}
+\usepackage{epstopdf}
+\usepackage{bm}
+\usepackage{amssymb}
+\usepackage{psfrag}
+\usepackage{color}
+\usepackage{amsbsy}      
+\usepackage{amsmath}
+\usepackage{lineno}
+\usepackage{natbib} 
+\bibliographystyle{unsrt}
+\usepackage{amsmath}
+\graphicspath{{./figures/}}
+%\usepackage{MnSymbol}
+
+
+
+\def\alphaeff{\alpha_{\mathrm{eff}}}
+\def\a{\alpha}
+\def\b{{\bf b}}
+\def\c{{\bf c}}
+\def\d{{\bf d}}
+\def\dd{\mbox{d}}
+\def\dz{\delta z}
+\def\ve{\varepsilon}
+\def\eps{\epsilon}
+\def\f{{\bf f}}
+\def\g{\gamma}
+\def\r{{\bf r}}
+\def\rp{{\bf r}_{\perp}}
+\def\q{{\bf q}}
+\def\k{\kappa}
+\def\u{{\bf u}}
+\def\t{{\bf t}}
+\def\w{{\bf w}}
+\def\x{{\bf x}}
+\def\y{{\bf y}}
+\def\l{\ell}
+\def\o{\omega}
+\def\p{{\bf p}}
+\def\s{\sigma}
+\def\vp{\varphi}
+\def\D{\Delta}
+\def\F{{\bf F}}
+\def\H{{\bf H}}
+\def\K{{\bf K}}
+\def\L{{\bf L}}
+\def\Q{{\bf Q}}
+\def\S{{\bf S}}
+\def\T{{\bf T}}
+\def\U{{\bf U}}
+\def\V{{\bf V}}
+\def\W{{\bf W}}  
+\def\F{{\bf F}}                
+\def\P{{\bf P}}
+\def\Pt{\tilde{P}}
+%\def\s{\mathbf{\sigma}}
+\newcommand{\bs}{\boldsymbol{\sigma}}
+\newcommand{\Conv}{\mathop{\scalebox{1.5}{\raisebox{-0.2ex}{$\ast$}}}}%
+
+%\usepackage{fullpage}
+\newcommand{\RR}{\mathbb{R}}
+
+
+\begin{document}
+
+\title{Reconstruction of localized force distributions in cells and tissues from substrate displacements using physically-consistent regularization}
+
+%\author{Yanli Liu and Tom Chou} 
+\affiliation{Depts. of
+Biomathematics and Mathematics, UCLA, Los Angeles, CA 90095-1766}
+
+
+%\maketitle 
+
+%\begin{article}
+
+
+%\runninglinenumbers*
+
+\begin{abstract}
+We develop a method to reconstruct, from measured displacements of the
+underlying elastic substrate, the spatially dependent forces that
+cells or tissues impart on them. Since these sources of force
+typically arise from focal adhesions, with are localized or
+``compact,'' and discontinuous, we solve this inverse problem using
+methods of optimization useful for image segmentation. In addition to
+the standard quadratic data mismatch terms (that defines least-squares
+fitting), we motivate a term in in the objective function which
+penalizes variations in the tensor invariants of the reconstructed stress while
+preserving boundaries.   By minimizing
+the objective function subject to physical constraints, we are able to
+efficiently reconstruct stress fields with localized structure from
+simulated and experimental substrate displacements. We provide a
+numerical method for setting up a discretized inverse problem that that
+ is solvable by standard convex optimization techniques. Our method incorporates
+the exact solution of the forward problem accurate to first-order finite-difference approximation
+in the stress tensor. For utility with newly-available high-resolution data, we motivate
+the use of distance-based cutoffs for data inclusion and find under loose regularity
+conditions the reconstruction error that results.
+\end{abstract}
+\maketitle
+
+\section{Introduction}
+
+Cell motility and response to signals have hitherto almost always been
+studied in two-dimensional geometries in which cells are placed on a
+flat elastic substrate.  Dynamic adhesion between the cells and the
+substrate are realized through {\it e.g.}, lamellapodia, filapodia,
+and dynamically reorganizing focal adhesions.  Such structures are
+spatially localized, as shown in Fig.~\ref{FIG1}. Similarly, on larger
+length scales, a collection of cells can give rise to localized stress
+distributions. For example, the leading edge of a cell layer produces
+the pulling force that leads to migration in wound healing assays.
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=\linewidth]{Fig1}
+\caption{A schematic of an isolated cell. (a) The boundary of the cell
+  footprint is denoted by the dashed curve, the stress field is
+  represented by the red regions that impart a stress ${\bf F}(x,y)$
+  on the surface. Displacements ${\bf u}(\r_{i})$ of the elastic
+  medium are measured at position $\r_{i} =
+  x_{i}\hat{x}+y_{i}\hat{y}+z_{i}\hat{z}$ (blue dots) that can be
+  inside or outside the cell footprint, on the surface ($z_{i}=0$), or
+  below the surface ($z_{i}<0$). (b). A perspective view of the
+  elastic substrate and cellular footprint.}
+\label{FIG1}
+\end{center}
+\end{figure}
+
+
+Dynamically varying force generating structures are often small and
+difficult to image, especially without biochemical modification such
+as incorporation of fluorescent dyes. Therefore, other methods for
+inferring their positions and magnitudes have been developed. The
+simplest method relies on measuring the displacement of fiduciary
+markers, such as gold nanoparticles, embedded in the elastic
+substrate. The measured displacements are an indirect probe of the
+force-generating structures.  Any inversion method should be able to
+not only reconstruct the positions and magnitudes of the stress field,
+but should ideally be able to capture potentially sharp boundaries of
+the stress-generating structures.
+
+Therefore, we develop a novel method for elastic stress source
+recovery using ideas developed for image segmentation.  This class of
+methods relies on optimization that uses an $L_{1}$ regularization
+term in the objective function.  This type of regularization term is
+not derived from a fundamental physical law, but represents a prior
+knowledge that the function to be recovered is sparse in content
+except near edges.  Nonetheless, our new objective will be constructed
+to obey physical constraints and symmetries.
+
+In the next section, we review the basic linear equations of
+elasticity that describe the displacement field as a function of an
+arbitrary surface stress distribution. This model is then used to
+construct the data mismatch term in an objective function. We then
+motivate regularization and constraint terms to construct the full
+objective function. Finally, given simulated and experimental data, we
+minimize our objective function using a modified split-Bregman
+algorithm and reconstruct the given stress fields. Our method provides
+good reconstruction of localized structures that exhibit desirable
+qualities such as the suppression of Gibbs ringing phenomenon at the
+boundaries of the stress structures.
+
+
+\section{Elastic Model}
+
+In this section, we explicitly describe the elastic green's function
+associated with a point force applied to the surface of a
+semi-infinite half-space, as shown in Fig.~\ref{FIG1}(b). The domain
+of the elastic medium is ${\cal D}=\left\{(x,y,z)|x,y\in
+R,z\leq0\right\}$. We assume that the elastic medium is infinite
+in depth ($d\to \infty$) and lateral extent.
+
+The Green's function for linear isotropic elasticity theory 
+in the half-space is given by
+
+\begin{align}
+\lefteqn{G^0_{ss}(x,y,z) = }\nonumber\\
+&=\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)R_{\perp}-z}{R_{\perp}(R_{\perp}-z)} + 
+\frac{[2R_{\perp}(\nu R_{\perp}-z)+z^{2}]s^{2}}{R_{\perp}^{3}(R_{\perp}-z)^{2}}\right],
+\end{align}
+%\begin{equation}
+%G_{yy} =\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)R_{\perp}-z}{R_{\perp}(R_{\perp}-z)}
+%+\frac{[2R_{\perp}(\nu R_{\perp}-z)+z^{2}]y^{2}}{R_{\perp}^{3}(R_{\perp}-z)^{2}}\right],
+%\end{equation}
+\begin{equation}
+G^0_{zz}(x,y,z) =\frac{1+\nu}{2\pi E}\left(\frac{2(1-\nu)}{R_{\perp}}+\frac{z^{2}}{R_{\perp}^{3}}\right),
+\end{equation}
+\begin{equation} 
+G^0_{xy}(x,y,z) = G_{yx}=\frac{1+\nu}{2\pi E}\frac{[2R_{\perp}(\nu R_{\perp}-z)+z^{2}]xy}{R_{\perp}^{3}
+(R_{\perp}-z)^{2}},
+\end{equation}
+\begin{equation}
+G^0_{sz, zs}(x,y,z) =\frac{1+\nu}{2\pi E}\left(\frac{sz}{R_{\perp}^{3}}\pm\frac{(1-2\nu)s}{R_{\perp}
+(R_{\perp}-z)}\right),
+\end{equation}
+%
+where $s=x,y$ and the equation with $\pm$ correspond to $G^0_{sz}$ and $G^0_{zs}$, respectively, 
+and $R_{\perp} \equiv \sqrt{x^{2} +y^{2}}$ with $x$ and $y$ the distances from the 
+point force. The Young's modulus and Poisson ratio of the elastic substrate are denoted by 
+$E$ and $\nu$, respectively.   
+The displacement of a material point at $(x,y,z\leq 0)$ in the medium due
+to a stress distribution ${\bf F}$ is simply the convolution
+$\u(\r) \equiv [u_x \ u_y\  u_z]^\intercal = {\bf G^0}\Conv\F$, where 
+\begin{equation}
+{\bf G^0} = \left[ \begin{matrix} G^0_{xx}(x,y,z) & G^0_{xy}(x,y,z) & G^0_{xz}(x,y,z) \\
+	G^0_{yx}(x,y,z) & G^0_{xy}(x,y,z) & G^0_{yz}(x,y,z) \\
+	G^0_{zx}(x,y,z) & G^0_{zy}(x,y,z) & G^0_{zz}(x,y,z) 
+ \end{matrix} \right]
+\end{equation}
+
+
+%, while for a surface-localized force distribution, 
+%$\F=(F_{x}(x,y,z=0),F_{y}(x,y,z=0),F_{z}(x,y,z=0))$ the displacement would be
+
+%\begin{equation}
+%\left[\begin{array}{c} u_{x}\\u_{y}\\u_{z}\end{array}\right]=
+%\left[\begin{array}{ccc} G_{xx}&G_{xy}&G_{xz}\\G_{yx}&G_{yy}&G_{yz}\\G_{zx}&G_{zy}&G_{zz}
+%\end{array}\right]
+%\left[\begin{array}{c} F_{x}\\F_{y}\\F_{z}\end{array}\right]
+%\end{equation}
+%
+%
+%For a force distributation
+%
+%\begin{equation}
+%\F=(F_{x}(x,y),F_{y}(x,y),F_{z}(x,y)) 
+%\end{equation}
+% 
+%exerting on the surface of the medium,the displacement would be:
+
+%\begin{equation}
+%u_{i}(\r) = \int \dd \r_{\perp}'\dd z'
+%G_{ij}(\r_{\perp}-\r_{\perp}',z-z')
+%F_{j}(\r_{\perp}', z'),
+%\label{UMODEL0}
+%\end{equation}
+% 
+%where $\r = (\r_{\perp},z)$, $\r_{\perp}=x\hat{x} + y\hat{y}$ and
+%$\r_{\perp}'= x'\hat{x} + y'\hat{y}$.  We will use this expression for
+%the displacement as the model for the data term in the objective
+%function for our inverse problem.
+
+For our specific problem, we shall specialize the forces to surface
+stresses $\sigma_{x,y}$ that act on the plane perpendicular to the
+$\hat{z}$ axis. We define the in-plane stress distribution, at depth $z$, as
+$\bs(x,y,z) = \sigma_{xz}(x,y,z)\hat{x} + \sigma_{yz}(x,y,z)\hat{y}$. 
+The resulting surface-level displacement fields become
+
+\begin{align}
+u_{x}(x,y) &= \int_\Omega \dd x'\dd y'G_{xx}( x-x',y-y')\sigma_{xz}(x',y') \nonumber\\
+&\qquad +  \int_\Omega \dd x'\dd y'G_{xy}( x-x',y-y')\sigma_{yz}(x',y') \label{eq:UMODEL1x}  \\
+u_y(x,y) &= \int_\Omega \dd x'\dd y'G_{yx}( x-x',y-y')\sigma_{xz}(x',y') \nonumber\\
+&\qquad +  \int_\Omega \dd x'\dd y'G_{yy}( x-x',y-y')\sigma_{yz}(x',y'),  \label{eq:UMODEL1y}  
+\end{align}
+where
+\begin{equation}
+G_{\cdot,\cdot}(x,y) = G^0_{\cdot,\cdot}(x,y,z=0),
+\end{equation}
+and by abuse of notation,
+\begin{equation}
+\sigma_{xz}(x,y) = \sigma_{xz}(x,y,z=0) \quad \sigma_{yz}(x,y) = \sigma_{yz}(x,y,z=0) .
+\end{equation}
+In Eqs~\ref{eq:UMODEL1x} and~\ref{eq:UMODEL1}, we have restricted the domain of integration to the extent of the cell, $\Omega$, to emphasize that 
+$\boldsymbol\sigma$ has compact support. Note that tangential stresses can lead to displacement data in the normal direction.
+
+%
+
+
+
+
+\section{Setup of inverse problem}
+
+Here, we develop an objective function for which the minimizing
+solution provides a good approximation to the underlying stress
+field, while preserving discontinuities.
+ The first component is simply a quadratic data mismatch term
+defined by the sum over the displacements measured at the $N$
+measurement positions at $\r_{i}$:
+
+
+\begin{equation}
+\Phi_{\rm data}[\bs] = \sum_{i}^{N}\vert \u^{\rm
+  data}(\r_{i})- \u(\r_i)\vert^{2}.
+\end{equation}
+%
+Since $\u^{\rm data}(\r_{i})$ is given, and $\u(\r_{i})$, is given by
+Eqs.~\ref{eq:UMODEL1x} and~\ref{eq:UMODEL1y}, this contribution to the objective function is a
+functional over the surface-stress function $\bs(\r_{\perp})$. 
+
+We solve Eqs.~\ref{eq:UMODEL1x} and~\ref{eq:UMODEL1y} \emph{exactly} given
+an approximation of the stress field.
+  Let us consider the first-order approximation of $\sigma_{xz}$ and $\sigma_{yz}$ using central finite differences, for $x\in[x_j - \delta x/2, x_j+\delta x/2) \cap y\in[y_j-\delta y/2, y_j + \delta y /2)$,
+\begin{align}
+\lefteqn{\sigma_{xz}(x,y) =\sigma_{xz}(x_i , y_j)  }\nonumber \\
+& \qquad+ (x-x_i)\frac{\sigma_{xz}(x_{i+1},y_j) -\sigma_{xz}(x_{i-1},y_j) }{2\delta x}  \nonumber\\
+&\qquad + (y-y_j)\frac{\sigma_{xz}(x_i,y_{j+1}) - \sigma_{xz}(x_i,y_{j-1}) }{2\delta y} \nonumber\\
+&\qquad + \mathcal{O}(\delta x)^2 + \mathcal{O}(\delta y)^2,\label{eq:sigma_affine}
+\end{align}
+where $i,j$ denotes a tuple of grid coordinates. The stress tensor $\boldsymbol{\sigma}$ has compact support within the region $\Omega$. For this reason, the domain of integration within Eq.~\ref{eq:ux} is compact. Noting that our approximation for the stress fields is piecewise affine, we may rewrite Eq.~\ref{eq:ux}, decomposing the integral into a sum of integrals over grid cells
+
+\subsection{Regularization}
+
+So far, the construction of the surface stress, even at the discrete
+resolution where measurements are available, is ill-conditioned. To
+regularize this problem, while obeying some physically-relevant
+characteristics of the surface stress, we apply an L1 total
+variational penalty onto the problem resulting in a penalized
+objective function
+%
+\begin{equation}
+\Phi = ||\sigma_{xz}||_{TV} +  ||\sigma_{yz}||_{TV}
+\end{equation}
+%
+The corresponding optimization problem is linear and is solvable within standard optimization routines. In our implementation, we use a second-order 
+quadratic cone solver 
+
+
+\section{Results}
+
+\section{summary and Conclusions}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+where 
+
+\begin{equation}
+G_{xx} =-\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)R_{\perp}+z}{R_{\perp}(R_{\perp}+z)} + 
+\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]x^{2}}{R_{\perp}^{3}(R_{\perp}+z)^{2}}\right]
+\end{equation}
+\begin{equation} 
+G_{xy} =-\frac{1+\nu}{2\pi E}\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]xy}{R_{\perp}^{3}
+(R_{\perp}+z)^{2}}
+\end{equation}
+\begin{equation}
+G_{xz} =-\frac{1+\nu}{2\pi E}\left(\frac{xz}{R_{\perp}^{3}}-\frac{(1-2\nu)x}{R_{\perp}
+(R_{\perp}+z)}\right)
+\end{equation}
+\begin{equation}
+G_{yx} =-\frac{1+\nu}{2\pi E}\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]xy}{R_{\perp}^{3}(R_{\perp}
++z)^{2}}
+\end{equation}
+\begin{equation}
+G_{yy} =-\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)R_{\perp}+z}{R_{\perp}(R_{\perp}+z)}
++\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]y^{2}}{R_{\perp}^{3}(R_{\perp}+z)^{2}}\right]
+\end{equation}
+\begin{equation}
+G_{yz} =-\frac{1+\nu}{2\pi E}\left[\frac{yz}{R_{\perp}^{3}}-\frac{(1-2\nu)y}
+{R_{\perp}(R_{\perp}+z)}\right]
+\end{equation}
+\begin{equation}
+G_{zx} =-\frac{1+\nu}{2\pi E}\left(\frac{1-2\nu}{R_{\perp}(R_{\perp}+z)}+\frac{z}{R_{\perp}^{3}}
+\right)x
+\end{equation}
+\begin{equation}
+G_{zy} =-\frac{1+\nu}{2\pi E}\left(\frac{1-2\nu}{R_{\perp}(R_{\perp}+z)}+\frac{z}{R_{\perp}^{3}}\right)y
+\end{equation}
+\begin{equation}
+G_{zz} =-\frac{1+\nu}{2\pi E}\left(\frac{2(1-\nu)}{R_{\perp}}+\frac{z^{2}}{R_{\perp}^{3}}\right)
+\end{equation}
+\begin{equation}
+R_{\perp} \equiv \sqrt{x^{2} +y^{2} +z^{2}}
+\end{equation}
+Here,\,\,$E$\, is Young's modulus and\,\,\,$\nu$\,\,\,is Poission's ratio.
+%
+
+
+
+
+
+
+\begin{equation}
+G_{xx} =-\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)R_{\perp}+z}{R_{\perp}(R_{\perp}+z)} + 
+\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]X^{2}}{R_{\perp}^{3}(R_{\perp}+z)^{2}}\right]
+\end{equation}
+\begin{equation} 
+G_{xy} =-\frac{1+\nu}{2\pi E}\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]XY}{R_{\perp}^{3}
+(R_{\perp}+z)^{2}}
+\end{equation}
+\begin{equation}
+G_{xz} =-\frac{1+\nu}{2\pi E}\left(\frac{Xz}{R_{\perp}^{3}}-\frac{(1-2\nu)X}{R_{\perp}
+(R_{\perp}+z)}\right)
+\end{equation}
+\begin{equation}
+G_{yx} =-\frac{1+\nu}{2\pi E}\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2}]XY}{R_{\perp}^{3}(R_{\perp}
++z)^{2}}
+\end{equation}
+\begin{equation}
+G_{yy} =-\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)R_{\perp}+z}{R_{\perp}(R_{\perp}+z)}
++\frac{[2R_{\perp}(\nu R_{\perp}+z)+z^{2})]Y^{2}}{R_{\perp}^{3}(R_{\perp}+z)^{2}}\right]
+\end{equation}
+\begin{equation}
+G_{yz} =-\frac{1+\nu}{2\pi E}\left(\frac{z}{R_{\perp}^{3}}-\frac{1-2\nu}
+{R_{\perp}(R_{\perp}+z)}\right)Y
+\end{equation}
+\begin{equation}
+G_{zx} =-\frac{1+\nu}{2\pi E}\left(\frac{1-2\nu}{R_{\perp}(R_{\perp}+z)}+\frac{z}{R_{\perp}^{3}}
+\right)X
+\end{equation}
+\begin{equation}
+G_{zy} =-\frac{1+\nu}{2\pi E}\left(\frac{1-2\nu}{R_{\perp}(R_{\perp}+z)}+\frac{z}{R_{\perp}^{3}}\right)Y
+\end{equation}
+\begin{equation}
+G_{zz} =-\frac{1+\nu}{2\pi E}\left(\frac{2(1-\nu)}{R_{\perp}}+\frac{z^{2}}{R_{\perp}^{3}}\right)
+\end{equation}
+\begin{equation}
+R_{\perp} \equiv \sqrt{(x-x')^{2} +(y-y')^{2} +z^{2}}, \,\,\, X\equiv x-x', \,\,\, Y\equiv y-y'
+\end{equation}
+
+\noindent\section{Surface stresses only}
+Particularly,if we set\,\,$z=0$,\,these coefficients become:
+%
+\begin{equation}
+G_{xx} =-\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)}{R_{\perp}}+ 
+\frac{2\nu X^{2}}{R_{\perp}^{3}}\right]
+\end{equation}
+\begin{equation} 
+G_{xy} =-\frac{1+\nu}{2\pi E}\frac{2\nu XY}{R_{\perp}^{3}}
+\end{equation}
+\begin{equation}
+G_{xz} =-\frac{1+\nu}{2\pi E}\frac{2 \nu -1}{R_{\perp}^{2}}X
+\end{equation}
+\begin{equation}
+G_{yx} =-\frac{1+\nu}{2\pi E}\frac{2\nu XY}{R_{\perp}^{3}}
+\end{equation}
+\begin{equation}
+G_{yy} =-\frac{1+\nu}{2\pi E}\left(\frac{2(1-\nu)}{R_{\perp}}
++\frac{2\nu Y^{2}}{R_{\perp}^{3}}\right)
+\end{equation}
+\begin{equation}
+G_{yz} =-\frac{1+\nu}{2\pi E}\frac{2 \nu -1}
+{R_{\perp}^2}Y
+\end{equation}
+\begin{equation}
+G_{zx} =-\frac{1+\nu}{2\pi E}\frac{1-2\nu}{R_{\perp}^2}
+X
+\end{equation}
+\begin{equation}
+G_{zy} =-\frac{1+\nu}{2\pi E}\frac{1-2\nu}{R_{\perp}^2}Y
+\end{equation}
+\begin{equation}
+G_{zz} =-\frac{1+\nu}{2\pi E}\frac{2(1-\nu)}{R_{\perp}}
+\end{equation}
+\begin{equation}
+R_{\perp} \equiv \sqrt{(x-x')^{2} +(y-y')^{2}}, \,\,\, X\equiv x-x', \,\,\, Y\equiv y-y'
+\end{equation}
+
+%
+%
+%
+
+\section{Incompressible Limit} 
+When the medium is considered
+incompressible,ie,\,\,\,$\nu =\frac{1}{2},$\,\,\,we have simplified
+results.
+
+Throughout the medium,these coefficients would be:
+\begin{equation}
+G_{xx} =-\frac{3}{4\pi E}\left[\frac{1}{R_{\perp}} + 
+\frac{[R_{\perp}(R_{\perp}+2z)+z^{2}]X^{2}}{R_{\perp}^{3}(R_{\perp}+z)^{2}}\right]
+\end{equation}
+\begin{equation} 
+G_{xy} =-\frac{3}{4\pi E}\frac{[R_{\perp}(R_{\perp}+2z)+z^{2}]XY}{R_{\perp}^{3}
+(R_{\perp}+z)^{2}}
+\end{equation}
+\begin{equation}
+G_{xz} =-\frac{3}{4\pi E}\left(\frac{z}{R_{\perp}^{3}}\right)X
+\end{equation}
+\begin{equation}
+G_{yx} =-\frac{3}{4\pi E}\frac{[R_{\perp}(R_{\perp}+2z)+z^{2}]XY}{R_{\perp}^{3}(R_{\perp}
++z)^{2}}
+\end{equation}
+\begin{equation}
+G_{yy} =-\frac{3}{4\pi E}\left[\frac{1}{R_{\perp}}
++\frac{[R_{\perp}(R_{\perp}+2z)+z^{2}]Y^{2}}{R_{\perp}^{3}(R_{\perp}+z)^{2}}\right]
+\end{equation}
+\begin{equation}
+G_{yz} =-\frac{3}{4\pi E}\left(\frac{z}{R_{\perp}^{3}}\right)Y
+\end{equation}
+\begin{equation}
+G_{zx} =-\frac{3}{4\pi E}\left(\frac{z}{R_{\perp}^{3}}
+\right)X
+\end{equation}
+\begin{equation}
+G_{zy} =-\frac{3}{4\pi E}\left(\frac{z}{R_{\perp}^{3}}\right)Y
+\end{equation}
+\begin{equation}
+G_{zz} =-\frac{3}{4\pi E}\left(\frac{1}{R_{\perp}}+\frac{z^{2}}{R_{\perp}^{3}}\right)
+\end{equation}
+\begin{equation}
+R_{\perp} \equiv\sqrt{(x'-x)^{2} +(y'-y)^{2} +z^{2}}, \,\,\, X\equiv x-x', \,\,\, Y\equiv y-y'
+\end{equation}
+%
+And on the surface:
+\begin{equation}
+G_{xx} =-\frac{3}{4\pi E}\left(\frac{1}{R_{\perp}}+ 
+\frac{X^{2}}{R_{\perp}^{3}}\right)
+\end{equation}
+\begin{equation} 
+G_{xy} =-\frac{3}{4\pi E}\frac{XY}{R_{\perp}^{3}}
+\end{equation}
+\begin{equation}
+G_{xz} =0
+\end{equation}
+\begin{equation}
+G_{yx} =-\frac{3}{4\pi E}\frac{XY}{R_{\perp}^{3}}
+\end{equation}
+\begin{equation}
+G_{yy} =-\frac{3}{4\pi E}\left(\frac{1}{R_{\perp}}
++\frac{Y^{2}}{R_{\perp}^{3}}\right)
+\end{equation}
+\begin{equation}
+G_{yz} =0
+\end{equation}
+\begin{equation}
+G_{zx} =0
+\end{equation}
+\begin{equation}
+G_{zy} =0
+\end{equation}
+\begin{equation}
+G_{zz} =-\frac{3}{4\pi E}\frac{1}{R_{\perp}}
+\end{equation}
+\begin{equation}
+R_{\perp} \equiv \sqrt{(x-x')^{2} +(y-y')^{2}}, \,\,\, X\equiv x-x', \,\,\, Y\equiv y-y'
+\end{equation}
+
+
+
+
+The optimization problem using TV can be formally defined by minimization of two possible 
+objective functions
+
+\begin{equation}
+\Phi_{1} = \sum_{i}\bigg| \u^{\rm data}(\r_{i})- 
+\u^{\rm model}(\r_i)\bigg|^{2} + \gamma \int_{\Omega}
+\vert \nabla_{\perp} F_{x}(\r_{\perp})\vert^{p} \dd \r_{\perp} + \gamma \int_{\Omega}
+\vert \nabla_{\perp} F_{y}(\r_{\perp})\vert^{p} \dd \r_{\perp} +
+\int_{\Omega}(\lambda_{x}F_{x}+\lambda_{y}F_{y})\dd \r_{\perp},
+\end{equation}
+%
+where $p=1,2$ and 
+\begin{equation}
+\Phi_{2} = \sum_{i}\bigg| u_{x}^{\rm data}(\r_{\perp}(i))- u_{x}^{\rm model}(\r_{\perp}(i))
+\bigg|^{2} + \gamma \int_{\Omega}
+\vert \nabla_{\perp} \cdot {\bf F}_{\perp}(\r_{\perp})\vert^{p} \dd \r_{\perp} +
+\int_{\Omega}(\lambda_{x}F_{x}+\lambda_{y}F_{y})\dd \r_{\perp},
+\end{equation}
+
+Where the displacement derived from the model is
+
+\begin{equation}
+u_{x}^{\rm model}(\r_{\perp}(i)) = 
+\int_{\Omega}G_{xj}(\r_{\perp}(i)-\r_{\perp}')
+F_{j}(\r_{\perp}')\dd \r_{\perp}', \quad j=1,2.
+\end{equation}
+
+In this problem, $\Omega$ is the foot print of the cell, $\gamma$ is the
+regularization parameter, and $\lambda$ is the Lagrange multiplier
+used to enforce the total zero force condition $\int {\bf
+  F}(\r_{\perp}) \dd \r_{\perp} =0$, and the points $\r_{\perp}(i)$ are
+those at which data is measured.  These data points are discrete in
+the $x-$direction since the surface fluorescence comes from discretely
+spaces lines.  However, there can be a continuous set of data points
+along the $y-$direction of the lines.
+
+During the optimization of $\Phi$ to find the best ${\bf
+  F}_{\perp}(\r_{\perp})$ is performed on the interior, under the cell
+only.  The boundary condition ${\bf F}_{\perp}(\r_{\perp} \in \partial
+\Omega) = 0$ is imposed.
+
+
+
+There is yet another constraint. The total torque has to be zero since
+the cell cannot exert a net torque from the air. 
+So another constraint should be:
+
+
+\begin{equation}
+\int_{\Omega}\rp\times {\bf F}_{\perp}(\rp) \,\dd \rp = 0,
+\end{equation}
+%
+where the origin of $\rp$ is arbitrary since 
+the total force is also constrained to vanish.
+
+I wonder if it is better to use a Helmhotz decomposition
+
+\begin{equation}
+{\bf F}_{\perp} = \nabla_{\perp} \varphi(\rp) + \nabla\times (\psi(\rp)\hat{z}).
+\end{equation}
+%
+In this picture, the no net force constraint gives
+
+\begin{equation}
+\int_{\Omega} \nabla_{\perp} \varphi \,\dd \rp +
+\int_{\Omega}\nabla_{\perp}\times(\psi\hat{z}) \,\dd \rp = 0.
+\end{equation}
+%
+The no-torque condition then becomes
+
+\begin{equation}
+\int_{\partial \Omega} \left[(\rp\times\nabla_{\perp})\varphi - 
+(\rp\cdot\nabla_{\perp})\psi(\rp)\right]\,\dd\rp = 0.
+\end{equation}
+
+
+ 
+\noindent The objective function for our problem is:
+\begin{equation}
+\Phi = \sum_{i}\bigg| u_{x}^{\rm data}(\r_{\perp}(i))- 
+u_{x}^{\rm model}(\r_{\perp}(i))\bigg|^{2} + \gamma \int_{\Omega}
+\vert \nabla_{\perp} P_{x}(\r_{\perp})\vert^{p} \dd \r_{\perp} + \gamma \int_{\Omega}
+\vert \nabla_{\perp} P_{y}(\r_{\perp})\vert^{p} \dd \r_{\perp}
+\end{equation}
+Where\,\,$\gamma$\,\, is a regularization parameter, $\Omega$\,\,is
+the area where we assume that there are no stresses outside.  Because
+the data is collected on the plane\,\,$z=0$\,\,,and the substrate is
+incompressible, i.e., $\nu=0.5$, plug these two conditions into
+Equation(5) and (8), we have\,\,$G_{xz}=G_{yz}=0$\,\,, which means
+that the gravity of the cells have no effect on the strain in x- and
+y- direction on the surface of the substrate. When\,\,$p=1$, if we
+use the anisotropic l1-norm of the derivatives for the TV norm
+instead, the objective function would be:
+\begin{equation}
+\begin{split}
+\Phi = \sum_{i}\bigg| u_{x}^{\rm data}(\r_{\perp}(i))- 
+u_{x}^{\rm model}(\r_{\perp}(i))\bigg|^{2} + \gamma \int_{\Omega}
+\mid \frac{\partial P_{x}(\r_{\perp})}{\partial x}\mid \dd \r_{\perp} + \gamma \int_{\Omega}
+\mid \frac{\partial P_{x}(\r_{\perp})}{\partial y}\mid \dd \r_{\perp}\\+\gamma \int_{\Omega}
+\mid \frac{\partial P_{y}(\r_{\perp})}{\partial x}\mid \dd \r_{\perp} + \gamma \int_{\Omega}
+\mid \frac{\partial P_{y}(\r_{\perp})}{\partial y}\mid \dd \r_{\perp}
+\end{split}
+\end{equation}
+Both the isotropic one and the anisotropic one are used in image
+processing. Another consideration is that the total force and the
+total torque are nearly zero. Which are equivalent to the constraints:
+\begin{equation}
+\int_{\Omega}\F\dd \r_{\perp}=0\,\,\,\int_{\Omega}\r_{\perp} \times \F\dd\r_{\perp}=0
+\end{equation}
