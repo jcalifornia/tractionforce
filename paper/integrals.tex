@@ -180,7 +180,7 @@ X^{n,m,j,k} &= A^{n,m,j,k} - A^{n,m,j-1,k}\frac{x_{j-1}}{2\delta x} +A^{n,m,j+1,
 and
 \begin{align}
 Y^{n,m,j,k} &= D^{n,m,j,k} - D^{n,m,j-1,k}\frac{x_{j-1}}{2\delta x} +D^{n,m,j+1,k}\frac{x_{j+1}}{2\delta x} - D^{n,m,j,k-1}\frac{y_{k-1}}{2\delta y} +D^{n,m,j,k+1}\frac{y_{k+1}}{2\delta y} \nonumber\\
-&\quad-\frac{E^{n,m,j-1,k}}{2\delta x} +\frac{E^{n,m,j+1,k}}{2\delta x} - \frac{F^{n,m,j,k-1}}{2\delta y} +\frac{F^{n,m,j,k+1}}{2\delta y}
+&\quad-\frac{E^{n,m,j-1,k}}{2\delta x} +\frac{E^{n,m,j+1,k}}{2\delta x} - \frac{F^{n,m,j,k-1}}{2\delta y} +\frac{F^{n,m,j,k+1}}{2\delta y}.
 \end{align}
 
 \section{Error analysis}
@@ -237,4 +237,17 @@ where the dipole moments $\bp_x,\bp_y$ are
 
 On the basis of the previous analysis, we investigate the effect of the incorporation of a hard cut-off for observations. Usage of a cut-off greatly improves the computational complexity of the problem by decreasing the size of the system of equations to solve. We note here that we have explicit expressions for $u_x,u_y$, so the solution of each of these displacements can be found point-wise with no dependence on neighborhood points. In effect, by imposing a cut-off, we do not sacrifice any precision in the computation of these quantities at the points where we chose to make the computation.
 
+We examine the minimizer for the cost functional
+\begin{align}
+\mathcal{J}(\sigma_x,\sigma_y) = \frac{1}{2s^2}\sum_j\sum_k \left(u_x(x_j,y_k) - u^{\textrm{data}}_x(x_j,y_k)\right)^2 +  \gamma \| \nabla (\sigma_{xz} + \sigma_{yz}) \|_1,
+\end{align}
+where as a reminder the explicit relationship between the displacements and the stress fields are given above. We are assuming independent Gaussian error in the observation model, which can be extended to other types of errors. We decompose this cost functional as
+\begin{equation}
+\mathcal{J}(\sigma_x,\sigma_y) = \mathcal{J}^{>}(\sigma_x,\sigma_y) + \mathcal{J}^{-}(\sigma_x,\sigma_y), 
+\end{equation}
+where 
+\begin{equation}
+ \mathcal{J}^{-}(\sigma_x,\sigma_y)=  \frac{1}{2s^2}\sum_{(x_j,y_k)\in\Omega^{+R}} \left(u_x(x_j,y_k) - u^{\textrm{data}}_x(x_j,y_k)\right)^2 +  \gamma \| \nabla (\sigma_{xz} + \sigma_{yz}) \|_1 , 
+\end{equation}
+and $\Omega^{+R}$ is the set of all points that are at most within a distance of $R$ from $\Omega$.
 \end{document}
