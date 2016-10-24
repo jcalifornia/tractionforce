@@ -21,7 +21,7 @@
 %\usepackage{MnSymbol}
 
 
-
+\newcommand{\bsigma}{{\boldsymbol\sigma}}
 \def\alphaeff{\alpha_{\mathrm{eff}}}
 \def\a{\alpha}
 \def\b{{\bf b}}
@@ -180,12 +180,19 @@ of the elastic medium is ${\cal D}=\left\{(x,y,z)|x,y\in
 R,z\leq0\right\}$. We assume that the elastic medium is infinite
 in depth ($d\to \infty$) and lateral extent.
 
-The Green's function for linear isotropic elasticity theory 
-in the half-space is given by
-
+The Green's function 
+\begin{equation}
+{\bf G^0} = \left[ \begin{matrix} G^0_{xx}(x,y,z) & G^0_{xy}(x,y,z) & G^0_{xz}(x,y,z) \\
+	G^0_{yx}(x,y,z) & G^0_{xy}(x,y,z) & G^0_{yz}(x,y,z) \\
+	G^0_{zx}(x,y,z) & G^0_{zy}(x,y,z) & G^0_{zz}(x,y,z) 
+ \end{matrix} \right]
+\end{equation}
+for linear isotropic elasticity theory 
+in the half-space is given by its components
+%
 \begin{align}
 \lefteqn{G^0_{ss}(x,y,z) = }\nonumber\\
-&=\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)R_{\perp}-z}{R_{\perp}(R_{\perp}-z)} + 
+&\frac{1+\nu}{2\pi E}\left[\frac{2(1-\nu)R_{\perp}-z}{R_{\perp}(R_{\perp}-z)} + 
 \frac{[2R_{\perp}(\nu R_{\perp}-z)+z^{2}]s^{2}}{R_{\perp}^{3}(R_{\perp}-z)^{2}}\right],
 \end{align}
 %\begin{equation}
@@ -204,19 +211,13 @@ G^0_{sz, zs}(x,y,z) =\frac{1+\nu}{2\pi E}\left(\frac{sz}{R_{\perp}^{3}}\pm\frac{
 (R_{\perp}-z)}\right),
 \end{equation}
 %
-where $s=x,y$ and the equation with $\pm$ correspond to $G^0_{sz}$ and $G^0_{zs}$, respectively, 
-and $R_{\perp} \equiv \sqrt{x^{2} +y^{2}}$ with $x$ and $y$ the distances from the 
-point force. The Young's modulus and Poisson ratio of the elastic substrate are denoted by 
+where $s=x,y$  the equation with $\pm$ corresponds to $G^0_{sz}$ and $G^0_{zs}$, respectively, 
+and $R_{\perp} \equiv \sqrt{x^{2} +y^{2}}$. The Young's modulus and Poisson ratio of the elastic substrate are denoted by 
 $E$ and $\nu$, respectively.   
 The displacement of a material point at $(x,y,z\leq 0)$ in the medium due
 to a stress distribution ${\bf F}$ is simply the convolution
-$\u(\r) \equiv [u_x \ u_y\  u_z]^\intercal = {\bf G^0}\Conv\F$, where 
-\begin{equation}
-{\bf G^0} = \left[ \begin{matrix} G^0_{xx}(x,y,z) & G^0_{xy}(x,y,z) & G^0_{xz}(x,y,z) \\
-	G^0_{yx}(x,y,z) & G^0_{xy}(x,y,z) & G^0_{yz}(x,y,z) \\
-	G^0_{zx}(x,y,z) & G^0_{zy}(x,y,z) & G^0_{zz}(x,y,z) 
- \end{matrix} \right].
-\end{equation}
+$\u(\r) \equiv [u_x \ u_y\  u_z]^\intercal = {\bf G^0}\Conv\F$.
+
 
 
 %, while for a surface-localized force distribution, 
@@ -306,7 +307,7 @@ Here we explicitely define this system of linear equations given a piecewise-aff
 &\qquad + (y-y_j)\frac{\sigma_{xz}(x_i,y_{j+1}) - \sigma_{xz}(x_i,y_{j-1}) }{2\delta y} \nonumber\\
 &\qquad + \mathcal{O}(\delta x)^2 + \mathcal{O}(\delta y)^2,\label{eq:sigma_affine}
 \end{align}
-where $i,j$ denotes a tuple of grid coordinates. 
+where $i,j$ denotes a tuple of grid coordinates. In effect, we are performing sub-pixel interpolation of the stress where the stress is fully-determined by its values at the grid vertices.
 
 Now we may rewrite Eq.~\ref{eq:UMODEL1x}, for instance, to solve for the displacement at a location $(x_n,y_m)$, by decomposing the integral into a sum of integrals over grid cells
 %
@@ -330,24 +331,79 @@ where
 except that at the edges where we use one-sided differences so that we are only differentiating within $\Omega$. Explicit 
 closed-form expressions for the integrals represented in Eqs.~\ref{eq:G_ave} and~\ref{eq:G_ave2} are given in the Supplemental Materials. A similar expression can be found for solving for $u_y$ (not shown).
 
-From the equation-counting perspective, the system of equations is exactly determined given that one has at least as many measurement points as grid cells in the resolution that one wishes to reconstruct the stress field, provided that one is able to measure displacements in both principle directions. However, in line experiments this is not the case. Furthermore, even if one is able to measure both displacements, the problem may still be highly ill-conditioned.
+Regrouping terms, we can now define the linear system of equations for solving for $u_x$ at all grid points simultaneously,
+\begin{equation}
+u_x^{nm} = X^{nmjk}\sigma_{xz}(x_j,y_k) + Y^{nmjk}\sigma_{yz}(x_j,y_k),
+\end{equation}
+where summation is implied over each index tuple $(j,k)$, and the coefficient matrices are defined as
+\begin{align}
+\lefteqn{X^{nmjk} = \langle G_{xx} \rangle^{nmjk} -  \langle G_{xx} \rangle^{n,m,j-1,k}\frac{x_{j-1}}{2\delta x} } \nonumber\\
+&\quad  + \langle G_{xx} \rangle^{n,m,j+1,k}\frac{x_{j+1}}{2\delta x} -  \langle G_{xx} \rangle^{n,m,j,k-1}\frac{y_{k-1}}{2\delta y}  \nonumber\\
+&\quad + \langle G_{xx} \rangle^{n,m,j,k+1}\frac{y_{k+1}}{2\delta y} -\frac{\langle x'G_{xx} \rangle^{n,m,j-1,k}}{2\delta x}  \nonumber\\
+&\quad +\frac{\langle x'G_{xx} \rangle^{n,m,j+1,k}}{2\delta x} - \frac{\langle y'G_{xx} \rangle^{n,m,j,k-1}}{2\delta y} \nonumber\\
+&\quad+\frac{\langle y'G_{xx} \rangle^{n,m,j,k+1}}{2\delta y} 
+\end{align}
+\begin{align}
+\lefteqn{ Y^{n,m,j,k} =  \langle G_{xy} \rangle^{nmjk} - \langle G_{xy} \rangle^{n,m,j-1,k}\frac{x_{j-1}}{2\delta x} } \nonumber\\
+&\quad+\langle G_{xy} \rangle^{n,m,j+1,k}\frac{x_{j+1}}{2\delta x} - \langle G_{xy} \rangle^{n,m,j,k-1}\frac{y_{k-1}}{2\delta y} \nonumber\\
+&\quad+\langle G_{xy} \rangle^{n,m,j,k+1}\frac{y_{k+1}}{2\delta y}  -\frac{\langle x'G_{xy} \rangle^{n,m,j-1,k}}{2\delta x} \nonumber \\
+&\quad +\frac{\langle x'G_{xy} \rangle^{n,m,j+1,k}}{2\delta x} - \frac{\langle y'G_{xy} \rangle^{n,m,j,k-1}}{2\delta y} \nonumber\\
+ &\quad+\frac{\langle y'G_{xy} \rangle^{n,m,j,k+1}}{2\delta y}.
+\end{align}
 
-\subsection{Regularization}
+
+From the equation-counting perspective, the system of equations is exactly determined given that one has at least as many measurement points as grid cells in the resolution that one wishes to reconstruct the stress field, provided that one is able to measure displacements in both principle directions. However, in line experiments this is not the case. Furthermore, even if one is able to measure both displacements, the problem may still be highly ill-conditioned since measurements are taken in the presence of noise at a given level of precision.
+
+\subsection{Physical regularization}
 
 So far, the construction of the surface stress, even at the discrete
-resolution where measurements are available, is ill-conditioned. To
-regularize this problem, while obeying some physically-relevant
-characteristics of the surface stress, we apply an L1 total
-variational penalty onto the problem resulting in a penalized
-objective function
+resolution where measurements are available, is ill-conditioned. We 
+regularize this problem, by forcing the reconstruction to obey some physically-relevant
+characteristics of the surface stress. First, since we are assuming inertial
+effects are negligible, we require that the net for is zero, or that
+\begin{equation}
+\int_\Omega\sigma_{xz}(x,y)\dd x \dd y= \int_\Omega\sigma_{yz}(x,y)\dd x \dd y = 0 .
+\end{equation}
+Likewise, we require that there is no net torque, or that
+\begin{equation}
+\int_\Omega\sigma_{yz}(x,y)x \dd x \dd y  = \int_\Omega\sigma_{xz}(x,y)y \dd x \dd y .
+\end{equation}
+ 
+ %
+ Finally, we would like to impose regularity on the reconstructed fields while preserving first
+ rotational invariance and second sharp interfaces. To this end we employ a variant of a penalty
+ used often in image processing applications, where we wish to penalize the $L_1$ norm of the
+ variation in the fields, or the total variation. To do this in such a manner that is consistent with
+the philosophy that rotation of the data should not affect the result, we penalize the total variation
+norm of the invariants of the stress tensor. In the case of two-dimensional tensors, of which the surface stress
+is an example, the tensor invariants are the trace
+\begin{equation}
+\textrm{Tr}(\bsigma) = \sigma_{xz} + \sigma_{yz}
+\end{equation}
+and the determinant
+\begin{equation}
+\textrm{Det}(\bsigma) = \sigma_{xz} \sigma_{yz}.
+\end{equation}
+Any regularization penalty imposed on the reconstruction problem must be a function
+of these invariants in order to maintain rotational invariance of the reconstructed stress tensor.
+
+For this manuscript, we will use the trace, but we note that it may also be natural to use the
+logarithm of the determinant, in analogy to the log-likelihood arising in multivariate linear regression
+problems of unknown variance. We now write the convex regularization functional, $\Phi = ||\sigma_{xz} + \sigma_{yz}||_{TV} $ the total variation of the trace of the tensor,
 %
 \begin{equation}
-\Phi = ||\sigma_{xz}||_{TV} +  ||\sigma_{yz}||_{TV}
+\Phi =  \int_\Omega | \nabla(\sigma_{xz}(x',y') + \sigma_{yz}(x',y') | \dd x'\dd y'.
 \end{equation}
-%
-The corresponding optimization problem is linear and is solvable within standard optimization routines. In our implementation, we use a second-order 
-quadratic cone solver 
 
+The corresponding penalized optimization problem
+\begin{equation}
+\bsigma^\star \vert \lambda = \arg\min_{\bsigma} \left\{ \Phi_{\textrm{data}}[\bsigma] + \lambda\Phi[\bsigma] \right\},
+\end{equation}
+subject to the constraints mentioned above,
+where $\lambda>0$ is a tunable parameter. This problem
+ is linear and is solvable within standard optimization routines. In our implementation, we use a second-order  quadratic cone solver. 
+\subsection{Cut-off}
+To reduce the size of the system of equations...
 
 \section{Results}
 
