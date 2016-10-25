@@ -234,6 +234,8 @@ def main():
     tv_norm_iso = norm(Dx * sigma_xz / dx, 1) + norm(Dy * sigma_xz / dy, 1) + norm(Dx * sigma_yz / dx, 1) + norm(
         Dy * sigma_yz / dy, 1)
     tv_trace_norm = tvnorm_trace_2d(sigma_xz,sigma_yz,Dx,Dy)
+    l2_grad_trace_norm = l2_trace_2d(sigma_xz,sigma_yz,Dx,Dy)
+    l1_trace_norm = l1_trace_2d(sigma_xz,sigma_yz)
 
     if REGULARIZATION == "tvtrace":
         regularity_penalty = tv_trace_norm
@@ -241,6 +243,10 @@ def main():
         regularity_penalty = tv_norm_iso
     elif REGULARIZATION == "tv":
         regularity_penalty = tv_norm_aniso
+    elif REGULARIZATION == 'l2_grad':
+        regularity_penalty = l2_grad_trace_norm
+    elif REGULARIZATION == 'l1':
+        regularity_penalty = l2_grad_trace_norm
 
     forceconstraints = [sum_entries(sigma_xz)==0, sum_entries(sigma_yz)==0] # add torque-free constraint here
     net_torque = sum_entries(mul_elemwise(x_in-x_center,sigma_yz) - mul_elemwise(y_in-y_center,sigma_xz))
