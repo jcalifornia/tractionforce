@@ -230,23 +230,20 @@ def main():
     predicted_out =  A_out_in*sigma_xz + D_out_in*sigma_yz
 
     error = sum_squares(u_x_in - predicted_in) + sum_squares(u_x_out - predicted_out)
-    tv_norm_aniso = tvnorm2d(sigma_xz, Dx, Dy) + tvnorm2d(sigma_yz, Dx, Dy)
-    tv_norm_iso = norm(Dx * sigma_xz / dx, 1) + norm(Dy * sigma_xz / dy, 1) + norm(Dx * sigma_yz / dx, 1) + norm(
-        Dy * sigma_yz / dy, 1)
-    tv_trace_norm = tvnorm_trace_2d(sigma_xz,sigma_yz,Dx,Dy)
-    l2_grad_trace_norm = l2_trace_2d(sigma_xz,sigma_yz,Dx,Dy)
-    l1_trace_norm = l1_trace_2d(sigma_xz,sigma_yz)
 
     if REGULARIZATION == "tvtrace":
-        regularity_penalty = tv_trace_norm
+        regularity_penalty = tvnorm_trace_2d(sigma_xz,sigma_yz,Dx,Dy)
     elif REGULARIZATION == "tviso":
-        regularity_penalty = tv_norm_iso
+        regularity_penalty = norm(Dx * sigma_xz / dx, 1) + norm(Dy * sigma_xz / dy, 1) + norm(Dx * sigma_yz / dx, 1) + norm(
+        Dy * sigma_yz / dy, 1)
     elif REGULARIZATION == "tv":
-        regularity_penalty = tv_norm_aniso
+        regularity_penalty = tvnorm2d(sigma_xz, Dx, Dy) + tvnorm2d(sigma_yz, Dx, Dy)
     elif REGULARIZATION == 'l2_grad':
-        regularity_penalty = l2_grad_trace_norm
+        regularity_penalty = sum_squares(Dx*sigma_xz + Dx*sigma_yz) + sum_squares(Dy*sigma_xz + Dy*sigma_yz)
     elif REGULARIZATION == 'l1':
-        regularity_penalty = l2_grad_trace_norm
+        regularity_penalty = norm(sigma_xz+sigma_yz,p=1)
+    elif REGULARIZATION == 'l2':
+        regularity_penalty = sum_squares(sigma_xz + sigma_yz) + sum_squares(sigma_xz + sigma_yz)
 
     forceconstraints = [sum_entries(sigma_xz)==0, sum_entries(sigma_yz)==0] # add torque-free constraint here
     net_torque = sum_entries(mul_elemwise(x_in-x_center,sigma_yz) - mul_elemwise(y_in-y_center,sigma_xz))

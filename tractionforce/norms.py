@@ -4,6 +4,7 @@ Modified from tv method in cvxpy
 """
 
 from cvxpy.expressions.expression import Expression
+from cvxpy.atoms.sum_squares import sum_squares
 from cvxpy.atoms.norm import norm as cvxnorm
 from cvxpy.atoms.affine.vstack import vstack
 from cvxpy.atoms.affine.sum_entries import sum_entries
@@ -73,7 +74,7 @@ def l2_trace_2d(value1, value2,  Dx, Dy):
     diffs = [ Dx*(value1 + value2) , Dy*(value1+value2)]
 
     stack = vstack( *[reshape(diff, 1, len) for diff in diffs])
-    return sum_entries(cvxnorm(stack, p=2, axis=0))
+    return sum_squares(cvxnorm(stack, p=2, axis=0))
 
 def l1_trace_2d(value1, value2):
     """Total variation of a vector, matrix, or list of matrices.
