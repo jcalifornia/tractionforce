@@ -4,6 +4,11 @@
 \newcommand{\dd}{\mathrm{d}}
 \newcommand{\br}{\mathbf{r}}
 \newcommand{\bp}{\mathbf{p}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+
 \begin{document}
 \section{Forward problem}
 
@@ -190,7 +195,6 @@ The Greens functions can be seen to scale as $1/r$, where $r$ is the two-dimensi
 
 \subsection{$r^{-2}$ scaling}
 
-Let $supp(\sigma_{xz}) \subseteq \Omega$ and $supp(\sigma_{yz}) \subseteq\Omega$, and  $\sigma_{xz}, \sigma_{yz} \in C^1(\Omega)$.
 We assume that our coordinate system is centered at a point $(0,0)\in\Omega$, which we will set later.  Also, let $r=\sqrt{x^2+y^2}$.
 We rewrite Eq.~\ref{eq:ux} explicitly
 \begin{align}
@@ -219,7 +223,7 @@ U_x^{(2)} &=  \frac{\nu+1}{2\pi E}\int_\Omega (2\cos\theta + (2-2\nu)\sin\theta)
 &=-\frac{3(\nu+1)}{\pi E}(\cos\theta + (1-2\nu)\sin\theta) \int_{\Omega} (x'\cos\theta + y'\sin\theta ) \sigma_{xz}(x',y') \dd x' \dd y' \nonumber \\ 
 &\quad - \frac{3\nu(\nu+1)}{2\pi E}\sin(2\theta) \int_\Omega(x'\cos\theta + y'\sin\theta ) \sigma_{yz}(x',y') \dd x' \dd y' .\label{eq:Ux2}
 \end{align}
-So we see that $u_x(r,\theta)\sim r^{-2}$ for $r\gg r'$. The term within the integral in Eq.~\ref{eq:Ux2} is related to the dipole moment of the stress field. We may write now the asymptotic expansion for $u_x$ outside of the support of $\boldsymbol\sigma$,
+ The term within the integral in Eq.~\ref{eq:Ux2} is related to the dipole moment of the stress field. We may write now the asymptotic expansion for $u_x$ outside of the support of $\boldsymbol\sigma$,
 
 \begin{equation}
 u_x(\br)  = -\left[ \frac{3(\nu+1)}{\pi E}(\cos\theta + (1-2\nu)\sin\theta) \right] \frac{\br\cdot \bp_x}{r^3} -\left[ \frac{3\nu(\nu+1)}{2\pi E}\sin(2\theta)  \right] \frac{\br\cdot \bp_y}{r^3} + \mathcal{O}(r^{-3}),
@@ -230,7 +234,10 @@ where the dipole moments $\bp_x,\bp_y$ are
 \begin{equation}
 \bp_{(\cdot)}  = \left[ \begin{matrix} \displaystyle\int_{\Omega} x' \sigma_{\cdot z} \dd y' \dd x' \\ \displaystyle\int_{\Omega} y' \sigma_{\cdot z} \dd y' \dd x'  \end{matrix} \right].
 \end{equation}
-
+So we see that $u_x(r,\theta)\sim (\lambda/r)^{-2}$ for $r\gg r'$, where the length scale $\lambda$ is given
+\begin{equation}
+\lambda = \sqrt{\frac{3|\bp|}{\pi E}}.
+\end{equation}
 
 
 \subsection{Reconstruction error}
@@ -249,5 +256,19 @@ where
 \begin{equation}
  \mathcal{J}^{-}(\sigma_x,\sigma_y)=  \frac{1}{2s^2}\sum_{(x_j,y_k)\in\Omega^{+R}} \left(u_x(x_j,y_k) - u^{\textrm{data}}_x(x_j,y_k)\right)^2 +  \gamma \| \nabla (\sigma_{xz} + \sigma_{yz}) \|_1 , 
 \end{equation}
-and $\Omega^{+R}$ is the set of all points that are at most within a distance of $R$ from $\Omega$.
+and $\Omega^{+R}$ is the set of all points that are at most within a distance of $R$ from $\Omega$. So we have
+\begin{align}
+ \mathcal{J}^{>}(\sigma_x,\sigma_y)  &= \frac{1}{2s^2} \sum_{(x_j,y_k)\not\in\Omega^{+R}}  \left(u_x(x_j,y_k) - u^{\textrm{data}}_x(x_j,y_k)\right)^2.
+\end{align}
+
+\begin{lemma}
+Let $supp(\sigma_{xz}) \subseteq \Omega$ and $supp(\sigma_{yz}) \subseteq\Omega$, and  $\sigma_{xz}, \sigma_{yz} \in C^1(\Omega)$.
+\begin{align}
+ \mathcal{J}^{>}(\sigma_x,\sigma_y)   
+\end{align}
+\begin{proof}
+
+\end{proof}
+\end{lemma}
+
 \end{document}

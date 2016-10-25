@@ -385,14 +385,15 @@ and the determinant
 \textrm{Det}(\bsigma) = \sigma_{xz} \sigma_{yz}.
 \end{equation}
 Any regularization penalty imposed on the reconstruction problem must be a function
-of these invariants in order to maintain rotational invariance of the reconstructed stress tensor.
+of these invariants in order to maintain rotational invariance, relative to the choice of observation frame,
+ of the reconstructed stress tensor.
 
 For this manuscript, we will use the trace, but we note that it may also be natural to use the
 logarithm of the determinant, in analogy to the log-likelihood arising in multivariate linear regression
 problems of unknown variance. We now write the convex regularization functional, $\Phi = ||\sigma_{xz} + \sigma_{yz}||_{TV} $ the total variation of the trace of the tensor,
 %
 \begin{equation}
-\Phi =  \int_\Omega | \nabla(\sigma_{xz}(x',y') + \sigma_{yz}(x',y') | \dd x'\dd y'.
+\Phi =  \int_\Omega | \nabla(\sigma_{xz}(x',y') + \sigma_{yz}(x',y') ) | \dd x'\dd y'.
 \end{equation}
 
 The corresponding penalized optimization problem
