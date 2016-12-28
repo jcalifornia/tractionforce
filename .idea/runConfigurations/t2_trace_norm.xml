@@ -13,7 +13,7 @@
     <module name="tractionforce" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/bin/reconstruction.py" />
-    <option name="PARAMETERS" value="-f $PROJECT_DIR$/tractionforce/data/t2.txt -r tvtrace -t 10 -ofig tvtrace.pdf" />
+    <option name="PARAMETERS" value="-f $PROJECT_DIR$/tractionforce/data/t2.txt -n 20 -r tvtrace -t 10 -ofig tvtrace.pdf" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <method />
   </configuration>
