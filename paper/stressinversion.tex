@@ -12,14 +12,19 @@
 \usepackage{psfrag}
 \usepackage{color}
 \usepackage{amsbsy}      
-\usepackage{amsmath}
+\usepackage{amsmath,amsthm}
+\usepackage{mathtools}
 \usepackage{lineno}
 \usepackage{natbib} 
 \bibliographystyle{unsrt}
-\usepackage{amsmath}
 \graphicspath{{./figures/}}
 %\usepackage{MnSymbol}
 
+\newtheorem{thm}{Theorem}%
+\newtheorem{lem}[thm]{Lemma}%
+\newtheorem{prop}[thm]{Proposition}%
+\newtheorem{coro}[thm]{Corollary}%
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
 
 \newcommand{\bsigma}{{\boldsymbol\sigma}}
 \def\alphaeff{\alpha_{\mathrm{eff}}}
@@ -296,7 +301,7 @@ measurement positions at $\r_{i}$:
 Since $\u^{\rm data}(\r_{i})$ is given, and $\u(\r_{i})$, is given by
 Eqs.~\ref{eq:UMODEL1x} and~\ref{eq:UMODEL1y}, this contribution to the objective function is a
 functional over the surface-stress function $\bs(\r_{\perp})$.  For simplicity, we will assume that 
-the data points are sampled over an uniform grid with coordinates given $\{ (x_j,y_k) : j\in[1,2,\ldots,J], k\in[1,2,\ldots,K] \}.$
+the data points are sampled over an uniform grid with coordinates given $\{ (x_j,y_k) : j\in\{1,2,\ldots,J\}, k\in\{1,2,\ldots,K\}\}.$
 
 In Eqs~\ref{eq:UMODEL1x} and~\ref{eq:UMODEL1y}, we have restricted the domain of integration to the extent of the cell, $\Omega$, to emphasize that  $\boldsymbol\sigma$ has compact support. As a consequence of compact support, for a fixed, discretized approximation of $\sigma_{xz},\sigma_{yz}$, the displacements can be obtained exactly by solving an equivalent system of linear equations of finite dimension.
 
@@ -315,9 +320,9 @@ Now we may rewrite Eq.~\ref{eq:UMODEL1x}, for instance, to solve for the displac
 \begin{align}
  \lefteqn{u_x(x_n,y_m) =} \nonumber\\
  & \sum_{(x_j,y_k)\in\Omega} \Bigg\{ \Bigg[\sigma_{xz}(x_j,y_k)  - x_j\left(\frac{\sigma_{xz}(x_{j+1},y_k) - \sigma_{xz}(x_{j-1},y_k) }{2\delta x }    \right)    -y_k\left( \frac{\sigma_{xz}(x_j,y_{k+1}) -  \sigma_{xz}(x_j,y_{k-1}) }{2\delta y}\right) \Bigg]{ \langle G_{xx} \rangle}^{nmjk} \nonumber \\
-&\quad+\left[ \frac{\sigma_{xz}(x_{j+1},y_k) -  \sigma_{xz}(x_{j-1},y_k) }{2\delta x}   \right]\langle x'G_{xx} \rangle^{nmjk} + \left[  \frac{\sigma_{xz}(x_j,y_{k+1}) - \sigma_{xz}(x_j,y_{k-1}) }{2\delta y} \right] \langle y'G_{xx} \rangle^{nmjk}\nonumber\\
+&\quad+\left[ \frac{\sigma_{xz}(x_{j+1},y_k) -  \sigma_{xz}(x_{j-1},y_k) }{2\delta x}   \right]\langle xG_{xx} \rangle^{nmjk} + \left[  \frac{\sigma_{xz}(x_j,y_{k+1}) - \sigma_{xz}(x_j,y_{k-1}) }{2\delta y} \right] \langle yG_{xx} \rangle^{nmjk}\nonumber\\
 &\quad+  \Bigg[\sigma_{yz}(x_j,y_k) -x_j\left(\frac{\sigma_{yz}(x_{j+1},y_k) - \sigma_{yz}(x_{j-1},y_k) }{2\delta x}    \right)    -y_k\left( \frac{\sigma_{yz}(x_j,y_{k+1}) - \sigma_{yz}(x_j,y_{k-1}) }{2\delta y}\right) \Bigg] \langle G_{xy} \rangle^{nmjk}\nonumber \\
-&\qquad +\left[ \frac{\sigma_{yz}(x_{j+1},y_k) -  \sigma_{yz}(x_{j-1},y_k) }{2\delta x}   \right]  \int_{y_k-\delta y/2}^{y_k+\delta y/2}  \langle x'G_{xy} \rangle^{nmjk} + \left[  \frac{\sigma_{yz}(x_j,y_{k+1}) - \sigma_{yz}(x_j,y_{k-1}) }{2\delta y} \right] \langle y'G_{xy} \rangle^{nmjk} \Bigg\},
+&\qquad +\left[ \frac{\sigma_{yz}(x_{j+1},y_k) -  \sigma_{yz}(x_{j-1},y_k) }{2\delta x}   \right]  \int_{y_k-\delta y/2}^{y_k+\delta y/2}  \langle xG_{xy} \rangle^{nmjk} + \left[  \frac{\sigma_{yz}(x_j,y_{k+1}) - \sigma_{yz}(x_j,y_{k-1}) }{2\delta y} \right] \langle yG_{xy} \rangle^{nmjk} \Bigg\},
 \label{eq:ux_decomposed}
 \end{align}
 \end{widetext}
@@ -325,8 +330,8 @@ where
 \begin{align}
 \lefteqn{\langle G_{st} \rangle^{nmjk} = }\nonumber\\
 &\qquad    \int_{y_k-\delta y/2}^{y_k+\delta y/2} \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{st}(x_n-x',y_m-y') \dd x' \dd y' \label{eq:G_ave} \\
-\lefteqn{\langle uG_{st} \rangle^{nmjk} =}  \nonumber\\
-&\qquad  \int_{y_k-\delta y/2}^{y_k+\delta y/2} \int_{x_j-\delta x/2}^{x_j+\delta x/2} uG_{st}(x_n-x',y_m-y') \dd x' \dd y', \label{eq:G_ave2} 
+\lefteqn{\langle f(x,y)G_{st} \rangle^{nmjk} =}  \nonumber\\
+&\  \int_{y_k-\delta y/2}^{y_k+\delta y/2} \int_{x_j-\delta x/2}^{x_j+\delta x/2} f(x',y')G_{st}(x_n-x',y_m-y') \dd x' \dd y', \label{eq:G_ave2} 
 \end{align}
 except that at the edges where we use one-sided differences so that we are only differentiating within $\Omega$. Explicit 
 closed-form expressions for the integrals represented in Eqs.~\ref{eq:G_ave} and~\ref{eq:G_ave2} are given in the Supplemental Materials. A similar expression can be found for solving for $u_y$ (not shown).
@@ -334,33 +339,34 @@ closed-form expressions for the integrals represented in Eqs.~\ref{eq:G_ave} and
 Regrouping terms, we can now define the linear system of equations for solving for $u_x$ at all grid points simultaneously,
 \begin{equation}
 u_x^{nm} = X^{nmjk}\sigma_{xz}(x_j,y_k) + Y^{nmjk}\sigma_{yz}(x_j,y_k),
+\label{eq:linearsystem1}
 \end{equation}
 where summation is implied over each index tuple $(j,k)$, and the coefficient matrices are defined as
 \begin{align}
 \lefteqn{X^{nmjk} = \langle G_{xx} \rangle^{nmjk} -  \langle G_{xx} \rangle^{n,m,j-1,k}\frac{x_{j-1}}{2\delta x} } \nonumber\\
 &\quad  + \langle G_{xx} \rangle^{n,m,j+1,k}\frac{x_{j+1}}{2\delta x} -  \langle G_{xx} \rangle^{n,m,j,k-1}\frac{y_{k-1}}{2\delta y}  \nonumber\\
-&\quad + \langle G_{xx} \rangle^{n,m,j,k+1}\frac{y_{k+1}}{2\delta y} -\frac{\langle x'G_{xx} \rangle^{n,m,j-1,k}}{2\delta x}  \nonumber\\
-&\quad +\frac{\langle x'G_{xx} \rangle^{n,m,j+1,k}}{2\delta x} - \frac{\langle y'G_{xx} \rangle^{n,m,j,k-1}}{2\delta y} \nonumber\\
-&\quad+\frac{\langle y'G_{xx} \rangle^{n,m,j,k+1}}{2\delta y} 
+&\quad + \langle G_{xx} \rangle^{n,m,j,k+1}\frac{y_{k+1}}{2\delta y} -\frac{\langle xG_{xx} \rangle^{n,m,j-1,k}}{2\delta x}  \nonumber\\
+&\quad +\frac{\langle xG_{xx} \rangle^{n,m,j+1,k}}{2\delta x} - \frac{\langle yG_{xx} \rangle^{n,m,j,k-1}}{2\delta y} \nonumber\\
+&\quad+\frac{\langle yG_{xx} \rangle^{n,m,j,k+1}}{2\delta y} \label{eq:linearsystemX}
 \end{align}
 \begin{align}
 \lefteqn{ Y^{n,m,j,k} =  \langle G_{xy} \rangle^{nmjk} - \langle G_{xy} \rangle^{n,m,j-1,k}\frac{x_{j-1}}{2\delta x} } \nonumber\\
 &\quad+\langle G_{xy} \rangle^{n,m,j+1,k}\frac{x_{j+1}}{2\delta x} - \langle G_{xy} \rangle^{n,m,j,k-1}\frac{y_{k-1}}{2\delta y} \nonumber\\
-&\quad+\langle G_{xy} \rangle^{n,m,j,k+1}\frac{y_{k+1}}{2\delta y}  -\frac{\langle x'G_{xy} \rangle^{n,m,j-1,k}}{2\delta x} \nonumber \\
-&\quad +\frac{\langle x'G_{xy} \rangle^{n,m,j+1,k}}{2\delta x} - \frac{\langle y'G_{xy} \rangle^{n,m,j,k-1}}{2\delta y} \nonumber\\
- &\quad+\frac{\langle y'G_{xy} \rangle^{n,m,j,k+1}}{2\delta y}.
+&\quad+\langle G_{xy} \rangle^{n,m,j,k+1}\frac{y_{k+1}}{2\delta y}  -\frac{\langle xG_{xy} \rangle^{n,m,j-1,k}}{2\delta x} \nonumber \\
+&\quad +\frac{\langle xG_{xy} \rangle^{n,m,j+1,k}}{2\delta x} - \frac{\langle yG_{xy} \rangle^{n,m,j,k-1}}{2\delta y} \nonumber\\
+ &\quad+\frac{\langle yG_{xy} \rangle^{n,m,j,k+1}}{2\delta y}.\label{eq:linearsystemY}
 \end{align}
 
 
-From the equation-counting perspective, the system of equations is exactly determined given that one has at least as many measurement points as grid cells in the resolution that one wishes to reconstruct the stress field, provided that one is able to measure displacements in both principle directions. However, in line experiments this is not the case. Furthermore, even if one is able to measure both displacements, the problem may still be highly ill-conditioned since measurements are taken in the presence of noise at a given level of precision.
+From the equation-counting perspective, the system of equations is exactly determined given that one has at least as many measurement points as grid cells in the resolution that one wishes to reconstruct the stress field, provided that one is able to measure displacements in both principle directions. However, in line experiments this is not the case. Furthermore, even if one is able to measure both displacements, the problem may still be highly ill-conditioned since measurements are taken in the presence of noise at a a finite precision. To resolve these issues, we introduce  the concept of physically consistent regularization as applied to this problem.
 
 \subsection{Physical regularization}
 
-So far, the construction of the surface stress, even at the discrete
+So far, the construction of the surface stress, even at the finite
 resolution where measurements are available, is ill-conditioned. We 
 regularize this problem, by forcing the reconstruction to obey some physically-relevant
 characteristics of the surface stress. First, since we are assuming inertial
-effects are negligible, we require that the net for is zero, or that
+effects are negligible, we require that the net force is zero, or that
 \begin{equation}
 \int_\Omega\sigma_{xz}(x,y)\dd x \dd y= \int_\Omega\sigma_{yz}(x,y)\dd x \dd y = 0 .
 \end{equation}
@@ -384,9 +390,11 @@ and the determinant
 \begin{equation}
 \textrm{Det}(\bsigma) = \sigma_{xz} \sigma_{yz}.
 \end{equation}
-Any regularization penalty imposed on the reconstruction problem must be a function
+Any regularization penalty imposed on the reconstruction problem must be a functional
 of these invariants in order to maintain rotational invariance, relative to the choice of observation frame,
  of the reconstructed stress tensor.
+ 
+ \subsection{Sparsity-Enforcing priors}
 
 For this manuscript, we will use the trace, but we note that it may also be natural to use the
 logarithm of the determinant, in analogy to the log-likelihood arising in multivariate linear regression
@@ -398,20 +406,76 @@ problems of unknown variance. We now write the convex regularization functional,
 
 The corresponding penalized optimization problem
 \begin{equation}
-\bsigma^\star \vert \lambda = \arg\min_{\bsigma} \left\{ \Phi_{\textrm{data}}[\bsigma] + \lambda\Phi[\bsigma] \right\},
+\bsigma^\star \big\vert \lambda = \arg\min_{\bsigma} \left\{ \Phi_{\textrm{data}}[\bsigma] + \lambda\Phi[\bsigma] \right\},
 \end{equation}
 subject to the constraints mentioned above,
 where $\lambda>0$ is a tunable parameter. This problem
  is linear and is solvable within standard optimization routines. In our implementation, we use a second-order  quadratic cone solver. 
 \subsection{Cut-off}
-To reduce the size of the system of equations...
+To reduce the size of the system of equations described in Eqs.~\ref{eq:linearsystem1}--\ref{eq:linearsystemY}, we note that the Green's function falls off at a rate of $r^{-1}$. However,
+when combined with the zero-force constraint, the relationship between the displacements
+and the support of the stress field falls off at the much quicker rate of $r^{-2}$ under a
+set of reasonable assumptions.
+
+\begin{lem} 
+      \label{lem:main}
+Let $\Omega = supp(\bsigma)\subset \mathbb{R}^2$ be compact, and assume that $\bsigma\in L^1(\Omega)$. For a fixed $\mathbf{x}\not\in\Omega$, denote $D(\mathbf{x}) = \inf\{ || \mathbf{x} -\mathbf{y}|| : \mathbf{y}\in\Omega \}$. Then, if $D(\mathbf{x})\geq R>0$, then
+\begin{equation}
+\vert u_x(\mathbf{x}) \vert \leq \frac{C_x\norm{\bsigma}_1}{R^2}
+\end{equation}      
+and
+\begin{equation}
+\vert u_y(\mathbf{x}) \vert \leq \frac{C_x\norm{\bsigma}_1}{R^2}
+\end{equation}      
+for some constants $C_x,C_y$.
+
+\begin{proof}
+
+\qed
+\end{proof}
+      
+\end{lem}
+
+The decay of the influence of stress on the system provides justification for setting distance-based
+cut-offs specification of the linear system. Th effect of the cut-off is to limit the left-hand side of Eq.~\ref{eq:linearsystem1} to only locations within some maximal distance $R$ from the outline of the cell.
+The error in the solution of the inverse problem is dependent on the precision of the observations,
+ the physical constants that describe the medium, and the maximum magnitude of the stress.
+
+\begin{thm}
+\label{thm:main}
+
+\begin{proof}
+
+
+\end{proof}
+
+\end{thm}
+
 
 \section{Results}
+
+We implemented our regularized inversion method in Python version 3.5, where optimization is performed using the \texttt{cvxpy} package. 
 
 \subsection{Comparison of norms}
 \section{summary and Conclusions}
 
+\appendix
 
+\section{Integrals }
+
+\begin{align}
+\lefteqn{
+\int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{xx}(x-x',y-y')\dd x'  \dd y'} \nonumber\\
+&=  \int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} G_{xx}(u,v) \dd u \dd v \nonumber \\
+&= \frac{\nu+1}{2\pi E}\int_{\Delta y_{k}^-}^{\Delta y_k^+}\left[ 2\log\left( \sqrt{ (\Delta x_j^+)^2 + v^2 } \right) - \frac{2\nu \Delta x_j^+}{\sqrt{ (\Delta x_j^+)^2 + v^2 }}  \right] \dd v \nonumber \\
+& \quad -  \frac{\nu+1}{2\pi E}\int_{\Delta y_{k}^-}^{\Delta y_k^+}\left[ 2\log\left( \sqrt{ (\Delta x_j^-)^2 + v^2 } \right) - \frac{2\nu \Delta x_j^-}{\sqrt{ (\Delta x_j^-)^2 + v^2 }}  \right] \dd v \nonumber \\
+&= f_{xx}( \Delta x_j^+,\Delta y_k^+) - f_{xx}( \Delta x_j^+,\Delta y_k^-)  \nonumber \\
+&\qquad -f_{xx}(\Delta x_j^-, \Delta y_k^+) + f_{xx}(\Delta x_j^- , \Delta y_k^-)
+\end{align}
+where
+\begin{align}
+f_{xx}(x,y) &= \frac{\nu+1}{\pi E}\left[ x(1-\nu ) \log\left( \sqrt{x^2+y^2}+y\right) + y \log\left(\sqrt{x^2+y^2} +x\right)-y  \right].
+\end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

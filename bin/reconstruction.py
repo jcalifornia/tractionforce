@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import numpy as np
 import cvxpy
 from cvxpy import Variable, Minimize, sum_squares, norm, Problem, Parameter, mul_elemwise, sum_entries, Constant
@@ -11,6 +12,8 @@ from matplotlib.backends.backend_pdf import PdfPages
 from tractionforce.elasticity import *
 import gc
 from tractionforce.norms import *
+from cvxpy.atoms.elementwise.log import log as cvxlog
+from cvxpy.atoms.elementwise.power import power as cvxpower
 
 def read_data(filename):
 
@@ -57,7 +60,6 @@ def main():
     CUTOFF = 16 if results.threshold is None else float(results.threshold)
     REGULARIZATION = "tvnorm" if results.regularization is None else results.regularization
     N_SOLUTIONS = 10 if results.nsolutions is None else int(float(results.nsolutions))
-    SOLVER = cvxpy.ECOS if results.solver == "ecos" else cvxpy.CVXOPT
 
     coords, deflection, boundary = read_data(results.filename)
 
@@ -229,6 +231,8 @@ def main():
     predicted_in = A_in_in*sigma_xz + D_in_in*sigma_yz
     predicted_out =  A_out_in*sigma_xz + D_out_in*sigma_yz
 
+    gamma_vals = np.logspace(-3, 2, N_SOLUTIONS)
+
     error = sum_squares(u_x_in - predicted_in) + sum_squares(u_x_out - predicted_out)
 
     if REGULARIZATION == "tvtrace":
@@ -244,6 +248,12 @@ def main():
         regularity_penalty = norm(sigma_xz+sigma_yz,p=1)
     elif REGULARIZATION == 'l2':
         regularity_penalty = sum_squares(sigma_xz + sigma_yz) + sum_squares(sigma_xz + sigma_yz)
+    elif REGULARIZATION == 'det':
+        gamma_vals = np.logspace(-8, -5, N_SOLUTIONS)
+        regularity_penalty = sum_entries(-log2(sigma_xz)-log2(sigma_yz))
+    else:
+        print("Invalid regularization choice")
+        sys.exit(0)
 
     forceconstraints = [sum_entries(sigma_xz)==0, sum_entries(sigma_yz)==0] # add torque-free constraint here
     net_torque = sum_entries(mul_elemwise(x_in-x_center,sigma_yz) - mul_elemwise(y_in-y_center,sigma_xz))
@@ -261,22 +271,27 @@ def main():
     sigma_xz_values = []
     sigma_yz_values = []
 
-    gamma_vals = np.logspace(-4, 1, N_SOLUTIONS)
 
     with PdfPages(figure_outfile) as pdf:
         for val in gamma_vals:
             gamma.value = val
             try:
-                if SOLVER == cvxpy.ECOS:
+                if results.solver is not None and results.solver == "ecos":
                     prob.solve(verbose= True, max_iters = 50,
-                               warm_start=True, solver = SOLVER,
+                               warm_start=True, solver = cvxpy.ECOS,
                                feastol = 1e-6, reltol = 1e-5,
                                abstol = 1e-6)
-                else:
+                elif results.solver is not None and results.solver == "cvxopt":
                     prob.solve(verbose= True, max_iters = 50,
                                warm_start=True, solver = cvxpy.CVXOPT,
                                feastol = 1e-6, reltol = 1e-5,
                                abstol = 1e-6)
+                else:
+                    prob.solve(verbose=True, max_iters=50,
+                               warm_start=True,
+                               feastol=1e-6, reltol=1e-5,
+                               abstol=1e-6)
+
             except cvxpy.SolverError:
                 continue
 
@@ -348,6 +363,14 @@ def main():
         plt.xlabel("Mismatch", fontsize=16)
         plt.ylabel("Regularity", fontsize=16)
         plt.title('Trade-Off Curve', fontsize=16)
+
+        l_curve_distances = np.abs((l1_penalty[-1]-l1_penalty[0])*sq_penalty -  \
+            (sq_penalty[-1]-sq_penalty[0])*l1_penalty+sq_penalty[-1]*l1_penalty[0]-l1_penalty[-1]*sq_penalty[0])
+
+        # Choose the optimal lambda value
+
+
+
 
         pdf.savefig()
         plt.close()
