@@ -78,7 +78,8 @@
 
 \title{Reconstruction of localized force distributions in cells and tissues from substrate displacements using physically-consistent regularization}
 
-%\author{Yanli Liu and Tom Chou} 
+\author{Joshua C. Chang and Yanli Liu and Tom Chou} 
+\affiliation{Epidemiology and Biostatistics Section, Rehabilitation Medicine, Clinical Center, The National Institutes of Health, Bethesda MD, 20892}
 \affiliation{Depts. of
 Biomathematics and Mathematics, UCLA, Los Angeles, CA 90095-1766}
 
@@ -206,10 +207,12 @@ in the half-space is given by its components
 %\end{equation}
 \begin{equation}
 G^0_{zz}(x,y,z) =\frac{1+\nu}{2\pi E}\left(\frac{2(1-\nu)}{R_{\perp}}+\frac{z^{2}}{R_{\perp}^{3}}\right),
+\label{eq:Gzz0}
 \end{equation}
 \begin{equation} 
 G^0_{xy}(x,y,z) = G_{yx}=\frac{1+\nu}{2\pi E}\frac{[2R_{\perp}(\nu R_{\perp}-z)+z^{2}]xy}{R_{\perp}^{3}
 (R_{\perp}-z)^{2}},
+\label{eq:Gxy0}
 \end{equation}
 \begin{equation}
 G^0_{sz, zs}(x,y,z) =\frac{1+\nu}{2\pi E}\left(\frac{sz}{R_{\perp}^{3}}\pm\frac{(1-2\nu)s}{R_{\perp}
@@ -394,32 +397,36 @@ Any regularization penalty imposed on the reconstruction problem must be a funct
 of these invariants in order to maintain rotational invariance, relative to the choice of observation frame,
  of the reconstructed stress tensor.
  
- \subsection{Sparsity-Enforcing priors}
-
-For this manuscript, we will use the trace, but we note that it may also be natural to use the
-logarithm of the determinant, in analogy to the log-likelihood arising in multivariate linear regression
-problems of unknown variance. We now write the convex regularization functional, $\Phi = ||\sigma_{xz} + \sigma_{yz}||_{TV} $ the total variation of the trace of the tensor,
+For this manuscript, we  investigate penalty functionals on the trace of the stress tensor. In particular, we are interested in the $L^1$ norm of the trace
+\begin{equation}
+\Phi_{L^1(Tr)} = \int_\Omega \vert \sigma_{xz}(x,y) + \sigma_{yz}(x,y)  \vert \dd x\dd y
+\label{eq:PhiL1Tr}
+\end{equation}
+and total variation norm of the trace
 %
 \begin{equation}
-\Phi =  \int_\Omega | \nabla(\sigma_{xz}(x',y') + \sigma_{yz}(x',y') ) | \dd x'\dd y'.
+\Phi_{TV(Tr)} =  \int_\Omega | \nabla(\sigma_{xz}(x,y) + \sigma_{yz}(x,y) ) | \dd x\dd y.
+\label{eq:PhiTVTr}
 \end{equation}
 
-The corresponding penalized optimization problem
+Using either of these expressions as a regularization norm $\Phi_{\textrm{reg}}$ suggests the penalized optimization problem
 \begin{equation}
-\bsigma^\star \big\vert \lambda = \arg\min_{\bsigma} \left\{ \Phi_{\textrm{data}}[\bsigma] + \lambda\Phi[\bsigma] \right\},
+\bsigma^\star \big\vert \lambda = \arg\min_{\bsigma} \left\{ \Phi_{\textrm{data}}[\bsigma] + \lambda\Phi_{\textrm{reg}}[\bsigma] \right\},\label{eq:objective}
 \end{equation}
 subject to the constraints mentioned above,
 where $\lambda>0$ is a tunable parameter. This problem
- is linear and is solvable within standard optimization routines. In our implementation, we use a second-order  quadratic cone solver. 
+ is in a standard form that is directly solvable using a variety of optimization routines.
+  In our implementation, we use a second-order  quadratic cone solver. 
 \subsection{Cut-off}
 To reduce the size of the system of equations described in Eqs.~\ref{eq:linearsystem1}--\ref{eq:linearsystemY}, we note that the Green's function falls off at a rate of $r^{-1}$. However,
 when combined with the zero-force constraint, the relationship between the displacements
-and the support of the stress field falls off at the much quicker rate of $r^{-2}$ under a
-set of reasonable assumptions.
+and the support of the stress field falls off at the much quicker rate of $r^{-2},$ under a
+set of reasonable assumptions that are consistent with the choice of regularization that we have
+made.
 
 \begin{lem} 
       \label{lem:main}
-Let $\Omega = supp(\bsigma)\subset \mathbb{R}^2$ be compact, and assume that $\bsigma\in L^1(\Omega)$. For a fixed $\mathbf{x}\not\in\Omega$, denote $D(\mathbf{x}) = \inf\{ || \mathbf{x} -\mathbf{y}|| : \mathbf{y}\in\Omega \}$. Then, if $D(\mathbf{x})\geq R>0$, then
+Let $\Omega = supp(\bsigma)\subset \mathbb{R}^2$ be compact, and assume that $\bsigma\in L^1(\Omega)$. For a fixed $\mathbf{x}\not\in\Omega$, denote $D(\mathbf{x}) = \inf\{ || \mathbf{x} -\mathbf{y}|| : \mathbf{y}\in\Omega \}$. Then, for $\mathbf{x}$ where $D(\mathbf{x})\geq R>0$, 
 \begin{equation}
 \vert u_x(\mathbf{x}) \vert \leq \frac{C_x\norm{\bsigma}_1}{R^2}
 \end{equation}      
@@ -430,8 +437,11 @@ and
 for some constants $C_x,C_y$.
 
 \begin{proof}
-
-\qed
+Note that $u_x$ and $u_y$ are symmetric in form. Hence, it will suffice to prove just one of these assertions. Consider the multipole expansion for $u_x$, 
+\begin{align}
+u_x = \sum_{n=0}^\infty ,
+\end{align}
+which was obtained through binomial expansion of the Euclidean distance functions in the denominators of Eq.~\ref{eq:Gzz0} and Eq.~\ref{eq:Gxy0}.
 \end{proof}
       
 \end{lem}
@@ -443,6 +453,10 @@ The error in the solution of the inverse problem is dependent on the precision o
 
 \begin{thm}
 \label{thm:main}
+Denote $\varepsilon^R(\x) = \hat{\bsigma}^R(\x) - \bsigma(\x)$ for $\x\in\Omega$, where $\sigma_{xz}\in L^1(\Omega)$, and $\hat{\bsigma}^R(\x)$ is the reconstructed stress field found by solving the optimization problem of Eq.~\ref{eq:objective} using only the displacement data within a maximal distance of $R$ from the cell. Then,
+\begin{equation}
+\sup \vert \hat{\bsigma}^R(\x) - \hat{\bsigma}^\infty(\x) \vert \leq \frac{C}{R^2}
+\end{equation}
 
 \begin{proof}
 
@@ -452,29 +466,109 @@ The error in the solution of the inverse problem is dependent on the precision o
 \end{thm}
 
 
-\section{Results}
+\section{Computational investigation}
 
-We implemented our regularized inversion method in Python version 3.5, where optimization is performed using the \texttt{cvxpy} package. 
+\begin{figure*}
+\includegraphics[width=\linewidth]{fig2}
+\caption{\textbf{Reconstruction of surface stress field} for various choices of regularization. The first and third rows are physically-consistent regularizations. The best reconstruction balances regularity and data matching and corresponds to the value for $\lambda$ that is near a phase transition in the trade off plot between these two penalties (circled in red). The under-regularized solution corresponds to the point circled in green and the over-regulated solution corresponds to the point circled in black.}
+\label{fig:fig2}
+\end{figure*}
 
-\subsection{Comparison of norms}
-\section{summary and Conclusions}
+We implemented our regularized inversion method in Python version 3.5, where optimization is performed using the \texttt{cvxpy} package with the \texttt{ecos} solver. As a test, we used this method to reconstruct the force field for a dataset where the surface displacements are only known along a single axis, denoted $x$. TODO DESCRIBE MORE ABOUT THE DATA USED... WHAT IT IS OF AND WHERE IT IS FROM
+
+The results of this test are shown in Fig.~\ref{fig:fig2}. Here, we have compared reconstruction of the force field using our rotationally invariant norms of Eq.~\ref{eq:PhiL1Tr} and Eq.~\ref{eq:PhiTVTr} against alternate isotropic norms. As an alternative to the $L^1$ norm on the trace we compared
+\begin{equation}
+\Phi_{L1} = \int_\Omega \left( \sigma_{xz}(x,y) +\sigma_{yz}(x,y) \right)\d\x,
+\end{equation} 
+and as alternatives to the total variation on the trace we looked at
+ \begin{equation}
+ \Phi_{TV_1} = \int_\Omega \left( \vert\nabla\sigma_{xz}(x,y) \vert + \vert\nabla\sigma_{yz}(x,y) \vert\right)\d\x
+ \label{eq:PhiTV1}
+\end{equation}
+and
+\begin{equation}
+\Phi_{TV_2} = \int_\Omega  \left( \vert\partial_x\sigma_{xz}\vert + \vert\partial_y\sigma_{xz}\vert + \vert\partial_x\sigma_{yz}\vert+ \vert\partial_y\sigma_{yz}\vert\right)\d\x.
+ \label{eq:PhiTV2}
+\end{equation}
+ The adjustable parameter $\lambda$ was chosen in each instance by plotting the trade-off between data mismatch and regularity, and taking the value for $\lambda$ that yields a point farthest away from the line 
+segment joining the ends of the plot.
+
+Fig.~\ref{fig:fig2}
+
+\begin{figure}
+\caption{\textbf{Omission of constraints} leads to solutions that do not naturally obey the constraints, particularly }
+\end{figure}
+
+Reconstruction without torque constraint
+
+Reconstruction without force constraint
+
+Unconstrained
+
+\section{Discussion}
+
+We have presented a comprehensive method for solving the inverse problem of surface stress
+reconstruction the incorporates physical knowledge as constraints.  Under piecewise affine approximations
+of the stress tensor, we provided an exact solution to the forward problem as a system of
+linear equations. Using the multipole expansion, we motivated the use of a cut-off in the solution of the forward problem that greatly reduces the rank of the inverse problem thereby decreasing both
+the computational complexity of the problem and the memory requirements. The numerical stability
+of the problem was also improved using regularization which obeyed the physical knowledge that
+the problem should be rotationally invariant.
+
+\section{Summary and Conclusions}
 
 \appendix
 
 \section{Integrals }
-
+In this section we provide closed-form expression for the integrals in Eqs.~\ref{eq:G_ave} and~\ref{eq:G_ave2}.
+Let $\Delta x_{nj}^+ = x_n - (x_j+\delta x/2),$ $\Delta x_{nj}^- = x_n - (x_j-\delta x/2),$ $\Delta y_{mk}^+ = y_m - (y_k+\delta y/2),$ and $\Delta y_{mk}^+ = y_m - (y_k-\delta y/2).$ Then,
+we have the averaged Greens functions
 \begin{align}
-\lefteqn{
-\int_{y_k-\delta y/2}^{y_k+\delta y/2}  \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{xx}(x-x',y-y')\dd x'  \dd y'} \nonumber\\
-&=  \int_{\Delta y_{k}^-}^{\Delta y_k^+}  \int_{\Delta x_j^-}^{\Delta x_j^+} G_{xx}(u,v) \dd u \dd v \nonumber \\
-&= \frac{\nu+1}{2\pi E}\int_{\Delta y_{k}^-}^{\Delta y_k^+}\left[ 2\log\left( \sqrt{ (\Delta x_j^+)^2 + v^2 } \right) - \frac{2\nu \Delta x_j^+}{\sqrt{ (\Delta x_j^+)^2 + v^2 }}  \right] \dd v \nonumber \\
-& \quad -  \frac{\nu+1}{2\pi E}\int_{\Delta y_{k}^-}^{\Delta y_k^+}\left[ 2\log\left( \sqrt{ (\Delta x_j^-)^2 + v^2 } \right) - \frac{2\nu \Delta x_j^-}{\sqrt{ (\Delta x_j^-)^2 + v^2 }}  \right] \dd v \nonumber \\
-&= f_{xx}( \Delta x_j^+,\Delta y_k^+) - f_{xx}( \Delta x_j^+,\Delta y_k^-)  \nonumber \\
-&\qquad -f_{xx}(\Delta x_j^-, \Delta y_k^+) + f_{xx}(\Delta x_j^- , \Delta y_k^-)
+\langle G_{uv}\rangle^{nmjk} &=   f_{uv}( \Delta x_{nj}^+,\Delta y_{mk}^+) - f_{uv}( \Delta x_{nj}^+,\Delta y_{mk}^-)  \nonumber \\
+&\qquad -f_{uv}(\Delta x_{nj}^-, \Delta y_{mk}^+) + f_{uv}(\Delta x_{nj}^- , \Delta y_{mk}^-)
+\end{align}
+where
+\begin{align}\allowdisplaybreaks
+f_{xx}(x,y) &= \frac{\nu+1}{\pi E}\Bigg[ x(1-\nu ) \log\left( \sqrt{x^2+y^2}+y\right) \nonumber\\
+&\qquad+ y \log\left(\sqrt{x^2+y^2} +x\right)-y  \Bigg] \\
+f_{yy}(x,y) &= \frac{\nu+1}{\pi E}\Bigg[ y(1-\nu ) \log\left( \sqrt{x^2+y^2}+x\right) \nonumber\\
+&\qquad+ x \log\left(\sqrt{x^2+y^2} +y\right)-x  \Bigg] \\
+f_{xy}(x,y) &= -\frac{\nu(\nu+1)}{\pi E}\sqrt{x^2+y^2}.
+\end{align}
+The first moments follow
+\begin{align}
+\lefteqn{\langle xG_{xx}(x,y) \rangle^{nmjk} =\Big[ f_{xx}( \Delta x_{nj}^+,\Delta y_{mk}^+)- f_{xx}( \Delta x_{nj}^+,\Delta y_{mk}^-)}\nonumber\\
+ &\qquad\qquad\qquad   -f_{xx}(\Delta x_{nj}^-, \Delta y_{mk}^+)+ f_{xx}(\Delta x_{nj}^- , \Delta y_{mk}^-)\Big] x_n\nonumber\\
+ &\quad\qquad\qquad   - \Big[ f^x_{xx}( \Delta x_{nj}^+ , \Delta y_{mk}^+)- f^x_{xx}( \Delta x_{nj}^+ , \Delta y_{mk}^-) \nonumber\\
+ &\qquad\qquad\qquad-f^x_{xx}(\Delta x_{nj}^-, \Delta y_{mk}^+) + f^x_{xx}(\Delta x_{nj}^- , \Delta y_{mk}^-)\Big],
 \end{align}
 where
 \begin{align}
-f_{xx}(x,y) &= \frac{\nu+1}{\pi E}\left[ x(1-\nu ) \log\left( \sqrt{x^2+y^2}+y\right) + y \log\left(\sqrt{x^2+y^2} +x\right)-y  \right].
+f^x_{xx}(x,y) &= \frac{\nu+1}{2\pi E} \Big[ (\nu+1)y\sqrt{x^2 + y^2} \nonumber\\
+&\qquad\qquad- (\nu-1) x^2\log\left(\sqrt{x^2 + y^2} +y  \right)  \Big],
+\end{align}
+\begin{align}
+\lefteqn{\langle yG_{xx}(x,y) \rangle^{nmjk} = \Big[f_{xx}( \Delta x_{nj}^+,\Delta y_{mk}^+) - f_{xx}( \Delta x_{nj}^+,\Delta y_{mk}^-) } \nonumber\\
+&\qquad\qquad\qquad-f_{xx}(\Delta x_{nj}^-, \Delta y_{mk}^+) + f_{xx}(\Delta x_{nj}^- , \Delta y_{mk}^-)  \Big] y_m\nonumber\\
+&\qquad\qquad - \Big[ f^y_{xx}(\Delta x_{nj}^+,\Delta y_{mk}^+) - f^y_{xx}(\Delta x_{nj}^+,\Delta y_{mk}^-)\nonumber\\
+&\qquad\qquad - f^y_{xx}(\Delta x_{nj}^-,\Delta y_{mk}^+) + f^y_{xx}(\Delta x_{nj}^-,\Delta y_{mk}^-)  \Big],
+\end{align}
+where
+\begin{align}
+f^y_{xx}(x,y) &=\frac{\nu+1}{2\pi E} \Bigg[y^2\log\left(\sqrt{x^2+y^2}+x \right)  \nonumber\\
+&\qquad- \sqrt{x^2+y^2}\left((2\nu-1)x + \frac{1}{2}\sqrt{x^2+y^2} \right)  \Bigg],
+\end{align}
+and
+\begin{align}
+\lefteqn{\langle xG_{xy}(x,y) \rangle^{nmjk} = \Big[ f_{xy}(\Delta x_j^-, \Delta y_k^+) - f_{xy}(\Delta x_j^-,\Delta y_k^-) } \nonumber\\
+&\qquad\qquad- f_{xy}(\Delta x_j^+,\Delta y_k^+) + f_{xy} (\Delta x_j^+,\Delta y_k^-) \Big]x_n\nonumber\\
+&\qquad\qquad -   \Big[ f_{xy}^x(\Delta x_j^+,\Delta y_j^+) - f_{xy}^x(\Delta x_j^+,\Delta y_j^-) \nonumber\\
+&\qquad\qquad- f_{xy}^x(\Delta x_j^-,\Delta y_j^+) + f_{xy}^x(\Delta x_j^-,\Delta y_j^-)\Big]
+\end{align}
+where
+\begin{align}
+f_{xy}^x(x,y) &=\frac{\nu(\nu+1)}{\pi E}\Big[ \frac{y^2}{2}\log\left(\sqrt{x^2+y^2} +x \right) \nonumber\\
+&\qquad\qquad\qquad-\frac{1}{4}\sqrt{x^2+y^2}\left(\sqrt{x^2+y^2}+2x\right) \Big].
 \end{align}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
