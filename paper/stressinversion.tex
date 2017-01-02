@@ -476,7 +476,7 @@ Denote $\varepsilon^R(\x) = \hat{\bsigma}^R(\x) - \bsigma(\x)$ for $\x\in\Omega$
 
 We implemented our regularized inversion method in Python version 3.5, where optimization is performed using the \texttt{cvxpy} package with the \texttt{ecos} solver. As a test, we used this method to reconstruct the force field for a dataset where the surface displacements are only known along a single axis, denoted $x$. TODO DESCRIBE MORE ABOUT THE DATA USED... WHAT IT IS OF AND WHERE IT IS FROM
 
-The results of this test are shown in Fig.~\ref{fig:fig2}. Here, we have compared reconstruction of the force field using our rotationally invariant norms of Eq.~\ref{eq:PhiL1Tr} and Eq.~\ref{eq:PhiTVTr} against alternate isotropic norms. As an alternative to the $L^1$ norm on the trace we compared
+The results of this test are shown in Fig.~\ref{fig:fig2}. Here, we have compared reconstruction of the surface stress using our rotationally invariant norms of Eq.~\ref{eq:PhiL1Tr} and Eq.~\ref{eq:PhiTVTr} against alternate isotropic norms. As an alternative to the $L^1$ norm on the trace we compared
 \begin{equation}
 \Phi_{L1} = \int_\Omega \left( \sigma_{xz}(x,y) +\sigma_{yz}(x,y) \right)\d\x,
 \end{equation} 
@@ -490,20 +490,24 @@ and
 \Phi_{TV_2} = \int_\Omega  \left( \vert\partial_x\sigma_{xz}\vert + \vert\partial_y\sigma_{xz}\vert + \vert\partial_x\sigma_{yz}\vert+ \vert\partial_y\sigma_{yz}\vert\right)\d\x.
  \label{eq:PhiTV2}
 \end{equation}
- The adjustable parameter $\lambda$ was chosen in each instance by plotting the trade-off between data mismatch and regularity, and taking the value for $\lambda$ that yields a point farthest away from the line 
-segment joining the ends of the plot.
+ The adjustable parameter $\lambda$ was chosen in each instance by examining the trade-off between data mismatch and regularity using trade-off curves shown in Fig.~\ref{fig:fig2}, and taking the value for $\lambda$ that yields a point farthest away from the line  segment joining the ends of the plot. In Fig.~\ref{fig:fig2}, the chosen value of $\lambda$ corresponds to the given balance between regularity and data fidelity marked by the red circle. The solution corresponding to this particular value of $\lambda$ is shown in the middle column on the right. For reference, under-regularized solutions, corresponding to the green  circle in the trade-off plot, and over-regularized solutions, corresponding to black circle, are also given. Each row in Fig.~\ref{fig:fig2} corresponds to the use of a different regularization penalty functional. In all of these reconstructions, we have imposed that the surface stress is both force-free and torque free, and also that the support of the stress is within given cell boundaries.
 
-Fig.~\ref{fig:fig2}
+To explore the effect of constraints on our reconstructions, we systematically removed constraints in solving the rotationally invariant $L^1$ regularized problem In Fig.~\ref{fig:fig3}, we present reconstructions without the zero force constraint, without the zero torque constraint, and with neither the force nor the torque constraints. In each of these reconstructions the zero force and zero torque constraints did not naturally arise in the solution of the inverse problem, particularly in the reconstruction of $\sigma_{yz}$.
+
+Additionally, our reconstructions are implicitly constrained by the assumption of compact support where
+the support of the stress tensor is within the cell boundary. Examining Fig.~\ref{fig:fig2}, it appears that 
+this constraint is active as much of the stress is concentrated at boundaries. In Fig.~\ref{fig:fig4}, we 
+loosened the boundary constraint by allowing the support of the stress to fall within 10 pixels of the cell boundary. 
 
 \begin{figure}
 \caption{\textbf{Omission of constraints} leads to solutions that do not naturally obey the constraints, particularly }
+\label{fig:fig3}
 \end{figure}
 
-Reconstruction without torque constraint
-
-Reconstruction without force constraint
-
-Unconstrained
+\begin{figure}
+\caption{\textbf{Boundary constraint weakening} leads to solutions where the support does not fall naturally within the cell boundary. }
+\label{fig:fig4}
+\end{figure}
 
 \section{Discussion}
 
