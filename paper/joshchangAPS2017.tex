@@ -1,5 +1,5 @@
 % !TEX encoding = UTF-8 Unicode
-\documentclass[presentation]{beamer}
+\documentclass[presentation,aspectratio=169]{beamer}
 \newcommand{\trans}[1]{{#1}^{\ensuremath{\mathsf{T}}}}           % transpose
 \newcommand{\ci}{\ensuremath{\mathcal{I}}}
 \newcommand{\abs}[1]{\left| #1\right|}                    % 
@@ -84,7 +84,7 @@
 
 \institute[NIH] % (optional, but mostly needed)
 {
-National Institutes of Health
+%National Institutes of Health
 }
 % - Use the \inst command only if there are several affiliations.
 % - Keep it simple, no one is interested in your street address.
@@ -113,21 +113,30 @@ Session S5: Machine Learning for Modeling and Control of Biological Systems I
 %\end{frame}
 
 \begin{frame}{Traction force microscopy: displacements $\mathbf{u}$ measured}
+\begin{columns}
+\begin{column}{0.65\textwidth}
 \centering
-\includegraphics[width=0.8\textwidth]{figures/Fig1}
+\includegraphics[width=\textwidth]{figures/Fig1}
+\end{column}
+\begin{column}{0.35\textwidth}
+\begin{itemize}
+\item $\bsigma$ is tangential surface stress tensor, proportional to the $\mathbf{F}_\perp$
+\item $\mathbf{u}$ found exactly in closed-form for any fixed piecewise-polynomial approximation of $\bsigma$
+\end{itemize}
+\end{column}
+\end{columns}
+
 \scriptsize
+
 \begin{block}{In-plane surface displacements, as $d\to\infty,$s where $G \propto (Er)^{-1}$}
 \vspace{-10pt}
-\begin{align*}
+\begin{align*}\tiny
 u_{x}(x,y) &= \int_\Omega \dd x'\dd y'G_{xx}( x-x',y-y')\sigma_{xz}(x',y') 
  +  \int_\Omega \dd x'\dd y'G_{xy}( x-x',y-y')\sigma_{yz}(x',y')  \\
 u_y(x,y) &= \int_\Omega \dd x'\dd y'G_{yx}( x-x',y-y')\sigma_{xz}(x',y') +  \int_\Omega \dd x'\dd y'G_{yy}( x-x',y-y')\sigma_{yz}(x',y') 
 \end{align*}
 \end{block}
-\begin{itemize}
-\item $\bsigma$ is tangential surface stress tensor, proportional to the $\mathbf{F}_\perp$
-\item $\mathbf{u}$ found exactly in closed-form for any fixed piecewise-polynomial approximation of $\bsigma$
-\end{itemize}
+
 \end{frame}
 
 \begin{frame}{Discretized forward problem}
@@ -135,7 +144,7 @@ u_y(x,y) &= \int_\Omega \dd x'\dd y'G_{yx}( x-x',y-y')\sigma_{xz}(x',y') +  \int
 \begin{block}{Linear algebra system}
 \begin{itemize}
 \item $\boldsymbol\sigma$ interpolated about points $\bs_i$ (using polynomials)
-\item Solution exact up to order of interpolation of $\bs_i$
+\item Solution exact up to order of interpolation of $\boldsymbol\sigma_i$
 \end{itemize}
 \begin{columns}
 \begin{column}{0.6\textwidth}
@@ -150,10 +159,10 @@ u_y({\br_2} ) \\
 \vdots \\
 u_y({\br_N} )
 \end{matrix}\right)}_{2N\times1} =
-\left(\begin{matrix}
+\overbrace{\left(\begin{matrix}
 \mathbb{G}_{xx} & \mathbb{G}_{xy} \\
 \mathbb{G}_{yx} & \mathbb{G}_{yy}
-\end{matrix}\right)
+\end{matrix}\right)}^{\mathbb{G}}
 \underbrace{\left(\begin{matrix} 
 \sigma_{xz}({\bs_1} )\\
 \sigma_{xz}({\bs_2} ) \\
@@ -170,6 +179,7 @@ u_y({\br_N} )
 \begin{itemize}
 \item $\{\mathbf{r}_i\}_{i=1}^N$  locations at which measurements are taken
 \item $\{\mathbf{s}_i\}_{i=1}^M$  locations controlling interpolation of $\boldsymbol\sigma$
+\item Origins of $\mathbb{G}$ depend on the interpolation order of $\boldsymbol\sigma$
 \end{itemize}
 \end{column}
 \end{columns}
@@ -177,11 +187,66 @@ u_y({\br_N} )
 \end{frame}
 
 
+
+
+\begin{frame}{Using the physics to help constrain the problem}
+\small
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\begin{block}{Reasonable physical assumptions}
+\begin{enumerate}
+\item No force outside the cell footprint
+\item No inertia (forces and torques each sum to zero)
+\end{enumerate}
+\end{block}
+\end{column}
+\begin{column}{0.5\textwidth}
+ 
+\begin{exampleblock}{Advantage gained}
+\begin{enumerate} \scriptsize
+\item Reduction in problem size
+\begin{itemize} \scriptsize
+\item Throw away far data points
+\end{itemize}
+\item Multipole expansion $\Rightarrow$  decay at rate $r^{-2}$
+\begin{itemize} \scriptsize
+\item Cutoff data by distance
+\item Sparsify the matrix $\mathbb{G}$
+\end{itemize}
+\end{enumerate}
+\end{exampleblock}
+\end{column}
+\end{columns}
+
+\begin{block}{Still need to regularize the problem}
+
+\begin{columns}
+\begin{column}{0.4\textwidth}
+
+Criteria for a well-posed problem
+\begin{itemize}
+\item Solution exists
+\item Solution unique
+\item Solution continuous wrt data
+\end{itemize}
+\end{column}
+\begin{column}{0.55\textwidth} \Large
+\[
+\hat{\boldsymbol\sigma} = \arg\min_{\boldsymbol\sigma}\left[ \underbrace{||\mathbf{u} - \mathbb{G}\mathbf{\bsigma}  ||_2^2}_{\Phi_{\textrm{data}}} + \lambda\Phi_{\textrm{reg}}[\boldsymbol\sigma] \right]
+\]
+\end{column}
+\end{columns}
+
+\end{block}
+
+\end{frame}
+
+ 
 \begin{frame}{Respecting the physics in regularizing the problem}
 \small
 \begin{itemize}
-\item \textbf{Principle:} Coordinate frame should not bias results
-\item Regularize using functionals of the tensor invariants
+\item \textbf{Principle:} Coordinate system should not bias results
+\item \textbf{Solution:}  Regularize using functionals of the tensor invariants
 \end{itemize}
 \begin{columns}
 \begin{column}{0.35\textwidth}
@@ -195,7 +260,7 @@ u_y({\br_N} )
 \end{block}
 \end{column}
 \begin{column}{0.6\textwidth}
-\begin{exampleblock}{Invariant regularization functionals}
+\begin{exampleblock}{Invariant regularization functionals $\Phi_{\textrm{reg}}$}
 \[
 \Phi_{L^1(Tr)} = \int_\Omega \vert \sigma_{xz}(x,y) + \sigma_{yz}(x,y)  \vert \dd x\dd y
 \]
@@ -206,7 +271,7 @@ u_y({\br_N} )
 \end{exampleblock}
 \end{column}
 \end{columns}
-\begin{block}{Non-invariant functionals}
+\begin{block}{Non-invariant functionals $\Phi_{\textrm{reg}}$}
 \[
  \Phi_{TV_1} = \int_\Omega \left( \vert\nabla\sigma_{xz}(x,y) \vert + \vert\nabla\sigma_{yz}(x,y) \vert\right)\dd\bx
 \]
@@ -218,41 +283,11 @@ u_y({\br_N} )
 
 \end{frame}
 
-
-
-\begin{frame}{Using the physics to help constrain the problem}
-\begin{block}{Reasonable physical assumptions}
-\begin{enumerate}
-\item No force outside the cell footprint
-\item No inertia (forces and torques each sum to zero)
-\end{enumerate}
-\end{block}
-
  
-\begin{exampleblock}{Advantage gained}
-\begin{enumerate}
-\item May restrict the size of the problem
-\begin{itemize}
-\item Throw away far data points
-\end{itemize}
-\item Multiple expansion $\Rightarrow$  decay at rate $r^{-2}$
-\begin{itemize}
-\item Justifies the use of a cut-off for data to use
-\item Sparsify the linear algebra problem
-\end{itemize}
-\end{enumerate}
-\end{exampleblock}
-\begin{block}{Regularized inverse problem}
-\[
-\hat{\boldsymbol\sigma} = \arg\min_{\boldsymbol\sigma}\left[ ||\mathbf{u} - \mathbb{G}\mathbf{\bsigma}  ||_2^2 + \lambda\Phi_{\textrm{reg}}[\boldsymbol\sigma] \right]
-\]
-\end{block}
-\end{frame}
-
  
 \begin{frame}{Rotational invariance matters}
 \centering
-\includegraphics[width=1\textwidth]{figures/fig2}
+\includegraphics[width=0.85\textwidth]{figures/fig2}
 
 \smallskip
 \emph{Units:} $E\textrm(Young's\ modulus)$
@@ -289,8 +324,8 @@ u_y({\br_N} )
 \item The numerical solution of the forward problem should be consistent with the regularization
 \item Localization of the cell footprint is important in determining traction
 \begin{itemize}
-\item Future idea: Joint force reconstruction and cell boundary determination
-\item Future work: May do uncertainty quantification through Bayes
+\item Extension: Joint force reconstruction and cell boundary determination
+\item Extesion: May do uncertainty quantification through Bayes
 \end{itemize}
 \end{itemize}
 \end{frame}
