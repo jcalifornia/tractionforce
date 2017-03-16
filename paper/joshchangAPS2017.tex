@@ -176,7 +176,7 @@ u_y(x,y) &= \int_\Omega \dd x'\dd y'G_{yx}( x-x',y-y')\sigma_{xz}(x',y') +  \int
 \item Solution exact up to order of interpolation of $\boldsymbol\sigma_i$
 \end{itemize}
 \begin{columns}
-\begin{column}{0.6\textwidth}
+\begin{column}{0.55\textwidth}
 \[
 \underbrace{\left(\begin{matrix} 
 u_{x}({\br_1} )\\
@@ -208,7 +208,8 @@ u_y({\br_N} )
 \begin{itemize}
 \item $\{\mathbf{r}_i\}_{i=1}^N$  locations at which measurements are taken
 \item $\{\mathbf{s}_i\}_{i=1}^M$  locations controlling interpolation of $\boldsymbol\sigma$
-\item Origins of $\mathbb{G}$ depend on the interpolation order of $\boldsymbol\sigma$
+\item $\mathbb{G}$ composed of grid-cell moments of the Greens function
+\item  $\mathbb{G}$ depends on the interpolation order of $\boldsymbol\sigma$
 \end{itemize}
 \end{column}
 \end{columns}
@@ -218,7 +219,7 @@ u_y({\br_N} )
 
 
 
-\begin{frame}{Using the physics to help constrain the problem}
+\begin{frame}{Using the physics to help constrain the inverse problem}
 \small
 \begin{columns}
 \begin{column}{0.4\textwidth}
@@ -247,7 +248,7 @@ u_y({\br_N} )
 \end{column}
 \end{columns}
 
-\begin{block}{Still need to regularize the problem}
+\begin{block}{Still need to regularize the inverse problem}
 
 \begin{columns}
 \begin{column}{0.4\textwidth}
@@ -256,7 +257,7 @@ Criteria for a well-posed problem
 \begin{itemize}
 \item Solution exists
 \item Solution unique
-\item Solution continuous wrt data
+\item Solution continuous w.r.t. data
 \end{itemize}
 \end{column}
 \begin{column}{0.55\textwidth} \Large
@@ -271,7 +272,7 @@ Criteria for a well-posed problem
 \end{frame}
 
  
-\begin{frame}{Respecting the physics in regularizing the problem}
+\begin{frame}{Respecting the physics in regularizing the inverse problem}
 \small
 \begin{itemize}
 \item \textbf{Principle:} Coordinate system should not bias results
@@ -279,14 +280,14 @@ Criteria for a well-posed problem
 \end{itemize}
 \begin{columns}
 \begin{column}{0.35\textwidth}
-\begin{block}{Tensor invariants}
+\begin{exampleblock}{Tensor invariants}
 \[
 \textrm{Tr}(\boldsymbol\sigma) = \sigma_{xz} + \sigma_{yz}
 \]
 \[
 \textrm{Det}(\boldsymbol\sigma) = \sigma_{xz}\sigma_{yz}
 \]
-\end{block}
+\end{exampleblock}
 \end{column}
 \begin{column}{0.6\textwidth}
 \begin{exampleblock}{Invariant regularization functionals $\Phi_{\textrm{reg}}$}
@@ -300,12 +301,14 @@ Criteria for a well-posed problem
 \end{exampleblock}
 \end{column}
 \end{columns}
-\begin{block}{Non-invariant functionals $\Phi_{\textrm{reg}}$}
+\begin{block}{Non-invariant functionals $\Phi_{\textrm{reg}}$} \small
 \[
- \Phi_{TV_1} = \int_\Omega \left( \vert\nabla\sigma_{xz}(x,y) \vert + \vert\nabla\sigma_{yz}(x,y) \vert\right)\dd\bx
+\Phi_{L1} = \int_\Omega\left( \left| \sigma_{xz}(x,y) \right|+\left|\sigma_{yz}(x,y) \right|\right)\dd\bx,
 \]
 \[
-\Phi_{TV_2} = \int_\Omega  \left( \vert\partial_x\sigma_{xz}\vert + \vert\partial_y\sigma_{xz}\vert + \vert\partial_x\sigma_{yz}\vert+ \vert\partial_y\sigma_{yz}\vert\right)\dd\bx.
+ \Phi_{TV_1} = \int_\Omega \left( \vert\nabla\sigma_{xz}(x,y) \vert + \vert\nabla\sigma_{yz}(x,y) \vert\right)\dd\bx
+\qquad
+\Phi_{TV_2} = \int_\Omega  \left( \vert\partial_x\sigma_{xz}\vert + \vert\partial_y\sigma_{xz}\vert + \vert\partial_x\sigma_{yz}\vert+ \vert\partial_y\sigma_{yz}\vert\right)\dd\bx
 \]
 
 \end{block}
@@ -316,9 +319,11 @@ Criteria for a well-posed problem
  \begin{columns}
  \begin{column}{0.35\textwidth}
  \begin{itemize}
- \item Polyacrylamide hydrogels with fluorescent grid 
+  \item Mesenchymal stem cell
+ \item Polyacrylamide hydrogels
+ \item  Fluorescent beads in a regular grid
  \item High-resolution measurement of displacement field
- \item Hand-drawn cell boundary superimposed
+ \item Cell boundary estimated from raw bright-field image (superimposed)
  \end{itemize}
  \end{column}
  \begin{column}{0.7\textwidth}
