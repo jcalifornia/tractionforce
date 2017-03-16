@@ -112,7 +112,36 @@ Session S5: Machine Learning for Modeling and Control of Biological Systems I
 %%\includegraphics[width=0.9\textwidth]{figures/fi}
 %\end{frame}
 
-\begin{frame}{Traction force microscopy: displacements $\mathbf{u}$ measured}
+\begin{frame}{Traction force microscopy}
+\begin{columns}
+\begin{column}{0.45\textwidth}
+\includegraphics[width=0.9\textwidth]{figures/nihms748056f4.jpg}
+
+\emph{Plotnikov et. al. Methods Cell Biol. 2014}
+\end{column}
+\begin{column}{0.55\textwidth}
+
+Imaging focal cell adhesions by tracking the displacement of fluorescent markers placed within a medium
+
+\bigskip
+
+\begin{description}
+\item[A] Confocal image of human breast adenocarcinoma cell
+\item[B] Position of fluorescent beads
+\item[C] Displacement field for beads
+\item[D] Stress field
+\item[E] Stress magnitude
+\end{description}
+
+\bigskip
+
+\textbf{Goal:} Determine tangential traction stress at the surface of medium
+
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Linear elasticity theory for displacements $\mathbf{u}$}
 \begin{columns}
 \begin{column}{0.65\textwidth}
 \centering
@@ -121,7 +150,7 @@ Session S5: Machine Learning for Modeling and Control of Biological Systems I
 \begin{column}{0.35\textwidth}
 \begin{itemize}
 \item $\bsigma$ is tangential surface stress tensor, proportional to the $\mathbf{F}_\perp$
-\item $\mathbf{u}$ found exactly in closed-form for any fixed piecewise-polynomial approximation of $\bsigma$
+\item $\mathbf{u}$ found ``exactly'' in closed-form for any fixed piecewise-polynomial approximation of $\bsigma$
 \end{itemize}
 \end{column}
 \end{columns}
@@ -283,17 +312,30 @@ Criteria for a well-posed problem
 
 \end{frame}
 
- 
+ \begin{frame}{High-resolution data}
+ \begin{columns}
+ \begin{column}{0.35\textwidth}
+ \begin{itemize}
+ \item Polyacrylamide hydrogels with fluorescent grid 
+ \item High-resolution measurement of displacement field
+ \item Hand-drawn cell boundary superimposed
+ \end{itemize}
+ \end{column}
+ \begin{column}{0.7\textwidth}
+ \centering
+ \includegraphics[width=0.9\textwidth]{figures/fig0a}
+  
+ \emph{Courtesy of Gabriel Popescu, UIUC}
+  \end{column}
+  \end{columns}
+ \end{frame}
  
 \begin{frame}{Rotational invariance matters}
 \centering
-\includegraphics[width=0.85\textwidth]{figures/fig2}
-
-\smallskip
-\emph{Units:} $E\textrm(Young's\ modulus)$
+\includegraphics[width=0.88\textwidth]{figures/fig2}\ \rotatebox{90}{\scriptsize \qquad\qquad\qquad\qquad \emph{Units:} $E\textrm(Young's\ modulus)$}
 \end{frame}
 
-\begin{frame}{Force constraint matters}
+\begin{frame}{Force constraints matter}
 \centering
 \begin{columns}
 \begin{column}{0.6\textwidth}
@@ -325,7 +367,7 @@ Criteria for a well-posed problem
 \item Localization of the cell footprint is important in determining traction
 \begin{itemize}
 \item Extension: Joint force reconstruction and cell boundary determination
-\item Extesion: May do uncertainty quantification through Bayes
+\item Extension: Uncertainty quantification through Bayes
 \end{itemize}
 \end{itemize}
 \end{frame}
