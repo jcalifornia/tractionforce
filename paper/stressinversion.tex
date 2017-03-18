@@ -439,7 +439,7 @@ for some constants $C_x,C_y$.
 
 \begin{lem}
 \label{lem:affine_error}
-Let $\tilde{\bsigma}$ be an affine approximation to $\bsigma\in C^2(\Omega)$, and $\tilde{\u}$ be the corresponding displacement field completed from the approximate stress field. Then, 
+Let $\tilde{\bsigma}$ be an affine approximation to $\bsigma\in C^s(\Omega)$ for $s\in\mathbb{Z}^+$, and $\tilde{\u}$ be the corresponding displacement field completed from the approximate stress field. Then, 
 \begin{equation}
 \vert \tilde{\u}  - \u \vert \leq C (\delta x)^2
 \end{equation}
@@ -477,7 +477,7 @@ We implemented our regularized inversion method in Python version 3.5, where opt
 
 The results of this test are shown in Fig.~\ref{fig:fig2}. Here, we have compared reconstruction of the surface stress using our rotationally invariant norms of Eq.~\ref{eq:PhiL1Tr} and Eq.~\ref{eq:PhiTVTr} against alternate isotropic norms. As an alternative to the $L^1$ norm on the trace we compared
 \begin{equation}
-\Phi_{L1} = \int_\Omega \left( \sigma_{xz}(x,y) +\sigma_{yz}(x,y) \right)\d\x,
+\Phi_{L1} = \int_\Omega \left\vert \sigma_{xz}(x,y) +\sigma_{yz}(x,y) \right\vert\d\x,
 \end{equation} 
 and as alternatives to the total variation on the trace we looked at
  \begin{equation}
@@ -593,6 +593,7 @@ u_x =\sum_{n=0}^\infty \frac{U_x(\theta)}{r^n},
 which was obtained through binomial expansion of the Euclidea n distance functions in the denominators of Eq.~\ref{eq:Gzz0} and Eq.~\ref{eq:Gxy0}. TODO
 \end{proof}
       
+\subsection{Proof of~Lemma \ref{lem:affine_error}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
