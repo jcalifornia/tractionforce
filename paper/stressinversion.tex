@@ -333,7 +333,7 @@ where
 %\lefteqn{\langle G_{st} \rangle^{nmjk} = }\nonumber\\
 %&\qquad    \int_{y_k-\delta y/2}^{y_k+\delta y/2} \int_{x_j-\delta x/2}^{x_j+\delta x/2} G_{st}(x_n-x',y_m-y') \dd x' \dd y' \label{eq:G_ave} \\
 \lefteqn{\langle g(x,y)G_{st} \rangle^{nmjk} =}  \nonumber\\
-&\  \int_{y_k-\delta y/2}^{y_k+\delta y/2} \int_{x_j-\delta x/2}^{x_j+\delta x/2} g(x',y')G_{st}(x_n-x',y_m-y') \dd x' \dd y', \label{eq:G_ave2} 
+&\  \int_{y_k-\delta y/2}^{y_k+\delta y/2} \int_{x_j-\delta x/2}^{x_j+\delta x/2} g(x',y')G_{st}(x_n-x',y_m-y') \dd x' \dd y', \label{eq:G_ave} 
 \end{align}
 except that at the edges where we use one-sided differences so that we are only differentiating within $\Omega$. Explicit 
 closed-form expressions for the integrals represented by Eq.~\ref{eq:G_ave2} are given in the Supplemental Materials. A similar expression can be found for solving for $u_y$ (not shown).
@@ -416,7 +416,7 @@ subject to the constraints mentioned above,
 where $\lambda>0$ is a tunable parameter. This problem
  is in a standard form that is directly solvable using a variety of optimization routines.
   In our implementation, we use a second-order  quadratic cone solver. 
-\subsection{Cut-off}
+\subsection{Reducing computation by using a cut-off}
 To reduce the size of the system of equations described in Eqs.~\ref{eq:linearsystem1}--\ref{eq:linearsystemY}, we note that the Green's function falls off at a rate of $r^{-1}$. However,
 when combined with the zero-force constraint, the relationship between the displacements
 and the support of the stress field falls off at the much quicker rate of $r^{-2},$ under a
@@ -446,7 +446,7 @@ Let $\tilde{\bsigma}$ be an affine approximation to $\bsigma\in C^s(\Omega)$ for
 \end{lem}
 
 The decay of the influence of stress on the system provides justification for setting distance-based
-cut-offs specification of the linear system. Th effect of the cut-off is to limit the left-hand side of Eq.~\ref{eq:linearsystem1} to only locations within some maximal distance $R$ from the outline of the cell.
+cut-offs specification of the linear system. The effect of the cut-off is to limit the left-hand side of Eq.~\ref{eq:linearsystem1} to only locations within some maximal distance $R$ from the outline of the cell.
 The error in the solution of the inverse problem is dependent on the precision of the observations,
  the physical constants that describe the medium, and the maximum magnitude of the stress.
 
@@ -527,7 +527,7 @@ the problem should be rotationally invariant.
 \appendix
 
 \section{Integrals }
-In this section we provide closed-form expressions for the integrals in Eqs.~\ref{eq:G_ave} and~\ref{eq:G_ave2}.
+In this section we provide closed-form expressions for the integrals represented by Eq.~\ref{eq:G_ave}.
 Let $\Delta x_{nj}^+ = x_n - (x_j+\delta x/2),$ $\Delta x_{nj}^- = x_n - (x_j-\delta x/2),$ $\Delta y_{mk}^+ = y_m - (y_k+\delta y/2),$ and $\Delta y_{mk}^+ = y_m - (y_k-\delta y/2).$ Then,
 we have the averaged Greens functions
 \begin{align}
@@ -537,10 +537,10 @@ we have the averaged Greens functions
 where
 \begin{align}\allowdisplaybreaks
 f_{xx}(x,y) &= \frac{\nu+1}{\pi E}\Bigg[ x(1-\nu ) \log\left( \sqrt{x^2+y^2}+y\right) \nonumber\\
-&\qquad+ y \log\left(\sqrt{x^2+y^2} +x\right)-y  \Bigg] \\
+&\qquad+ y \log\left(\sqrt{x^2+y^2} +x\right)-y  \Bigg] \label{eq:fxx} \\
 f_{yy}(x,y) &= \frac{\nu+1}{\pi E}\Bigg[ y(1-\nu ) \log\left( \sqrt{x^2+y^2}+x\right) \nonumber\\
-&\qquad+ x \log\left(\sqrt{x^2+y^2} +y\right)-x  \Bigg] \\
-f_{xy}(x,y) &= -\frac{\nu(\nu+1)}{\pi E}\sqrt{x^2+y^2}.
+&\qquad+ x \log\left(\sqrt{x^2+y^2} +y\right)-x  \Bigg] \label{eq:fyy} \\
+f_{xy}(x,y) &= -\frac{\nu(\nu+1)}{\pi E}\sqrt{x^2+y^2}. \label{eq:fxy}
 \end{align}
 The first moments follow
 \begin{align}
@@ -552,7 +552,7 @@ The first moments follow
 where
 \begin{align}
 f^x_{xx}(x,y) &= \frac{\nu+1}{2\pi E} \Big[ (\nu+1)y\sqrt{x^2 + y^2} \nonumber\\
-&\qquad\qquad- (\nu-1) x^2\log\left(\sqrt{x^2 + y^2} +y  \right)  \Big],
+&\qquad\qquad- (\nu-1) x^2\log\left(\sqrt{x^2 + y^2} +y  \right)  \Big],\label{eq:fxxx}
 \end{align}
 \begin{align}
 \lefteqn{\langle yG_{xx}(x,y) \rangle^{nmjk} = \Big[f_{xx}( \Delta x_{nj}^+,\Delta y_{mk}^+) - f_{xx}( \Delta x_{nj}^+,\Delta y_{mk}^-) } \nonumber\\
@@ -563,7 +563,7 @@ f^x_{xx}(x,y) &= \frac{\nu+1}{2\pi E} \Big[ (\nu+1)y\sqrt{x^2 + y^2} \nonumber\\
 where
 \begin{align}
 f^y_{xx}(x,y) &=\frac{\nu+1}{2\pi E} \Bigg[y^2\log\left(\sqrt{x^2+y^2}+x \right)  \nonumber\\
-&\qquad- \sqrt{x^2+y^2}\left((2\nu-1)x + \frac{1}{2}\sqrt{x^2+y^2} \right)  \Bigg],
+&\qquad- \sqrt{x^2+y^2}\left((2\nu-1)x + \frac{1}{2}\sqrt{x^2+y^2} \right)  \Bigg], \label{eq:fyxx}
 \end{align}
 and
 \begin{align}
@@ -575,22 +575,43 @@ and
 where
 \begin{align}
 f_{xy}^x(x,y) &=\frac{\nu(\nu+1)}{\pi E}\Big[ \frac{y^2}{2}\log\left(\sqrt{x^2+y^2} +x \right) \nonumber\\
-&\qquad\qquad\qquad-\frac{1}{4}\sqrt{x^2+y^2}\left(\sqrt{x^2+y^2}+2x\right) \Big].
+&\qquad\qquad\qquad-\frac{1}{4}\sqrt{x^2+y^2}\left(\sqrt{x^2+y^2}+2x\right) \Big]. \label{eq:fxxy}
 \end{align}
 All of these expressions may be found through direct iterated evaluation of the integrals, noting that
-one may apply dominated convergence and then Fubini's theorem as long as one is not in the situation where $n=m$ and $j=k$. In the 
-special case where this condition holds true, one may evaluate the integral excluding the origin by a slice
-of width $\varepsilon$, in which case one may apply Fubini's theorem. Then one may take the limit of 
-the resulting expression as $\varepsilon\to0$, which is well-behaved.
+as long as $n\neq m$ or $j\neq k$ the integrand (effectively the Green's function) is bounded, hence making
+Fubini's theorem applicable given the compactly supported domains of integration.
+
+In the 
+special case where $n=m$ and $j=k$, these formulae also hold. This fact is found by decomposing the integration domain to
+exclude the origin, for instance in the manner
+\begin{equation}
+\int_{ -\Delta y/2 }^{\Delta y/2 }\int_{- \Delta x/2 }^{\Delta x/2 } \d\x = \lim_{\varepsilon\to0} \left( \int_\varepsilon^{\Delta y/2}  +  \int_{-\Delta y/2}^\varepsilon   \right)\int_{\Delta x/2}^{\Delta x/2} \d\x.~\label{eq:splitdomain}
+\end{equation}
+Since the antiderivatives of Eqs~\ref{eq:fxx},~\ref{eq:fyy},~\ref{eq:fxy},~\ref{eq:fxxx},~\ref{eq:fyxx}, and~\ref{eq:fxxy} all have well-defined limits with only removable discontinuities at the origin,  integrals of the Green's functions defined through Eq.~\ref{eq:splitdomain} all converge about the origin and the equations above also hold in the case where $n=m$ and $j=k$.
 
 \subsection{Proof of~Lemma \ref{lem:multipole}}
 
 \begin{proof}
-Note that $u_x$ and $u_y$ are symmetric in form. Hence, it will suffice to prove just one of these assertions. Consider the multipole expansion for $u_x$, 
+Note that $u_x$ and $u_y$ are symmetric in form. Hence, it will suffice to prove just one of these assertions. Consider the multipole expansion for $u_x$ at a fixed location $\x\not\in\Omega$, 
 \begin{align}
-u_x =\sum_{n=0}^\infty \frac{U_x(\theta)}{r^n},
+u_x(\x) =\sum_{n=0}^\infty \frac{U_x(\theta)}{|\x - \x_0|^n}, \label{eq:multipole}
 \end{align}
-which was obtained through binomial expansion of the Euclidea n distance functions in the denominators of Eq.~\ref{eq:Gzz0} and Eq.~\ref{eq:Gxy0}. TODO
+where $\x_0\in\Omega$ and $\cos\theta = \frac{(\x-\x_0,\x'-\x_0)} {|\x - \x_0| |\x'-\x_0|}$. Eq.~\ref{eq:multipole}  is obtained through binomial expansion of the Euclidean distance functions in the denominators of Eq.~\ref{eq:Gzz0} and Eq.~\ref{eq:Gxy0},
+\begin{align*}
+\lefteqn{|\x - \x'|^s = |\x-\x_0 - (\x'-\x_0) |^s }\\
+&\quad= \left[ |\x-\x_0|^2 -2 (\x-\x_0)(\x'-\x_0) + |\x'-\x_0|^2  \right]^{s/2}.
+\end{align*}
+In particular, since all the Green's functions scale with distance as $|\x-\x'|^{-1}$, we have the following approximation through the binomial expansion
+\begin{align}
+\lefteqn{\frac{1}{|\x-\x'|} =} \nonumber\\
+&  \frac{1}{|\x-\x_0|}\sum_{n=0}^\infty {n-\frac{1}{2} \choose n} \left[  \frac{2 (\x-\x_0)(\x'-\x_0) - |\x'-\x_0|^2 }{|\x-\x_0|} \right]^n \nonumber\\
+&=\frac{1}{|\x-\x_0|}\Bigg\{ 1 +    \frac{2 (\x-\x_0)(\x'-\x_0) - |\x'-\x_0|^2 }{2|\x-\x_0|}    \nonumber\\
+&\qquad+ \mathcal{O}(|\x-\x_0|^{-2})\Bigg\}.
+\end{align}
+Invoking the net force-free constraint, the first few terms of the expansion of Eq.~\ref{eq:multipole} are
+\begin{align}
+U_0 = 0
+\end{align}
 \end{proof}
       
 \subsection{Proof of~Lemma \ref{lem:affine_error}}
