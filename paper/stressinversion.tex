@@ -592,26 +592,35 @@ Since the antiderivatives of Eqs~\ref{eq:fxx},~\ref{eq:fyy},~\ref{eq:fxy},~\ref{
 \subsection{Proof of~Lemma \ref{lem:multipole}}
 
 \begin{proof}
-Note that $u_x$ and $u_y$ are symmetric in form. Hence, it will suffice to prove just one of these assertions. Consider the multipole expansion for $u_x$ at a fixed location $\x\not\in\Omega$, 
+Note that $u_x$ and $u_y$ are symmetric in form. Hence, it will suffice to prove just one of these assertions.
+Eq.~\ref{eq:UMODEL1x} can be written as
 \begin{align}
-u_x(\x) =\sum_{n=0}^\infty \frac{U_x(\theta)}{|\x - \x_0|^n}, \label{eq:multipole}
+u_x(\x) &= \frac{1+\nu}{\pi E} \int \dd \x \Bigg\{ \left[ \frac{\nu(x - x')^2}{|\x-\x'|^2} + 1-\nu \right]\frac{\sigma_x(\x')}{|\x-\x'|}  \nonumber\\
+&\quad+\nu\frac{(x-x')(y-y')}{|\x-\x'|^2}  \frac{\sigma_y(\x')}{|\x-\x'|}  \Bigg\} \nonumber\\
+&= \frac{1}{\pi E |\x|} \Bigg( \int \dd\x 
 \end{align}
-where $\x_0\in\Omega$ and $\cos\theta = \frac{(\x-\x_0,\x'-\x_0)} {|\x - \x_0| |\x'-\x_0|}$. Eq.~\ref{eq:multipole}  is obtained through binomial expansion of the Euclidean distance functions in the denominators of Eq.~\ref{eq:Gzz0} and Eq.~\ref{eq:Gxy0},
-\begin{align*}
-\lefteqn{|\x - \x'|^s = |\x-\x_0 - (\x'-\x_0) |^s }\\
-&\quad= \left[ |\x-\x_0|^2 -2 (\x-\x_0)(\x'-\x_0) + |\x'-\x_0|^2  \right]^{s/2}.
-\end{align*}
-In particular, since all the Green's functions scale with distance as $|\x-\x'|^{-1}$, we have the following approximation through the binomial expansion
+
+ Consider the multipole expansion for $u_x$ at a fixed location $\x\not\in\Omega$, 
 \begin{align}
-\lefteqn{\frac{1}{|\x-\x'|} =} \nonumber\\
-&  \frac{1}{|\x-\x_0|}\sum_{n=0}^\infty {n-\frac{1}{2} \choose n} \left[  \frac{2 (\x-\x_0)(\x'-\x_0) - |\x'-\x_0|^2 }{|\x-\x_0|} \right]^n \nonumber\\
-&=\frac{1}{|\x-\x_0|}\Bigg\{ 1 +    \frac{2 (\x-\x_0)(\x'-\x_0) - |\x'-\x_0|^2 }{2|\x-\x_0|}    \nonumber\\
-&\qquad+ \mathcal{O}(|\x-\x_0|^{-2})\Bigg\}.
+u_x(\x) =\sum_{n=0}^\infty \frac{U_x(\theta)}{|\x|^n}, \label{eq:multipole}
 \end{align}
-Invoking the net force-free constraint, the first few terms of the expansion of Eq.~\ref{eq:multipole} are
-\begin{align}
-U_0 = 0
-\end{align}
+where without loss of generality, the coordinate system is centered at some point $\mathbf{0}\in\Omega$.
+% and $\cos\theta = \frac{(\x-\x_0,\x'-\x_0)} {|\x - \x_0| |\x'-\x_0|}$. Eq.~\ref{eq:multipole}  is obtained through binomial expansion of the Euclidean distance functions in the denominators of Eq.~\ref{eq:Gzz0} and Eq.~\ref{eq:Gxy0},
+%\begin{align*}
+%\lefteqn{|\x - \x'|^s = |\x-\x_0 - (\x'-\x_0) |^s }\\
+%&\quad= \left[ |\x-\x_0|^2 -2 (\x-\x_0)(\x'-\x_0) + |\x'-\x_0|^2  \right]^{s/2}.
+%\end{align*}
+%In particular, since all the Green's functions scale with distance as $|\x-\x'|^{-1}$, we have the following approximation through the binomial expansion
+%\begin{align}
+%\lefteqn{\frac{1}{|\x-\x'|} =} \nonumber\\
+%&  \frac{1}{|\x-\x_0|}\sum_{n=0}^\infty {n-\frac{1}{2} \choose n} \left[  \frac{2 (\x-\x_0)(\x'-\x_0) - |\x'-\x_0|^2 }{|\x-\x_0|} \right]^n \nonumber\\
+%&=\frac{1}{|\x-\x_0|}\Bigg\{ 1 +    \frac{2 (\x-\x_0)(\x'-\x_0) - |\x'-\x_0|^2 }{2|\x-\x_0|}    \nonumber\\
+%&\qquad+ \mathcal{O}(|\x-\x_0|^{-2})\Bigg\}.
+%\end{align}
+%Invoking the net force-free constraint, the first few terms of the expansion of Eq.~\ref{eq:multipole} are
+%\begin{align}
+%U_0 = 0
+%\end{align}
 \end{proof}
       
 \subsection{Proof of~Lemma \ref{lem:affine_error}}
