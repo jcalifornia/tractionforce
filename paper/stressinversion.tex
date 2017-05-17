@@ -5,7 +5,9 @@
 %\documentclass[11pt]{article}
 %\documentclass{pnastwo}
 %\usepackage{color}
-\usepackage[pdftex,draft]{graphicx}
+\usepackage[pdftex]{graphicx}
+%\usepackage[pdftex,draft]{graphicx}
+
 \usepackage{epstopdf}
 \usepackage{bm}
 \usepackage{amssymb}
@@ -248,7 +250,7 @@ $\u(\r) \equiv [u_x \ u_y\  u_z]^\intercal = {\bf G^0}\Conv\F$.
 
 %\begin{equation}
 %u_{i}(\r) = \int \dd \r_{\perp}'\dd z'
-%G_{ij}(\r_{\perp}-\r_{\perp}',z-z')
+%G_{jk}(\r_{\perp}-\r_{\perp}',z-z')
 %F_{j}(\r_{\perp}', z'),
 %\label{UMODEL0}
 %\end{equation}
@@ -261,14 +263,14 @@ $\u(\r) \equiv [u_x \ u_y\  u_z]^\intercal = {\bf G^0}\Conv\F$.
 For our specific problem, we shall specialize the forces to surface
 stresses $\sigma_{x,y}$ that act on the plane perpendicular to the
 $\hat{z}$ axis. We define the in-plane stress distribution, at depth $z$, as
-$\bs(x,y,z) = \sigma_{xz}(x,y,z)\hat{x} + \sigma_{yz}(x,y,z)\hat{y}$. 
+$\bs(x,y,z) = \sigma_{x}(x,y,z)\hat{x} + \sigma_{y}(x,y,z)\hat{y}$. 
 The resulting surface-level displacement fields become
 
 \begin{align}
-u_{x}(x,y) &= \int_\Omega \dd x'\dd y'G_{xx}( x-x',y-y')\sigma_{xz}(x',y') \nonumber\\
-&\qquad +  \int_\Omega \dd x'\dd y'G_{xy}( x-x',y-y')\sigma_{yz}(x',y') \label{eq:UMODEL1x}  \\
-u_y(x,y) &= \int_\Omega \dd x'\dd y'G_{yx}( x-x',y-y')\sigma_{xz}(x',y') \nonumber\\
-&\qquad +  \int_\Omega \dd x'\dd y'G_{yy}( x-x',y-y')\sigma_{yz}(x',y'),  \label{eq:UMODEL1y}  
+u_{x}(x,y) &= \int_\Omega \dd x'\dd y'G_{xx}( x-x',y-y')\sigma_{x}(x',y') \nonumber\\
+&\qquad +  \int_\Omega \dd x'\dd y'G_{xy}( x-x',y-y')\sigma_{y}(x',y') \label{eq:UMODEL1x}  \\
+u_y(x,y) &= \int_\Omega \dd x'\dd y'G_{yx}( x-x',y-y')\sigma_{x}(x',y') \nonumber\\
+&\qquad +  \int_\Omega \dd x'\dd y'G_{yy}( x-x',y-y')\sigma_{y}(x',y'),  \label{eq:UMODEL1y}  
 \end{align}
 where
 \begin{equation}
@@ -276,7 +278,7 @@ G_{\cdot,\cdot}(x,y) = G^0_{\cdot,\cdot}(x,y,z=0),
 \end{equation}
 and by abuse of notation,
 \begin{equation}
-\sigma_{xz}(x,y) = \sigma_{xz}(x,y,z=0) \quad \sigma_{yz}(x,y) = \sigma_{yz}(x,y,z=0) .
+\sigma_{x}(x,y) = \sigma_{xz}(x,y,z=0) \quad \sigma_{y}(x,y) = \sigma_{yz}(x,y,z=0) .
 \end{equation}
 Note that tangential stresses can lead to displacement data in the normal direction.
 
@@ -305,13 +307,13 @@ Eqs.~\ref{eq:UMODEL1x} and~\ref{eq:UMODEL1y}, this contribution to the objective
 functional over the surface-stress function $\bs(\r_{\perp})$.  For simplicity, we will assume that 
 the data points are sampled over an uniform grid with coordinates given $\{ (x_j,y_k) : j\in\{1,2,\ldots,J\}, k\in\{1,2,\ldots,K\}\}.$
 
-In Eqs~\ref{eq:UMODEL1x} and~\ref{eq:UMODEL1y}, we have restricted the domain of integration to the extent of the cell, $\Omega$, to emphasize that  $\boldsymbol\sigma$ has compact support. As a consequence of compact support, for a fixed, discretized approximation of $\sigma_{xz},\sigma_{yz}$, the displacements can be obtained exactly by solving an equivalent system of linear equations of finite dimension.
+In Eqs~\ref{eq:UMODEL1x} and~\ref{eq:UMODEL1y}, we have restricted the domain of integration to the extent of the cell, $\Omega$, to emphasize that  $\boldsymbol\sigma$ has compact support. As a consequence of compact support, for a fixed, discretized approximation of $\sigma_{x},\sigma_{y}$, the displacements can be obtained exactly by solving an equivalent system of linear equations of finite dimension.
 
-Here we explicitely define this system of linear equations given a piecewise-affine approximation of the stress field. Let us consider the first-order approximation of $\sigma_{xz}$ and $\sigma_{yz}$ using central finite differences, for $x\in[x_j - \delta x/2, x_j+\delta x/2) \cap y\in[y_j-\delta y/2, y_j + \delta y /2)$,
+Here we explicitely define this system of linear equations given a piecewise-affine approximation of the stress field. Let us consider the first-order approximation of $\sigma_{x}$ and $\sigma_{y}$ using central finite differences, for $x\in[x_j - \delta x/2, x_j+\delta x/2) \cap y\in[y_j-\delta y/2, y_j + \delta y /2)$,
 \begin{align}
-\lefteqn{\sigma_{xz}(x,y) =\sigma_{xz}(x_i , y_j)  }\nonumber \\
-& \qquad+ (x-x_i)\frac{\sigma_{xz}(x_{i+1},y_j) -\sigma_{xz}(x_{i-1},y_j) }{2\delta x}  \nonumber\\
-&\qquad + (y-y_j)\frac{\sigma_{xz}(x_i,y_{j+1}) - \sigma_{xz}(x_i,y_{j-1}) }{2\delta y} \nonumber\\
+\lefteqn{\sigma_{x}(x,y) =\sigma_{x}(x_i , y_j)  }\nonumber \\
+& \qquad+ (x-x_i)\frac{\sigma_{x}(x_{i+1},y_j) -\sigma_{x}(x_{i-1},y_j) }{2\delta x}  \nonumber\\
+&\qquad + (y-y_j)\frac{\sigma_{x}(x_i,y_{j+1}) - \sigma_{x}(x_i,y_{j-1}) }{2\delta y} \nonumber\\
 &\qquad + \mathcal{O}(\delta x)^2 + \mathcal{O}(\delta y)^2,\label{eq:sigma_affine}
 \end{align}
 where $i,j$ denotes a tuple of grid coordinates. In effect, we are performing sub-pixel interpolation of the stress where the stress is fully-determined by its values at the grid vertices.
@@ -321,10 +323,10 @@ Now we may rewrite Eq.~\ref{eq:UMODEL1x}, for instance, to solve for the displac
 \begin{widetext}
 \begin{align}
  \lefteqn{u_x(x_n,y_m) =} \nonumber\\
- & \sum_{(x_j,y_k)\in\Omega} \Bigg\{ \Bigg[\sigma_{xz}(x_j,y_k)  - x_j\left(\frac{\sigma_{xz}(x_{j+1},y_k) - \sigma_{xz}(x_{j-1},y_k) }{2\delta x }    \right)    -y_k\left( \frac{\sigma_{xz}(x_j,y_{k+1}) -  \sigma_{xz}(x_j,y_{k-1}) }{2\delta y}\right) \Bigg]{ \langle G_{xx} \rangle}^{nmjk} \nonumber \\
-&\quad+\left[ \frac{\sigma_{xz}(x_{j+1},y_k) -  \sigma_{xz}(x_{j-1},y_k) }{2\delta x}   \right]\langle xG_{xx} \rangle^{nmjk} + \left[  \frac{\sigma_{xz}(x_j,y_{k+1}) - \sigma_{xz}(x_j,y_{k-1}) }{2\delta y} \right] \langle yG_{xx} \rangle^{nmjk}\nonumber\\
-&\quad+  \Bigg[\sigma_{yz}(x_j,y_k) -x_j\left(\frac{\sigma_{yz}(x_{j+1},y_k) - \sigma_{yz}(x_{j-1},y_k) }{2\delta x}    \right)    -y_k\left( \frac{\sigma_{yz}(x_j,y_{k+1}) - \sigma_{yz}(x_j,y_{k-1}) }{2\delta y}\right) \Bigg] \langle G_{xy} \rangle^{nmjk}\nonumber \\
-&\qquad +\left[ \frac{\sigma_{yz}(x_{j+1},y_k) -  \sigma_{yz}(x_{j-1},y_k) }{2\delta x}   \right]  \int_{y_k-\delta y/2}^{y_k+\delta y/2}  \langle xG_{xy} \rangle^{nmjk} + \left[  \frac{\sigma_{yz}(x_j,y_{k+1}) - \sigma_{yz}(x_j,y_{k-1}) }{2\delta y} \right] \langle yG_{xy} \rangle^{nmjk} \Bigg\},
+ & \sum_{(x_j,y_k)\in\Omega} \Bigg\{ \Bigg[\sigma_{x}(x_j,y_k)  - x_j\left(\frac{\sigma_{x}(x_{j+1},y_k) - \sigma_{x}(x_{j-1},y_k) }{2\delta x }    \right)    -y_k\left( \frac{\sigma_{x}(x_j,y_{k+1}) -  \sigma_{x}(x_j,y_{k-1}) }{2\delta y}\right) \Bigg]{ \langle G_{xx} \rangle}^{nmjk} \nonumber \\
+&\quad+\left[ \frac{\sigma_{x}(x_{j+1},y_k) -  \sigma_{x}(x_{j-1},y_k) }{2\delta x}   \right]\langle xG_{xx} \rangle^{nmjk} + \left[  \frac{\sigma_{x}(x_j,y_{k+1}) - \sigma_{x}(x_j,y_{k-1}) }{2\delta y} \right] \langle yG_{xx} \rangle^{nmjk}\nonumber\\
+&\quad+  \Bigg[\sigma_{y}(x_j,y_k) -x_j\left(\frac{\sigma_{y}(x_{j+1},y_k) - \sigma_{y}(x_{j-1},y_k) }{2\delta x}    \right)    -y_k\left( \frac{\sigma_{y}(x_j,y_{k+1}) - \sigma_{y}(x_j,y_{k-1}) }{2\delta y}\right) \Bigg] \langle G_{xy} \rangle^{nmjk}\nonumber \\
+&\qquad +\left[ \frac{\sigma_{y}(x_{j+1},y_k) -  \sigma_{y}(x_{j-1},y_k) }{2\delta x}   \right]  \int_{y_k-\delta y/2}^{y_k+\delta y/2}  \langle xG_{xy} \rangle^{nmjk} + \left[  \frac{\sigma_{y}(x_j,y_{k+1}) - \sigma_{y}(x_j,y_{k-1}) }{2\delta y} \right] \langle yG_{xy} \rangle^{nmjk} \Bigg\},
 \label{eq:ux_decomposed}
 \end{align}
 \end{widetext}
@@ -340,7 +342,7 @@ closed-form expressions for the integrals represented by Eq.~\ref{eq:G_ave2} are
 
 Regrouping terms, we can now define the linear system of equations for solving for $u_x$ at all grid points simultaneously,
 \begin{equation}
-u_x^{nm} = X^{nmjk}\sigma_{xz}(x_j,y_k) + Y^{nmjk}\sigma_{yz}(x_j,y_k),
+u_x^{nm} = X^{nmjk}\sigma_{x}(x_j,y_k) + Y^{nmjk}\sigma_{y}(x_j,y_k),
 \label{eq:linearsystem1}
 \end{equation}
 where summation is implied over each index tuple $(j,k)$, and the coefficient matrices are defined as
@@ -370,11 +372,11 @@ regularize this problem, by forcing the reconstruction to obey some physically-r
 characteristics of the surface stress. First, since we are assuming inertial
 effects are negligible, we require that the net force is zero, or that
 \begin{equation}
-\int_\Omega\sigma_{xz}(x,y)\dd x \dd y= \int_\Omega\sigma_{yz}(x,y)\dd x \dd y = 0 .
+\int_\Omega\sigma_{x}(x,y)\dd x \dd y= \int_\Omega\sigma_{y}(x,y)\dd x \dd y = 0 .
 \end{equation}
 Likewise, we require that there is no net torque, or that
 \begin{equation}
-\int_\Omega\sigma_{yz}(x,y)x \dd x \dd y  = \int_\Omega\sigma_{xz}(x,y)y \dd x \dd y .
+\int_\Omega x \sigma_{y}(x,y)\dd x \dd y  = \int_\Omega y \sigma_{x}(x,y)\dd x \dd y .
 \end{equation}
  
  %
@@ -386,11 +388,11 @@ the philosophy that rotation of the data should not affect the result, we penali
 norm of the invariants of the stress tensor. In the case of two-dimensional tensors, of which the surface stress
 is an example, the tensor invariants are the trace
 \begin{equation}
-\textrm{Tr}(\bsigma) = \sigma_{xz} + \sigma_{yz}
+\textrm{Tr}(\bsigma) = \sigma_{x} + \sigma_{y}
 \end{equation}
 and the determinant
 \begin{equation}
-\textrm{Det}(\bsigma) = \sigma_{xz} \sigma_{yz}.
+\textrm{Det}(\bsigma) = \sigma_{x} \sigma_{y}.
 \end{equation}
 Any regularization penalty imposed on the reconstruction problem must be a functional
 of these invariants in order to maintain rotational invariance, relative to the choice of observation frame,
@@ -398,13 +400,13 @@ of these invariants in order to maintain rotational invariance, relative to the 
  
 For this manuscript, we  investigate penalty functionals on the trace of the stress tensor. In particular, we are interested in the $L^1$ norm of the trace
 \begin{equation}
-\Phi_{L^1(Tr)} = \int_\Omega \vert \sigma_{xz}(x,y) + \sigma_{yz}(x,y)  \vert \dd x\dd y
+\Phi_{L^1(Tr)} = \int_\Omega \vert \sigma_{x}(x,y) + \sigma_{y}(x,y)  \vert \dd x\dd y
 \label{eq:PhiL1Tr}
 \end{equation}
 and total variation norm of the trace
 %
 \begin{equation}
-\Phi_{TV(Tr)} =  \int_\Omega | \nabla(\sigma_{xz}(x,y) + \sigma_{yz}(x,y) ) | \dd x\dd y.
+\Phi_{TV(Tr)} =  \int_\Omega | \nabla(\sigma_{x}(x,y) + \sigma_{y}(x,y) ) | \dd x\dd y.
 \label{eq:PhiTVTr}
 \end{equation}
 
@@ -439,9 +441,9 @@ for some constants $C_x,C_y$.
 
 \begin{lem}
 \label{lem:affine_error}
-Let $\tilde{\bsigma}$ be an affine approximation to $\bsigma\in C^s(\Omega)$ for $s\in\mathbb{Z}^+$, and $\tilde{\u}$ be the corresponding displacement field completed from the approximate stress field. Then, 
+Let $\tilde{\bsigma}$ be a piecewise affine approximation to $\bsigma$,   assumed to have a Lipschitz continuous Hessian, and let $\tilde{\u}$ be the corresponding displacement field completed from the approximate stress field. Then, 
 \begin{equation}
-\vert \tilde{\u}  - \u \vert \leq C (\delta x)^2
+\vert \tilde{\u}(\x)  - \u(\x) \vert \leq C (\delta x)^2
 \end{equation}
 \end{lem}
 
@@ -452,7 +454,7 @@ The error in the solution of the inverse problem is dependent on the precision o
 
 \begin{thm}
 \label{thm:main}
-Denote $\varepsilon^R(\x) = \hat{\bsigma}^R(\x) - \bsigma(\x)$ for $\x\in\Omega$, where $\sigma_{xz}\in L^1(\Omega)$, and $\hat{\bsigma}^R(\x)$ is the reconstructed stress field found by solving the optimization problem of Eq.~\ref{eq:objective} using only the displacement data within a maximal distance of $R$ from the cell. Then,
+Denote $\varepsilon^R(\x) = \hat{\bsigma}^R(\x) - \bsigma(\x)$ for $\x\in\Omega$, where $\sigma_{x}\in L^1(\Omega)$, and $\hat{\bsigma}^R(\x)$ is the reconstructed stress field found by solving the optimization problem of Eq.~\ref{eq:objective} using only the displacement data within a maximal distance of $R$ from the cell. Then,
 \begin{equation}
 \sup \vert \hat{\bsigma}^R(\x) - \hat{\bsigma}^\infty(\x) \vert \leq \frac{C}{R^2}
 \end{equation}
@@ -477,16 +479,16 @@ We implemented our regularized inversion method in Python version 3.5, where opt
 
 The results of this test are shown in Fig.~\ref{fig:fig2}. Here, we have compared reconstruction of the surface stress using our rotationally invariant norms of Eq.~\ref{eq:PhiL1Tr} and Eq.~\ref{eq:PhiTVTr} against alternate isotropic norms. As an alternative to the $L^1$ norm on the trace we compared
 \begin{equation}
-\Phi_{L1} = \int_\Omega \left\vert \sigma_{xz}(x,y) +\sigma_{yz}(x,y) \right\vert\d\x,
+\Phi_{L1} = \int_\Omega \left\vert \sigma_{x}(x,y) +\sigma_{y}(x,y) \right\vert\d\x,
 \end{equation} 
 and as alternatives to the total variation on the trace we looked at
  \begin{equation}
- \Phi_{TV_1} = \int_\Omega \left( \vert\nabla\sigma_{xz}(x,y) \vert + \vert\nabla\sigma_{yz}(x,y) \vert\right)\d\x
+ \Phi_{TV_1} = \int_\Omega \left( \vert\nabla\sigma_{x}(x,y) \vert + \vert\nabla\sigma_{y}(x,y) \vert\right)\d\x
  \label{eq:PhiTV1}
 \end{equation}
 and
 \begin{equation}
-\Phi_{TV_2} = \int_\Omega  \left( \vert\partial_x\sigma_{xz}\vert + \vert\partial_y\sigma_{xz}\vert + \vert\partial_x\sigma_{yz}\vert+ \vert\partial_y\sigma_{yz}\vert\right)\d\x.
+\Phi_{TV_2} = \int_\Omega  \left( \vert\partial_x\sigma_{x}\vert + \vert\partial_y\sigma_{x}\vert + \vert\partial_x\sigma_{y}\vert+ \vert\partial_y\sigma_{y}\vert\right)\d\x.
  \label{eq:PhiTV2}
 \end{equation}
  The adjustable parameter $\lambda$ was chosen in each instance by examining the balance between data mismatch and regularity using trade-off curves shown in Fig.~\ref{fig:fig2}, and taking the value for $\lambda$ that yields a point farthest away from the line  segment joining the ends of the plot. In Fig.~\ref{fig:fig2}, the chosen value of $\lambda$ corresponds to the given balance between regularity and data fidelity marked by the red circle. The solution corresponding to this particular value of $\lambda$ is shown in the middle column on the right. For reference, under-regularized solutions, corresponding to the green  circle in the trade-off plot, and over-regularized solutions, corresponding to black circle, are also given. Each row in Fig.~\ref{fig:fig2} corresponds to the use of a different regularization penalty functional. In all of these reconstructions, we have imposed that the surface stress is both force-free and torque free, and also that the support of the stress is within given cell boundaries.
@@ -594,7 +596,7 @@ Since the antiderivatives of Eqs~\ref{eq:fxx},~\ref{eq:fyy},~\ref{eq:fxy},~\ref{
 \begin{proof}
 Note that $u_x$ and $u_y$ are symmetric in form. Hence, it will suffice to prove just one of these assertions. Eq.~\ref{eq:UMODEL1x} can be written as
 \begin{align}
-u_x(\x) &= \frac{1+\nu}{\pi E} \int \frac{\dd \x}{|\x-\x'|} \Bigg\{ \left[ \frac{\nu(x - x')^2}{|\x-\x'|^2} + 1-\nu \right]\sigma_x(\x')  \nonumber\\
+u_x(\x) &= \frac{1+\nu}{\pi E} \int \frac{\dd \x}{|\x-\x'|} \Bigg\{ \left[ \frac{\nu(x - x')^2}{|\x-\x'|^2} + 1-\nu \right]\sigma_{x}(\x')  \nonumber\\
 &\quad+\nu\frac{(x-x')(y-y')}{|\x-\x'|^2} \sigma_y(\x')  \Bigg\} \nonumber\\
 &= \frac{1+\nu}{\pi E}   \int \rho(\x')    \frac{\dd \x'}{|\x-\x'|} \label{eq:rhoeq}
 \end{align}
@@ -608,12 +610,13 @@ where the series converges due to the fact that $|\x| > |\x'|$, since $\x\not\in
 Using the fact that $\int \bsigma(\x)\d\x = \mathbf{0}$, one finds that
 %
 \begin{align}
-\lefteqn{\int \rho(\x')\d\x' }\nonumber\\
-&= \nu\int\left[ \frac{(x - x')^2}{|\x-\x'|^2} \sigma_x(\x') +  \frac{(x-x')(y-y')}{|\x-\x'|^2} \sigma_y(\x')  \right]\d\x' \nonumber\\
-&=\frac{\nu}{|\x|^2}\int\left[ \frac{(x - x')^2\sigma_x(\x')  + (x-x')(y-y')\sigma_y(\x') }{1- \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2}} \right]\d\x' \nonumber\\
-&= \frac{\nu}{|\x|^2}\int\Bigg[  (x - x')^2\sigma_x(\x')  + (x-x')(y-y')\sigma_y(\x')  \Bigg] \nonumber\\
+\lefteqn{\int \rho(\x')\d\x'  =  \int (1-\nu)\sigma_x(\x')\d\x}\nonumber\\
+&\quad+\nu\int\left[ \frac{(x - x')^2}{|\x-\x'|^2} \sigma_{x}(\x') +  \frac{(x-x')(y-y')}{|\x-\x'|^2} \sigma_y(\x')  \right]\d\x' \nonumber\\
+&=\frac{\nu}{|\x|^2}\int\left[ \frac{(x - x')^2\sigma_{x}(\x')  + (x-x')(y-y')\sigma_y(\x') }{1- \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2}} \right]\d\x' \nonumber\\
+&= \frac{\nu}{|\x|^2}\int\Bigg[  (x - x')^2\sigma_{x}(\x')  + (x-x')(y-y')\sigma_y(\x')  \Bigg] \nonumber\\
 &\qquad\qquad\qquad\times\sum_{k=0}^\infty \left[  \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2} \right]^k \d\x'
 \end{align}
+Hence, it is evident that this integral of $\mathcal{O}(|\x|^{-2})$.
 
 % and $\cos\theta = \frac{(\x-\x_0,\x'-\x_0)} {|\x - \x_0| |\x'-\x_0|}$. Eq.~\ref{eq:multipole}  is obtained through binomial expansion of the Euclidean distance functions in the denominators of Eq.~\ref{eq:Gzz0} and Eq.~\ref{eq:Gxy0},
 %\begin{align*}
@@ -635,15 +638,22 @@ Using the fact that $\int \bsigma(\x)\d\x = \mathbf{0}$, one finds that
       
 \subsection{Proof of~Lemma \ref{lem:affine_error}}
 
-Let $\tilde{\bsigma}$ be the piecewise affine approximation of the stress field $\bsigma$.
-By the Taylor remainder theorem, one sees that
+Let $\tilde{\bsigma}$ be the piecewise affine approximation of the stress field $\bsigma$, and $\x\in\Omega_{jk}$. Then,
+by the Taylor remainder theorem, one sees that
 $$
-|\bsigma - \tilde{\bsigma}| \leq \frac{M (|\delta x| + |\delta y|)^2}{2!}.
+\sigma_{x}(\x) - \tilde{\sigma}_x(\x) = \frac{1}{2}(\x-\x_{jk})^\intercal\d^2\sigma_{x}(\mathbf{c}_{jk})(\x-\x_{jk})
 $$
+where $\mathbf{c}_{jk}\in\Omega_{jk}$ and $\x_{jk}\in\Omega_{jk}$ is the point about which interpolation is performed.
 Hence,
 \begin{align}
-|u_x(\x) - \tilde{u}_x(\x)| &\leq \left\vert\int G_x(\x-\x')(\sigma_x(\x') -\tilde\sigma_x(\x') ) \d\x'  \right\vert \nonumber\\
-&\quad + \left\vert\int G_y(\x-\x')(\sigma_x(\x') -\tilde\sigma_y(\x') ) \d\x'  \right\vert \nonumber\\
+\lefteqn{u_x(\x) - \tilde{u}_x(\x)  = \sum_{j,k}\int_{\Omega_{jk}} G_{xx} (\x,\x')(\sigma_{x}(\x') - \tilde{\sigma}_x(\x')) \d\x } \nonumber\\
+&\qquad+\sum_{j,k}\int_{\Omega_{jk}} G_{xy} (\x,\x')(\sigma_{y}(\x') - \tilde{\sigma}_y(\x')) \d\x \nonumber\\
+&= \sum_{j,k} \frac{\d_{xx}^2\sigma_x(\mathbf{c}_{jk})}{2}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (x'-x_j)^2 \d\x \nonumber\\
+&  + \sum_{j,k} {\d_{xy}^2\sigma_x(\mathbf{c}_{jk})}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (x'-x_j)(y'-y_k)\d\x \nonumber\\
+&\quad + \sum_{j,k} \frac{\d_{yy}^2\sigma_x(\mathbf{c}_{jk})}{2}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (y'-y_k)^2\d\x \nonumber\\
+&\quad + \sum_{j,k} \frac{\d_{xx}^2\sigma_y(\mathbf{a}_{jk})}{2}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (x'-x_j)^2\d\x \nonumber\\
+&  + \sum_{j,k} {\d_{xy}^2\sigma_y(\mathbf{a}_{jk})}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (x'-x_j)(y'-y_k)\d\x \nonumber\\
+&\quad + \sum_{j,k} \frac{\d_{yy}^2\sigma_y(\mathbf{a}_{jk})}{2}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (y'-y_k)^2\d\x 
 \end{align}
 
 \subsection{Proof of~Theorem \ref{thm:main}}
