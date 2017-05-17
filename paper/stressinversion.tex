@@ -592,19 +592,29 @@ Since the antiderivatives of Eqs~\ref{eq:fxx},~\ref{eq:fyy},~\ref{eq:fxy},~\ref{
 \subsection{Proof of~Lemma \ref{lem:multipole}}
 
 \begin{proof}
-Note that $u_x$ and $u_y$ are symmetric in form. Hence, it will suffice to prove just one of these assertions.
-Eq.~\ref{eq:UMODEL1x} can be written as
+Note that $u_x$ and $u_y$ are symmetric in form. Hence, it will suffice to prove just one of these assertions. Eq.~\ref{eq:UMODEL1x} can be written as
 \begin{align}
-u_x(\x) &= \frac{1+\nu}{\pi E} \int \dd \x \Bigg\{ \left[ \frac{\nu(x - x')^2}{|\x-\x'|^2} + 1-\nu \right]\frac{\sigma_x(\x')}{|\x-\x'|}  \nonumber\\
-&\quad+\nu\frac{(x-x')(y-y')}{|\x-\x'|^2}  \frac{\sigma_y(\x')}{|\x-\x'|}  \Bigg\} \nonumber\\
-&= \frac{1}{\pi E |\x|} \Bigg( \int \dd\x 
+u_x(\x) &= \frac{1+\nu}{\pi E} \int \frac{\dd \x}{|\x-\x'|} \Bigg\{ \left[ \frac{\nu(x - x')^2}{|\x-\x'|^2} + 1-\nu \right]\sigma_x(\x')  \nonumber\\
+&\quad+\nu\frac{(x-x')(y-y')}{|\x-\x'|^2} \sigma_y(\x')  \Bigg\} \nonumber\\
+&= \frac{1+\nu}{\pi E}   \int \rho(\x')    \frac{\dd \x'}{|\x-\x'|} \label{eq:rhoeq}
+\end{align}
+where $\rho(\x)$ is $\mathcal{O}(1)$ as $\vert\x\vert\to\infty$. Without loss of generality, we assume that the coordinate system is centered at some point $\mathbf{0}\in\Omega$. The Euclidean distances can then be represented using using the binomial expansion,
+\begin{align}
+\frac{1}{|\x-\x'|^p} &= \frac{1}{|\x|^p}\frac{1}{\left(1 - \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2} \right)^p } \nonumber\\
+&= \frac{1}{|\x|^p}\sum_{k=0}^\infty {{p+k-1}\choose{k}} \left(  \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2} \right)^k,
+\end{align} 
+where the series converges due to the fact that $|\x| > |\x'|$, since $\x\not\in\Omega$, whereas $\x'\in\Omega$. Plugging this series into the last line of Eq.~\ref{eq:rhoeq}, one sees that it in order to show that the magnitude of $u_x(\x)$ is $\mathcal{O}(|\x|^{-2})$, it suffices to show that $\int \rho(\x')\dd\x' \leq \mathcal{O}(|\x|^{-1})$.
+
+Using the fact that $\int \bsigma(\x)\d\x = \mathbf{0}$, one finds that
+%
+\begin{align}
+\lefteqn{\int \rho(\x')\d\x' }\nonumber\\
+&= \nu\int\left[ \frac{(x - x')^2}{|\x-\x'|^2} \sigma_x(\x') +  \frac{(x-x')(y-y')}{|\x-\x'|^2} \sigma_y(\x')  \right]\d\x' \nonumber\\
+&=\frac{\nu}{|\x|^2}\int\left[ \frac{(x - x')^2\sigma_x(\x')  + (x-x')(y-y')\sigma_y(\x') }{1- \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2}} \right]\d\x' \nonumber\\
+&= \frac{\nu}{|\x|^2}\int\Bigg[  (x - x')^2\sigma_x(\x')  + (x-x')(y-y')\sigma_y(\x')  \Bigg] \nonumber\\
+&\qquad\qquad\qquad\times\sum_{k=0}^\infty \left[  \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2} \right]^k \d\x'
 \end{align}
 
- Consider the multipole expansion for $u_x$ at a fixed location $\x\not\in\Omega$, 
-\begin{align}
-u_x(\x) =\sum_{n=0}^\infty \frac{U_x(\theta)}{|\x|^n}, \label{eq:multipole}
-\end{align}
-where without loss of generality, the coordinate system is centered at some point $\mathbf{0}\in\Omega$.
 % and $\cos\theta = \frac{(\x-\x_0,\x'-\x_0)} {|\x - \x_0| |\x'-\x_0|}$. Eq.~\ref{eq:multipole}  is obtained through binomial expansion of the Euclidean distance functions in the denominators of Eq.~\ref{eq:Gzz0} and Eq.~\ref{eq:Gxy0},
 %\begin{align*}
 %\lefteqn{|\x - \x'|^s = |\x-\x_0 - (\x'-\x_0) |^s }\\
@@ -625,6 +635,18 @@ where without loss of generality, the coordinate system is centered at some poin
       
 \subsection{Proof of~Lemma \ref{lem:affine_error}}
 
+Let $\tilde{\bsigma}$ be the piecewise affine approximation of the stress field $\bsigma$.
+By the Taylor remainder theorem, one sees that
+$$
+|\bsigma - \tilde{\bsigma}| \leq \frac{M (|\delta x| + |\delta y|)^2}{2!}.
+$$
+Hence,
+\begin{align}
+|u_x(\x) - \tilde{u}_x(\x)| &\leq \left\vert\int G_x(\x-\x')(\sigma_x(\x') -\tilde\sigma_x(\x') ) \d\x'  \right\vert \nonumber\\
+&\quad + \left\vert\int G_y(\x-\x')(\sigma_x(\x') -\tilde\sigma_y(\x') ) \d\x'  \right\vert \nonumber\\
+\end{align}
+
+\subsection{Proof of~Theorem \ref{thm:main}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
