@@ -5,8 +5,8 @@
 %\documentclass[11pt]{article}
 %\documentclass{pnastwo}
 %\usepackage{color}
-\usepackage[pdftex]{graphicx}
-%\usepackage[pdftex,draft]{graphicx}
+%\usepackage[pdftex]{graphicx}
+\usepackage[pdftex,draft]{graphicx}
 
 \usepackage{epstopdf}
 \usepackage{bm}
@@ -427,13 +427,17 @@ made.
 
 \begin{lem} 
       \label{lem:multipole}
-Let $\Omega = supp(\bsigma)\subset \mathbb{R}^2$ be compact, and assume that $\bsigma\in L^1(\Omega)$. For a fixed $\mathbf{x}\not\in\Omega$, denote $D(\mathbf{x}) = \inf\{ || \mathbf{x} -\mathbf{y}|| : \mathbf{y}\in\Omega \}$. Then, for $\mathbf{x}$ where $D(\mathbf{x})\geq R>0$, 
+Let $\Omega = supp(\bsigma)\subset \mathbb{R}^2$ be compact, such that $\bsigma$ is force-free.  For a fixed $\mathbf{x}\not\in\textrm{conv}(\Omega)$,
 \begin{equation}
-\vert u_x(\mathbf{x}) \vert \leq \frac{C_x\norm{\bsigma}_1}{R^2}
+u_x(\x) = \mathcal{O}(|\x|^{-2}).
+\end{equation}
+Furthermore, if we assume that $\bsigma\in L^1(\Omega)$, then
+\begin{equation}
+\vert u_x(\mathbf{x}) \vert \leq \frac{C_x\norm{\bsigma}_1}{|\x|^2}
 \end{equation}      
 and
 \begin{equation}
-\vert u_y(\mathbf{x}) \vert \leq \frac{C_x\norm{\bsigma}_1}{R^2}
+\vert u_y(\mathbf{x}) \vert \leq \frac{C_x\norm{\bsigma}_1}{|\x|^2}
 \end{equation}      
 for some constants $C_x,C_y$.
 
@@ -598,25 +602,41 @@ Note that $u_x$ and $u_y$ are symmetric in form. Hence, it will suffice to prove
 \begin{align}
 u_x(\x) &= \frac{1+\nu}{\pi E} \int \frac{\dd \x}{|\x-\x'|} \Bigg\{ \left[ \frac{\nu(x - x')^2}{|\x-\x'|^2} + 1-\nu \right]\sigma_{x}(\x')  \nonumber\\
 &\quad+\nu\frac{(x-x')(y-y')}{|\x-\x'|^2} \sigma_y(\x')  \Bigg\} \nonumber\\
-&= \frac{1+\nu}{\pi E}   \int \rho(\x')    \frac{\dd \x'}{|\x-\x'|} \label{eq:rhoeq}
+&= \frac{1+\nu}{\pi E}   \int \rho(\x,\x')    \frac{\dd \x'}{|\x-\x'|} \label{eq:rhoeq}
 \end{align}
-where $\rho(\x)$ is $\mathcal{O}(1)$ as $\vert\x\vert\to\infty$. Without loss of generality, we assume that the coordinate system is centered at some point $\mathbf{0}\in\Omega$. The Euclidean distances can then be represented using using the binomial expansion,
+where $\rho(\x,\x')$ is $\mathcal{O}(1)$ as $\vert\x\vert\to\infty$. Without loss of generality, we assume that the coordinate system is centered at some point $\mathbf{0}\in\Omega$. The Euclidean distances can then be represented through the binomial expansion,
 \begin{align}
 \frac{1}{|\x-\x'|^p} &= \frac{1}{|\x|^p}\frac{1}{\left(1 - \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2} \right)^p } \nonumber\\
-&= \frac{1}{|\x|^p}\sum_{k=0}^\infty {{p+k-1}\choose{k}} \left(  \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2} \right)^k,
+&= \frac{1}{|\x|^p}\sum_{k=0}^\infty {{p+k-1}\choose{k}} 
+{\underbrace{\left(  \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2} \right)}_{\mathcal{O}(|\x|^{-1})}}^k,
 \end{align} 
-where the series converges due to the fact that $|\x| > |\x'|$, since $\x\not\in\Omega$, whereas $\x'\in\Omega$. Plugging this series into the last line of Eq.~\ref{eq:rhoeq}, one sees that it in order to show that the magnitude of $u_x(\x)$ is $\mathcal{O}(|\x|^{-2})$, it suffices to show that $\int \rho(\x')\dd\x' \leq \mathcal{O}(|\x|^{-1})$.
+where the series converges due to the fact that $|\x| > |\x'|$, since $\x\not\in\Omega$, whereas $\x'\in\Omega$. Plugging this series into the last line of Eq.~\ref{eq:rhoeq}, one sees that it in order to show that the magnitude of $u_x(\x)$ is $\mathcal{O}(|\x|^{-2})$, it suffices to show that $\int \rho(\x,\x')\dd\x' \leq \mathcal{O}(|\x|^{-1})$.
 
 Using the fact that $\int \bsigma(\x)\d\x = \mathbf{0}$, one finds that
 %
 \begin{align}
-\lefteqn{\int \rho(\x')\d\x'  =  \int (1-\nu)\sigma_x(\x')\d\x}\nonumber\\
+\lefteqn{\int \rho(\x,\x')\d\x'  =  \int (1-\nu)\sigma_x(\x')\d\x'}\nonumber\\
 &\quad+\nu\int\left[ \frac{(x - x')^2}{|\x-\x'|^2} \sigma_{x}(\x') +  \frac{(x-x')(y-y')}{|\x-\x'|^2} \sigma_y(\x')  \right]\d\x' \nonumber\\
-&=\frac{\nu}{|\x|^2}\int\left[ \frac{(x - x')^2\sigma_{x}(\x')  + (x-x')(y-y')\sigma_y(\x') }{1- \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2}} \right]\d\x' \nonumber\\
+%&=\frac{\nu}{|\x|^2}\int\left[ \frac{(x - x')^2\sigma_{x}(\x')  + (x-x')(y-y')\sigma_y(\x') }{1- \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2}} \right]\d\x' \nonumber\\
 &= \frac{\nu}{|\x|^2}\int\Bigg[  (x - x')^2\sigma_{x}(\x')  + (x-x')(y-y')\sigma_y(\x')  \Bigg] \nonumber\\
-&\qquad\qquad\qquad\times\sum_{k=0}^\infty \left[  \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2} \right]^k \d\x'
+&\qquad\qquad\qquad\times\sum_{k=0}^\infty \left[  \frac{2\x\cdot\x' - |\x'|^2}{|\x|^2} \right]^k \d\x'.
 \end{align}
-Hence, it is evident that this integral of $\mathcal{O}(|\x|^{-2})$.
+Expanding the leading order term of this expression, we see that
+\begin{align*}
+\lefteqn{\int\rho(\x,\x')\d\x } \nonumber\\
+&= \frac{\nu}{|\x|^2}\int\Bigg[  (x - x')^2\sigma_{x}(\x')  + (x-x')(y-y')\sigma_y(\x')  \Bigg] \nonumber\\
+&\qquad\times[1+\mathcal{O}(|\x|^{-1}) ]\d\x' \nonumber\\
+&= \frac{\nu}{|\x|^2}  \Bigg[  -2x\int x'\sigma_x(\x')\d\x'  + \int x'^2\sigma_x(\x')\d\x'  \nonumber\\
+&\qquad  - x\int y' \sigma_y(\x') \d\x'- y\int x'\sigma_y(\x')\d\x' \nonumber\\
+&\qquad\qquad + \int x'y' \sigma_y(\x') \d\x'\Bigg][1+\mathcal{O}(|\x|^{-1}) ]\nonumber\\
+&=\mathcal{O}(|\x|^{-1}).
+\end{align*}
+Hence, it is evident that this integral of $\mathcal{O}(|\x|^{-2})$, where to the leading order we have
+\begin{align}
+\lefteqn{u_x(\x) = \frac{1+\nu}{\pi E |\x|^2}\Bigg[ -2\frac{x}{|\x|}\int x'\sigma_x(\x')\d\x' - \frac{x}{|\x|}\int y' \sigma_y(\x') \d\x'  }\nonumber\\
+&\qquad- \frac{y}{|\x|}\int x'\sigma_y(\x')\d\x' + 1-\nu \Bigg],
+\end{align}
+ignoring the fact that this expression also contains some information at lower orders.
 
 % and $\cos\theta = \frac{(\x-\x_0,\x'-\x_0)} {|\x - \x_0| |\x'-\x_0|}$. Eq.~\ref{eq:multipole}  is obtained through binomial expansion of the Euclidean distance functions in the denominators of Eq.~\ref{eq:Gzz0} and Eq.~\ref{eq:Gxy0},
 %\begin{align*}
@@ -643,7 +663,11 @@ by the Taylor remainder theorem, one sees that
 $$
 \sigma_{x}(\x) - \tilde{\sigma}_x(\x) = \frac{1}{2}(\x-\x_{jk})^\intercal\d^2\sigma_{x}(\mathbf{c}_{jk})(\x-\x_{jk})
 $$
-where $\mathbf{c}_{jk}\in\Omega_{jk}$ and $\x_{jk}\in\Omega_{jk}$ is the point about which interpolation is performed.
+and
+$$
+\sigma_{y}(\x) - \tilde{\sigma}_x(\x) = \frac{1}{2}(\x-\x_{jk})^\intercal\d^2\sigma_{x}(\mathbf{a}_{jk})(\x-\x_{jk})
+$$
+where $\mathbf{c}_{jk},\mathbf{a}_{jk}\in\Omega_{jk}$ and $\x_{jk}\in\Omega_{jk}$ is the point about which interpolation is performed.
 Hence,
 \begin{align}
 \lefteqn{u_x(\x) - \tilde{u}_x(\x)  = \sum_{j,k}\int_{\Omega_{jk}} G_{xx} (\x,\x')(\sigma_{x}(\x') - \tilde{\sigma}_x(\x')) \d\x } \nonumber\\
@@ -657,6 +681,14 @@ Hence,
 \end{align}
 
 \subsection{Proof of~Theorem \ref{thm:main}}
+
+Consider the data penalty term $\Phi_{\textrm{data}}$ of the optimization problem
+\begin{align*}
+\Phi_{\rm data}[\bs] &=\sum_{i=1}^{M}\vert \u^{\rm
+  data}(\r_{i})- \u(\r_i)\vert^{2}  + \sum_{i=M+1}^{N}\vert \u^{\rm
+  data}(\r_{i})- \u(\r_i)\vert^{2} 
+\end{align*}
+where the first $M$ data points are all within a maximal cut off distance of $R$ within the boundary of the cell and the remaining $N-M$ datapoints lie outside this distance.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
