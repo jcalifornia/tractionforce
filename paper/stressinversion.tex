@@ -535,14 +535,14 @@ TODO... result needs refinement
 
 We implemented our regularized inversion method in Python version 3.5,
 where optimization is performed using the \texttt{cvxpy} package with
-the \texttt{ecos} solver.  Our implementation can be found at
+the \texttt{ecos} solver.  Our implementation is available at
 \url{https://github.com/joshchang/tractionforce}. 
 
 First we tested our method on simulated data consisting of two different force- and
 torque-free test stress fields. The first test stress field we consider is 
 
 \begin{equation}
-\sigma_{rz}(r,\theta) = f_{r} \sin m\theta.\,\, \sigma_{\theta z}(r,\theta) = f_{\theta} \cos n\theta,
+\sigma_{rz}(r,\theta) = f_{r} \sin (m\theta)\quad \sigma_{\theta z}(r,\theta) = f_{\theta} \cos (n\theta),
 \end{equation}
 %
 for $a < r < 1$, and zero otherwise. Here, $m,n$ are integers and if
@@ -632,7 +632,7 @@ substrate \cite{POPESCU}.  Both $x$ and $y$-displacements at a resolution of the
 patterned grid spacing can be measured, as shown in Fig.~\ref{DATA}
 
 \begin{figure}
-\includegraphics[width=\linewidth]{fig2}
+\includegraphics[width=\linewidth]{fig0a}
 \caption{\textbf{Bright field image and displacements.} (a) Raw bight
   field image of a mesenchymal stem cell. The cell footprint boundary
   is estimated from segmentation. (b) and (c) The $x-$ and
@@ -839,7 +839,7 @@ where $\rho(\r,\r')$ is $\mathcal{O}(1)$ as $\vert\r\vert\to\infty$. Without los
 \begin{align}
 \frac{1}{|\r-\r'|^p} &= \frac{1}{|\r|^p}\frac{1}{\left(1 - \frac{2\r\cdot\r' - |\r'|^2}{|\r|^2} \right)^p } \nonumber\\
 &= \frac{1}{|\r|^p}\sum_{k=0}^\infty {{p+k-1}\choose{k}} 
-{\underbrace{\left(  \frac{2\r\cdot\r' - |\r'|^2}{|\r|^2} \right)}_{\mathcal{O}(|\r|^{-1})}}^k,
+{\left( \underbrace{ \frac{2\r\cdot\r' - |\r'|^2}{|\r|^2}}_{\mathcal{O}(|\r|^{-1})} \right)}^k,
 \end{align} 
 where the series converges due to the fact that $|\r| > |\r'|$, since $\r\not\in\Omega$, whereas $\r'\in\Omega$. Plugging this series into the last line of Eq.~\ref{eq:rhoeq}, one sees that it in order to show that the magnitude of $u_x(\r)$ is $\mathcal{O}(|\r|^{-2})$, it suffices to show that $\int \rho(\r,\r')\dd\r' \leq \mathcal{O}(|\r|^{-1})$.
 
