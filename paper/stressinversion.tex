@@ -475,25 +475,33 @@ Eqs.~\ref{eq:linearsystem1}--\ref{eq:linearsystemY}, we note that the
 Green's function falls off at a rate of $|\r|^{-1}$. However, when
 combined with the zero-force constraint, the relationship between the
 displacements and the support of the stress field falls off at the
-much quicker rate of $|r|^{-2},$ under a set of reasonable assumptions
+much quicker rate of $|\r|^{-2},$ under a set of reasonable assumptions
 that are consistent with the choice of regularization that we have
 made.
 
 \begin{lem} 
       \label{lem:multipole}
 Let $\Omega = supp(\bsigma)\subset \mathbb{R}^2$ be compact, and
-assume that $\bsigma\in L^1(\Omega)$. For a fixed
-$\mathbf{x}\not\in\Omega$, denote $D(\mathbf{x}) = \inf\{ ||
-\mathbf{x} -\mathbf{y}|| : \mathbf{y}\in\Omega \}$. Then, for
-$\mathbf{x}$ where $D(\mathbf{x})\geq R>0$,
-\begin{equation}
-\vert u_x(\mathbf{x}) \vert \leq \frac{C_x\norm{\bsigma}_1}{R^2}
-\end{equation}      
-and
-\begin{equation}
-\vert u_y(\mathbf{x}) \vert \leq \frac{C_x\norm{\bsigma}_1}{R^2}
-\end{equation}      
-for some constants $C_x,C_y$.
+assume that $\bsigma\in L^1(\Omega)$, such that $\int \bsigma(\r)\d\r = \mathbf{0}$. Then,
+as $\mathbf{r}\to\infty$,
+%
+\[
+u_x(\r) = \mathcal{O}\left( |\r|^{-2} \right).
+\]
+
+% For a fixed
+%$\mathbf{x}\not\in\Omega$, denote $D(\mathbf{x}) = \inf\{ ||
+%\mathbf{x} -\mathbf{y}|| : \mathbf{y}\in\Omega \}$. Then, for
+%$\mathbf{x}$ where $D(\mathbf{x})\geq R>0$,
+%\begin{equation}
+%\vert u_x(\mathbf{x}) \vert \leq \frac{C_x\norm{\bsigma}_1}{R^2}
+%\end{equation}      
+%and
+%\begin{equation}
+%\vert u_y(\mathbf{x}) \vert \leq \frac{C_x\norm{\bsigma}_1}{R^2}
+%\end{equation}      
+%for some constants $C_x,C_y$.
+
 \end{lem}
 
 \begin{lem}
@@ -622,7 +630,7 @@ RESULTS AND PLOTS FOR TEST STRESS FIELDS:
 %\input{Fig1.pstex_t}
 \includegraphics[width=5in]{tests.eps}
 \caption{\textbf{Inversion results for test stress fields.} (a) Inversion for 
-the annular stress field with $m=4$, $n=2$ and ...using different cell boundaries.... }
+the annular stress field with $m=3$, $n=5$ and ...using different cell boundaries.... }
 \label{RESULTS_TEST}
 \end{center}
 \end{figure}
@@ -868,10 +876,10 @@ Expanding the leading order term of this expression, we see that
 \end{align*}
 Hence, it is evident that this integral of $\mathcal{O}(|\r|^{-2})$, where to the leading order we have
 \begin{align}
-\lefteqn{u_x(\r) = \frac{1+\nu}{\pi E |\r|^2}\Bigg[ -2\frac{x}{|\r|}\int x'\sigma_x(\r')\d\r' - \frac{x}{|\r|}\int y' \sigma_y(\r') \d\r'  }\nonumber\\
-&\qquad- \frac{y}{|\r|}\int x'\sigma_y(\r')\d\r' + 1-\nu \Bigg],
+\lefteqn{u_x(\r) = \frac{1+\nu}{\pi E |\r|^2}\Bigg[ -2\nu\frac{x}{|\r|}\int x'\sigma_x(\r')\d\r' - \frac{x\nu}{|\r|}\int y' \sigma_y(\r') \d\r'  }\nonumber\\
+&\qquad\qquad- \frac{y\nu}{|\r|}\int x'\sigma_y(\r')\d\r' + (1-\nu)\frac{\r}{|\r|}\cdot\int \r'\sigma_x(\r') \d\r'\Bigg].
 \end{align}
-ignoring the fact that this expression also contains some information at lower orders.
+
 
 % and $\cos\theta = \frac{(\r-\r_0,\r'-\r_0)} {|\r - \r_0| |\r'-\r_0|}$. Eq.~\ref{eq:multipole}  is obtained through binomial expansion of the Euclidean distance functions in the denominators of Eq.~\ref{eq:Gzz0} and Eq.~\ref{eq:Gxy0},
 %\begin{align*}

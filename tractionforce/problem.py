@@ -63,6 +63,28 @@ def gen_matrices(x_in, y_in, x_out, y_out, dx, dy, loworder = False):
                  fxy(deltax_out_in * dx + dx / 2., deltay_out_in * dy - dy / 2.0, l2_out_minus_in_plus) + \
                  fxy(deltax_out_in * dx + dx / 2., deltay_out_in * dy + dy / 2.0, l2_out_minus_in_minus)
 
+    # u_y measurements
+
+    A_in_in_y = fxx(deltay_in_in * dy - dy / 2.0, deltax_in_in * dx - dx / 2., l2_in_plus_in_plus) - \
+                fxx(deltay_in_in * dy + dy / 2.0, deltax_in_in * dx - dx / 2., l2_in_plus_in_minus) - \
+                fxx(deltay_in_in * dy - dy / 2.0, deltax_in_in * dx + dx / 2., l2_in_minus_in_plus) + \
+                fxx(deltay_in_in * dy + dy / 2.0, deltax_in_in * dx + dx / 2., l2_in_minus_in_minus)
+
+    A_out_in_y = fxx(deltay_out_in * dy - dy / 2.0, deltax_out_in * dx - dx / 2., l2_out_plus_in_plus) - \
+                 fxx(deltay_out_in * dy + dy / 2.0, deltax_out_in * dx - dx / 2., l2_out_plus_in_minus) - \
+                 fxx(deltay_out_in * dy - dy / 2.0, deltax_out_in * dx + dx / 2., l2_out_minus_in_plus) + \
+                 fxx(deltay_out_in * dy + dy / 2.0, deltax_out_in * dx + dx / 2., l2_out_minus_in_minus)
+
+    D_in_in_y = fxy(deltay_in_in * dy - dy / 2.0, deltax_in_in * dx - dx / 2., l2_in_plus_in_plus) - \
+                fxy(deltay_in_in * dy + dy / 2.0, deltax_in_in * dx - dx / 2., l2_in_plus_in_minus) - \
+                fxy(deltay_in_in * dy - dy / 2.0, deltax_in_in * dx + dx / 2., l2_in_minus_in_plus) + \
+                fxy(deltay_in_in * dy + dy / 2.0, deltax_in_in * dx + dx / 2., l2_in_minus_in_minus)
+
+    D_out_in_y = fxy(deltay_out_in * dy - dy / 2.0, deltax_out_in * dx - dx / 2., l2_out_plus_in_plus) - \
+                 fxy(deltay_out_in * dy + dy / 2.0, deltax_out_in * dx - dx / 2., l2_out_plus_in_minus) - \
+                 fxy(deltay_out_in * dy - dy / 2.0, deltax_out_in * dx + dx / 2., l2_out_minus_in_plus) + \
+                 fxy(deltay_out_in * dy + dy / 2.0, deltax_out_in * dx + dx / 2., l2_out_minus_in_minus)
+
     if not loworder:
 
         B_in_in_x = x_in[..., np.newaxis] * A_in_in_x - fxxx(deltax_in_in - dx / 2., deltay_in_in - dy / 2.0,
@@ -113,27 +135,6 @@ def gen_matrices(x_in, y_in, x_out, y_out, dx, dy, loworder = False):
                      fxyx(deltax_out_in + dx / 2., deltay_out_in - dy / 2.0, l2_out_minus_in_plus) - \
                      fxyx(deltax_out_in + dx / 2., deltay_out_in + dy / 2.0, l2_out_minus_in_minus)
 
-        # u_y measurements
-
-        A_in_in_y = fxx(deltay_in_in * dy - dy / 2.0, deltax_in_in * dx - dx / 2., l2_in_plus_in_plus) - \
-                    fxx(deltay_in_in * dy + dy / 2.0, deltax_in_in * dx - dx / 2., l2_in_plus_in_minus) - \
-                    fxx(deltay_in_in * dy - dy / 2.0, deltax_in_in * dx + dx / 2., l2_in_minus_in_plus) + \
-                    fxx(deltay_in_in * dy + dy / 2.0, deltax_in_in * dx + dx / 2., l2_in_minus_in_minus)
-
-        A_out_in_y = fxx(deltay_out_in * dy - dy / 2.0, deltax_out_in * dx - dx / 2., l2_out_plus_in_plus) - \
-                     fxx(deltay_out_in * dy + dy / 2.0, deltax_out_in * dx - dx / 2., l2_out_plus_in_minus) - \
-                     fxx(deltay_out_in * dy - dy / 2.0, deltax_out_in * dx + dx / 2., l2_out_minus_in_plus) + \
-                     fxx(deltay_out_in * dy + dy / 2.0, deltax_out_in * dx + dx / 2., l2_out_minus_in_minus)
-
-        D_in_in_y = fxy(deltay_in_in * dy - dy / 2.0, deltax_in_in * dx - dx / 2., l2_in_plus_in_plus) - \
-                    fxy(deltay_in_in * dy + dy / 2.0, deltax_in_in * dx - dx / 2., l2_in_plus_in_minus) - \
-                    fxy(deltay_in_in * dy - dy / 2.0, deltax_in_in * dx + dx / 2., l2_in_minus_in_plus) + \
-                    fxy(deltay_in_in * dy + dy / 2.0, deltax_in_in * dx + dx / 2., l2_in_minus_in_minus)
-
-        D_out_in_y = fxy(deltay_out_in * dy - dy / 2.0, deltax_out_in * dx - dx / 2., l2_out_plus_in_plus) - \
-                     fxy(deltay_out_in * dy + dy / 2.0, deltax_out_in * dx - dx / 2., l2_out_plus_in_minus) - \
-                     fxy(deltay_out_in * dy - dy / 2.0, deltax_out_in * dx + dx / 2., l2_out_minus_in_plus) + \
-                     fxy(deltay_out_in * dy + dy / 2.0, deltax_out_in * dx + dx / 2., l2_out_minus_in_minus)
 
         B_in_in_y = y_in[..., np.newaxis] * A_in_in_y - fxxx(deltay_in_in - dy / 2.0, deltax_in_in - dx / 2.,
                                                              l2_in_plus_in_plus) + \
