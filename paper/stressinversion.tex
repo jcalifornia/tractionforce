@@ -418,7 +418,7 @@ subject to the no-force and no-torque constraints (Eqs.~\ref{NOFORCE}
 and \ref{NOTORQUE}) mentioned above, where $\lambda>0$ is a tunable
 parameter. This problem is in a standard form that is directly
 solvable using a variety of optimization routines.  In our
-implementation, we use a second-order quadratic cone solver.
+implementation, we use a second-order quadratic cone solver~\cite{cvxpy}.
 
 \subsection{Numerical cut-off and error}
 To reduce the size of the system of equations described in
@@ -433,7 +433,7 @@ much quicker rate of $|\r|^{-2}$. Formally, if
 %we have made.
 %
 $\Omega = {\rm sup}(\bsigma)\subset \mathbb{R}^2$ is compact, and
-assume $\bsigma\in L^1(\Omega)$ such that $\int \bsigma(\r)\d\r = \mathbf{0}$, then
+ $\int \bsigma(\r)\d\r = \mathbf{0}$, then
 as $\mathbf{r}\to\infty$, $u_{x,y}(\r) = \mathcal{O}\left( |\r|^{-2} \right)$.
 
 % For a fixed
@@ -559,7 +559,7 @@ and then recover $\bsigma(\r)$ from these displacements.
 \begin{figure}[t]
 \begin{center}
 %\input{Fig1.pstex_t}
-\includegraphics[width=3.4in]{}
+%\includegraphics[width=3.4in]{}
 \caption{\textbf{Inversion results for test stress fields.} (a)
   Inversion for the annular stress field with $m=3$, $n=5$ and
   ...using different cell boundaries.... }
@@ -881,10 +881,10 @@ and
 
 \begin{align}
 \langle xG_{xy}(x,y)\rangle^{nmjk} & = 
-\Big[f_{xy}(\Delta x_j^{-},\Delta y_k^+)-f_{xy}(\Delta x_j^{-},\Delta y_k^-)
-- f_{xy}(\Delta x_j^{+},\Delta y_k^+) + f_{xy}(\Delta x_j^+,\Delta y_k^-) \Big]x_n \nonumber\\
-\: & \qquad -\Big[f_{xy}^x(\Delta x_j^{+},\Delta y_j^+) - f_{xy}^x(\Delta x_j^{+},\Delta y_j^-)
--f_{xy}^x(\Delta x_j^{-},\Delta y_j^+)+f_{xy}^x(\Delta x_j^{-},\Delta y_j^-)\Big]
+\Big[f_{xy}(\Delta x_{nj}^{-},\Delta y_{mk}^+)-f_{xy}(\Delta x_{nj}^{-},\Delta y_{mk}^-)
+- f_{xy}(\Delta x_{nj}^{+},\Delta y_{mk}^+) + f_{xy}(\Delta x_{nj}^+,\Delta y_{mk}^-) \Big]x_n \nonumber\\
+\: & \qquad -\Big[f_{xy}^x(\Delta x_{nj}^{+},\Delta y_{mk}^+) - f_{xy}^x(\Delta x_{nj}^{+},\Delta y_{mk}^-)
+-f_{xy}^x(\Delta x_{nj}^{-},\Delta y_{mk}^+)+f_{xy}^x(\Delta x_{nj}^{-},\Delta y_{mk}^-)\Big]
 \end{align}
 %
 where
@@ -933,17 +933,16 @@ through the binomial expansion,
 
 \begin{align}
 \frac{1}{|\r-\r'|^p} &= \frac{1}{|\r|^p}\frac{1}{\left(1 - \frac{2\r\cdot\r'}{|\r|^2} 
-+\frac{\vert\r'\vert^{2}}{\vert\r\vert^{2}}\right)^{p/2}} \nonumber\\
-&= \frac{1}{|\r|^p}\sum_{k=0}^\infty {{{p\over 2}+k-1}\choose{k}} 
++\frac{\vert\r'\vert^{2}}{\vert\r\vert^{2}}\right)^{p/2}} = \frac{1}{|\r|^p}\sum_{k=0}^\infty {{{p\over 2}+k-1}\choose{k}} 
 {\left( \underbrace{ \frac{2\r\cdot\r' - |\r'|^2}{|\r|^2}}_{\mathcal{O}(|\r|^{-1})} \right)}^k.
 \end{align}
 % 
 Since $\r\not\in\Omega$ and $\r'\in\Omega$, the series converges in
 the $\vert \r\vert \to \infty$ limit. Plugging this series into the
-last line of Eq.~\ref{eq:rhoeq}, one sees that it in order to show
-that the magnitude of $u_x(\r)$ is ${\cal o}(|\r|^{-q})$, it
+last line of Eq.~\ref{eq:rhoeq}, where $p=1$, one sees that it in order to show
+that the magnitude of $u_x(\r)$ is $\mathcal{O}(|\r|^{-q})$, it
 suffices to show that $\int \rho(\r,\r')\dd\r' \leq
-{\cal o}(|\r|^{-q+1})$.
+{\cal O}(|\r|^{-q+1})$.
 
 Using the fact that $\int \bsigma(\r)\d\r = \mathbf{0}$, one finds that
 %
@@ -1010,16 +1009,15 @@ $$
 $$
 where $\mathbf{c}_{jk},\mathbf{a}_{jk}\in\Omega_{jk}$ and $\r_{jk}\in\Omega_{jk}$ is the point about which interpolation is performed.
 Hence,
+{\small
 \begin{align}
-\lefteqn{u_x(\r) - \tilde{u}_x(\r)  = \sum_{j,k}\int_{\Omega_{jk}} G_{xx} (\r,\r')(\sigma_{x}(\r') - \tilde{\sigma}_x(\r')) \d\r } \nonumber\\
-&\qquad+\sum_{j,k}\int_{\Omega_{jk}} G_{xy} (\r,\r')(\sigma_{y}(\r') - \tilde{\sigma}_y(\r')) \d\r \nonumber\\
-&= \sum_{j,k} \frac{\d_{xx}^2\sigma_x(\mathbf{c}_{jk})}{2}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (x'-x_j)^2 \d\r \nonumber\\
-&  + \sum_{j,k} {\d_{xy}^2\sigma_x(\mathbf{c}_{jk})}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (x'-x_j)(y'-y_k)\d\r \nonumber\\
-&\quad + \sum_{j,k} \frac{\d_{yy}^2\sigma_x(\mathbf{c}_{jk})}{2}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (y'-y_k)^2\d\r \nonumber\\
-&\quad + \sum_{j,k} \frac{\d_{xx}^2\sigma_y(\mathbf{a}_{jk})}{2}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (x'-x_j)^2\d\r \nonumber\\
-&  + \sum_{j,k} {\d_{xy}^2\sigma_y(\mathbf{a}_{jk})}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (x'-x_j)(y'-y_k)\d\r \nonumber\\
-&\quad + \sum_{j,k} \frac{\d_{yy}^2\sigma_y(\mathbf{a}_{jk})}{2}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (y'-y_k)^2\d\r 
+\lefteqn{u_x(\r) - \tilde{u}_x(\r)  = \sum_{j,k}\int_{\Omega_{jk}} G_{xx} (\r,\r')(\sigma_{x}(\r') - \tilde{\sigma}_x(\r')) \d\r 
+ +\sum_{j,k}\int_{\Omega_{jk}} G_{xy} (\r,\r')(\sigma_{y}(\r') - \tilde{\sigma}_y(\r')) \d\r } \nonumber\\
+&= \sum_{j,k} \frac{\d_{xx}^2\sigma_x(\mathbf{c}_{jk})}{2}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (x'-x_j)^2 \d\r + \sum_{j,k} {\d_{xy}^2\sigma_x(\mathbf{c}_{jk})}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (x'-x_j)(y'-y_k)\d\r \nonumber\\
+&\quad + \sum_{j,k} \frac{\d_{yy}^2\sigma_x(\mathbf{c}_{jk})}{2}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (y'-y_k)^2\d\r   + \sum_{j,k} \frac{\d_{xx}^2\sigma_y(\mathbf{a}_{jk})}{2}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (x'-x_j)^2\d\r \nonumber\\
+&  + \sum_{j,k} {\d_{xy}^2\sigma_y(\mathbf{a}_{jk})}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (x'-x_j)(y'-y_k)\d\r + \sum_{j,k} \frac{\d_{yy}^2\sigma_y(\mathbf{a}_{jk})}{2}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (y'-y_k)^2\d\r 
 \end{align}
+}
 
 \subsection{Proof of~Theorem \ref{thm:main}}
 
