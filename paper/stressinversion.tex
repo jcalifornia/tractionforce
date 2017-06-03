@@ -449,13 +449,13 @@ as $\mathbf{r}\to\infty$, $u_{x,y}(\r) = \mathcal{O}\left( |\r|^{-2} \right)$.
 %\end{equation}      
 %for some constants $C_x,C_y$.
 
-Furthermore, if $\tilde{\bsigma}$ is an affine approximation to
-$\bsigma\in C^s(\Omega)$ for $s\in\mathbb{Z}^+$, and $\tilde{\u}$ is
-the corresponding displacement field generated from $\tilde{\bsigma}$,
-
-\begin{equation}
-\vert \tilde{\u}  - \u \vert \leq C (\delta x)^2
-\end{equation}
+%Furthermore, if $\tilde{\bsigma}$ is an affine approximation to
+%$\bsigma\in C^s(\Omega)$ for $s\in\mathbb{Z}^+$, and $\tilde{\u}$ is
+%the corresponding displacement field generated from $\tilde{\bsigma}$,
+%
+%\begin{equation}
+%\vert \tilde{\u}  - \u \vert \leq C (\delta x)^2
+%\end{equation}
 
 The decay of the influence of stress on the system provides
 justification for setting distance-based cut-offs of the linear
@@ -463,20 +463,20 @@ system. The effect of the cut-off is to limit the left-hand side of
 Eq.~\ref{eq:linearsystem1} to locations only within some maximal
 distance $R$ from the outline of the cell.
 
-The error in the solution of the inverse problem is dependent on the
-precision of the observations, the physical constants that describe
-the medium, and the maximum magnitude of the stress. The error from
-cutting off the domain over which displacements are used in the
-reconstruction of $\bsigma(\r)$ can also be bounded. If
-Define $\hat{\bsigma}^R(\r)$ as the reconstructed stress field found by
-solving the optimization problem of Eq.~\ref{eq:objective} using only
-the displacement data within a maximal distance of $R$ from the
-cell. In Appendix C, we show that 
-%Denote $\varepsilon^R(\r) = \hat{\bsigma}^R(\r) - \bsigma(\r)$ for
-%$\r\in\Omega$, where $\sigma_{xz}\in L^1(\Omega)$,
-\begin{equation}
-\sup \vert \hat{\bsigma}^R(\r) - \hat{\bsigma}^\infty(\r) \vert \leq \frac{C}{R^2}
-\end{equation}
+%The error in the solution of the inverse problem is dependent on the
+%precision of the observations, the physical constants that describe
+%the medium, and the maximum magnitude of the stress. The error from
+%cutting off the domain over which displacements are used in the
+%reconstruction of $\bsigma(\r)$ can also be bounded. If
+%Define $\hat{\bsigma}^R(\r)$ as the reconstructed stress field found by
+%solving the optimization problem of Eq.~\ref{eq:objective} using only
+%the displacement data within a maximal distance of $R$ from the
+%cell. In Appendix C, we show that 
+%%Denote $\varepsilon^R(\r) = \hat{\bsigma}^R(\r) - \bsigma(\r)$ for
+%%$\r\in\Omega$, where $\sigma_{xz}\in L^1(\Omega)$,
+%\begin{equation}
+%\sup \vert \hat{\bsigma}^R(\r) - \hat{\bsigma}^\infty(\r) \vert \leq \frac{C}{R^2}
+%\end{equation}
 
 \section{Results}
 
@@ -973,8 +973,8 @@ where to the leading order we have
 \lefteqn{u_x(\r) = \frac{1+\nu}{\pi E |\r|^2}
 \Bigg[ -2\nu\frac{x}{|\r|}\int x'\sigma_x(\r')\d\r'
 -\frac{x\nu}{|\r|}\int y' \sigma_y(\r') \d\r'  }\nonumber\\
-&\qquad\qquad- \frac{y\nu}{|\r|}\int x'\sigma_y(\r')\d\r' 
-+ (1-\nu)\frac{\r}{|\r|}\cdot\int \r'\sigma_x(\r') \d\r'\Bigg].
+&\qquad- \frac{y\nu}{|\r|}\int x'\sigma_y(\r')\d\r' 
++ (1-\nu)\frac{\r}{|\r|}\cdot\int \r'\sigma_x(\r') \d\r'\Bigg] + \mathcal{O}(|\r|^{-3})
 \end{align}
 
 
