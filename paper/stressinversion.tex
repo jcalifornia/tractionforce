@@ -420,7 +420,7 @@ parameter. This problem is in a standard form that is directly
 solvable using a variety of optimization routines.  In our
 implementation, we use a second-order quadratic cone solver~\cite{cvxpy}.
 
-\subsection{Numerical cut-off and error}
+%\subsection{Numerical cut-off and error}
 To reduce the size of the system of equations described in
 Eqs.~\ref{eq:linearsystem1}, we note that the Green's function falls
 off at a rate of $|\r|^{-1}$. However, when combined with the
@@ -449,13 +449,13 @@ as $\mathbf{r}\to\infty$, $u_{x,y}(\r) = \mathcal{O}\left( |\r|^{-2} \right)$.
 %\end{equation}      
 %for some constants $C_x,C_y$.
 
-Furthermore, if $\tilde{\bsigma}$ is an affine approximation to
-$\bsigma\in C^s(\Omega)$ for $s\in\mathbb{Z}^+$, and $\tilde{\u}$ is
-the corresponding displacement field generated from $\tilde{\bsigma}$,
-
-\begin{equation}
-\vert \tilde{\u}  - \u \vert \leq C (\delta x)^2
-\end{equation}
+%Furthermore, if $\tilde{\bsigma}$ is an affine approximation to
+%$\bsigma\in C^s(\Omega)$ for $s\in\mathbb{Z}^+$, and $\tilde{\u}$ is
+%the corresponding displacement field generated from $\tilde{\bsigma}$,
+%
+%\begin{equation}
+%\vert \tilde{\u}  - \u \vert \leq C (\delta x)^2
+%\end{equation}
 
 The decay of the influence of stress on the system provides
 justification for setting distance-based cut-offs of the linear
@@ -463,20 +463,20 @@ system. The effect of the cut-off is to limit the left-hand side of
 Eq.~\ref{eq:linearsystem1} to locations only within some maximal
 distance $R$ from the outline of the cell.
 
-The error in the solution of the inverse problem is dependent on the
-precision of the observations, the physical constants that describe
-the medium, and the maximum magnitude of the stress. The error from
-cutting off the domain over which displacements are used in the
-reconstruction of $\bsigma(\r)$ can also be bounded. If
-Define $\hat{\bsigma}^R(\r)$ as the reconstructed stress field found by
-solving the optimization problem of Eq.~\ref{eq:objective} using only
-the displacement data within a maximal distance of $R$ from the
-cell. In Appendix C, we show that 
-%Denote $\varepsilon^R(\r) = \hat{\bsigma}^R(\r) - \bsigma(\r)$ for
-%$\r\in\Omega$, where $\sigma_{xz}\in L^1(\Omega)$,
-\begin{equation}
-\sup \vert \hat{\bsigma}^R(\r) - \hat{\bsigma}^\infty(\r) \vert \leq \frac{C}{R^2}
-\end{equation}
+%The error in the solution of the inverse problem is dependent on the
+%precision of the observations, the physical constants that describe
+%the medium, and the maximum magnitude of the stress. The error from
+%cutting off the domain over which displacements are used in the
+%reconstruction of $\bsigma(\r)$ can also be bounded. If
+%Define $\hat{\bsigma}^R(\r)$ as the reconstructed stress field found by
+%solving the optimization problem of Eq.~\ref{eq:objective} using only
+%the displacement data within a maximal distance of $R$ from the
+%cell. In Appendix C, we show that 
+%%Denote $\varepsilon^R(\r) = \hat{\bsigma}^R(\r) - \bsigma(\r)$ for
+%%$\r\in\Omega$, where $\sigma_{xz}\in L^1(\Omega)$,
+%\begin{equation}
+%\sup \vert \hat{\bsigma}^R(\r) - \hat{\bsigma}^\infty(\r) \vert \leq \frac{C}{R^2}
+%\end{equation}
 
 \section{Results}
 
@@ -716,6 +716,9 @@ related systems such as scratch wound assays.
 
 \bibliography{refs}
 
+\clearpage
+\newpage 
+
 \appendix
 \begin{widetext}
 \section{Appendix A: Elastic Green's function}
@@ -914,7 +917,7 @@ and the equations above also hold in the case where $n=m$ and $j=k$.
 These explicit expressions allow us to accurately evaluate
 $\u(\r_{i})$ in $\Phi_{\rm data}[\bsigma]$.
 
-\section{Appendix C: Decay of displacement fields and error estimates}
+\section{Appendix C: Decay of displacement fields}
 
 Note that $u_x$ and $u_y$ are symmetric in form. Hence, it will
 suffice to prove just one of these assertions. Eq.~\ref{eq:UMODEL1s}
@@ -973,8 +976,8 @@ where to the leading order we have
 \lefteqn{u_x(\r) = \frac{1+\nu}{\pi E |\r|^2}
 \Bigg[ -2\nu\frac{x}{|\r|}\int x'\sigma_x(\r')\d\r'
 -\frac{x\nu}{|\r|}\int y' \sigma_y(\r') \d\r'  }\nonumber\\
-&\qquad\qquad- \frac{y\nu}{|\r|}\int x'\sigma_y(\r')\d\r' 
-+ (1-\nu)\frac{\r}{|\r|}\cdot\int \r'\sigma_x(\r') \d\r'\Bigg].
+&\qquad- \frac{y\nu}{|\r|}\int x'\sigma_y(\r')\d\r' 
++ (1-\nu)\frac{\r}{|\r|}\cdot\int \r'\sigma_x(\r') \d\r'\Bigg] + \mathcal{O}(|\r|^{-3})
 \end{align}
 
 
@@ -996,42 +999,42 @@ where to the leading order we have
 %\end{align}
 
       
-\subsection{Proof of~Lemma \ref{lem:affine_error}}
+%\subsection{Proof of~Lemma \ref{lem:affine_error}}
+%
+%Let $\tilde{\bsigma}$ be the piecewise affine approximation of the stress field $\bsigma$, and $\r\in\Omega_{jk}$. Then,
+%by the Taylor remainder theorem, one sees that
+%$$
+%\sigma_{x}(\r) - \tilde{\sigma}_x(\r) = \frac{1}{2}(\r-\r_{jk})^\intercal\d^2\sigma_{x}(\mathbf{c}_{jk})(\r-\r_{jk})
+%$$
+%and
+%$$
+%\sigma_{y}(\r) - \tilde{\sigma}_x(\r) = \frac{1}{2}(\r-\r_{jk})^\intercal\d^2\sigma_{x}(\mathbf{a}_{jk})(\r-\r_{jk})
+%$$
+%where $\mathbf{c}_{jk},\mathbf{a}_{jk}\in\Omega_{jk}$ and $\r_{jk}\in\Omega_{jk}$ is the point about which interpolation is performed.
+%Hence,
+%{\small
+%\begin{align}
+%\lefteqn{u_x(\r) - \tilde{u}_x(\r)  = \sum_{j,k}\int_{\Omega_{jk}} G_{xx} (\r,\r')(\sigma_{x}(\r') - \tilde{\sigma}_x(\r')) \d\r 
+% +\sum_{j,k}\int_{\Omega_{jk}} G_{xy} (\r,\r')(\sigma_{y}(\r') - \tilde{\sigma}_y(\r')) \d\r } \nonumber\\
+%&= \sum_{j,k} \frac{\d_{xx}^2\sigma_x(\mathbf{c}_{jk})}{2}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (x'-x_j)^2 \d\r + \sum_{j,k} {\d_{xy}^2\sigma_x(\mathbf{c}_{jk})}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (x'-x_j)(y'-y_k)\d\r \nonumber\\
+%&\quad + \sum_{j,k} \frac{\d_{yy}^2\sigma_x(\mathbf{c}_{jk})}{2}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (y'-y_k)^2\d\r   + \sum_{j,k} \frac{\d_{xx}^2\sigma_y(\mathbf{a}_{jk})}{2}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (x'-x_j)^2\d\r \nonumber\\
+%&  + \sum_{j,k} {\d_{xy}^2\sigma_y(\mathbf{a}_{jk})}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (x'-x_j)(y'-y_k)\d\r + \sum_{j,k} \frac{\d_{yy}^2\sigma_y(\mathbf{a}_{jk})}{2}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (y'-y_k)^2\d\r 
+%\end{align}
+%}
+%
+%\subsection{Proof of~Theorem \ref{thm:main}}
+%
+%Consider the data penalty term $\Phi_{\textrm{data}}$ of the optimization problem
+%\begin{align*}
+%\Phi_{\rm data}[\bs] &=\sum_{i=1}^{M}\vert \u^{\rm
+%  data}(\r_{i})- \u(\r_i)\vert^{2}  + \sum_{i=M+1}^{N}\vert \u^{\rm
+%  data}(\r_{i})- \u(\r_i)\vert^{2} 
+%\end{align*}
+%where the first $M$ data points are all within a maximal cut off distance of $R$ within the boundary of the cell and the remaining $N-M$ datapoints lie outside this distance.
+%
+%
 
-Let $\tilde{\bsigma}$ be the piecewise affine approximation of the stress field $\bsigma$, and $\r\in\Omega_{jk}$. Then,
-by the Taylor remainder theorem, one sees that
-$$
-\sigma_{x}(\r) - \tilde{\sigma}_x(\r) = \frac{1}{2}(\r-\r_{jk})^\intercal\d^2\sigma_{x}(\mathbf{c}_{jk})(\r-\r_{jk})
-$$
-and
-$$
-\sigma_{y}(\r) - \tilde{\sigma}_x(\r) = \frac{1}{2}(\r-\r_{jk})^\intercal\d^2\sigma_{x}(\mathbf{a}_{jk})(\r-\r_{jk})
-$$
-where $\mathbf{c}_{jk},\mathbf{a}_{jk}\in\Omega_{jk}$ and $\r_{jk}\in\Omega_{jk}$ is the point about which interpolation is performed.
-Hence,
-{\small
-\begin{align}
-\lefteqn{u_x(\r) - \tilde{u}_x(\r)  = \sum_{j,k}\int_{\Omega_{jk}} G_{xx} (\r,\r')(\sigma_{x}(\r') - \tilde{\sigma}_x(\r')) \d\r 
- +\sum_{j,k}\int_{\Omega_{jk}} G_{xy} (\r,\r')(\sigma_{y}(\r') - \tilde{\sigma}_y(\r')) \d\r } \nonumber\\
-&= \sum_{j,k} \frac{\d_{xx}^2\sigma_x(\mathbf{c}_{jk})}{2}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (x'-x_j)^2 \d\r + \sum_{j,k} {\d_{xy}^2\sigma_x(\mathbf{c}_{jk})}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (x'-x_j)(y'-y_k)\d\r \nonumber\\
-&\quad + \sum_{j,k} \frac{\d_{yy}^2\sigma_x(\mathbf{c}_{jk})}{2}\int_{\Omega_{jk}} G_{xx}(x-x',y-y')  (y'-y_k)^2\d\r   + \sum_{j,k} \frac{\d_{xx}^2\sigma_y(\mathbf{a}_{jk})}{2}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (x'-x_j)^2\d\r \nonumber\\
-&  + \sum_{j,k} {\d_{xy}^2\sigma_y(\mathbf{a}_{jk})}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (x'-x_j)(y'-y_k)\d\r + \sum_{j,k} \frac{\d_{yy}^2\sigma_y(\mathbf{a}_{jk})}{2}\int_{\Omega_{jk}} G_{xy}(x-x',y-y')  (y'-y_k)^2\d\r 
-\end{align}
-}
-
-\subsection{Proof of~Theorem \ref{thm:main}}
-
-Consider the data penalty term $\Phi_{\textrm{data}}$ of the optimization problem
-\begin{align*}
-\Phi_{\rm data}[\bs] &=\sum_{i=1}^{M}\vert \u^{\rm
-  data}(\r_{i})- \u(\r_i)\vert^{2}  + \sum_{i=M+1}^{N}\vert \u^{\rm
-  data}(\r_{i})- \u(\r_i)\vert^{2} 
-\end{align*}
-where the first $M$ data points are all within a maximal cut off distance of $R$ within the boundary of the cell and the remaining $N-M$ datapoints lie outside this distance.
 \end{widetext}
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
