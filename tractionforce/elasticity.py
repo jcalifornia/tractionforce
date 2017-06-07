@@ -1,6 +1,6 @@
 import numpy as np
 
-nu = 0.3
+nu = 0.5
 E = 1
 
 def fxx(x,y,l2):
