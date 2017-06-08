@@ -501,8 +501,9 @@ $f_{\theta}$ are constants.
 \begin{figure}[h!]
 \begin{center}
 %\input{Fig1.pstex_t}
-\includegraphics[width=3.4in]{tests.pdf}
-\includegraphics[width=3.4in]{tests.pdf}
+\includegraphics[width=2.5in]{tests.pdf}
+\includegraphics[width=3.4in]{displacements}
+
 \caption{\textbf{Test stress fields and surface displacements.} (a) An
   annular stress distribution of forces in the $\theta$ and $r$
   directions. (b) Four focal adhesions under mutual tension
@@ -567,6 +568,18 @@ and then recover $\bsigma(\r)$ from these displacements.
 \label{RESULTS_TEST}
 \end{center}
 \end{figure}
+
+\begin{figure}
+\includegraphics[width=\linewidth]{gridspacefig}
+\caption{\textbf{Grid coarsening} Using every $2^n$ lattice points of observations.}
+\end{figure}
+
+
+\begin{figure}
+\includegraphics[width=\linewidth]{unidirectionfig}
+\caption{\textbf{Unidirectional displacement measurements} Sets of reconstructions using displacements under only $\hat{x}$ or $\hat{y}$ directions}
+\end{figure}
+
 
 \vspace{1cm}
 {\bf DO SOME RECONSTRUCTIONS FOR DIFFERENT REGULARIZATIONS, FOOTPRINTS, AND GRID RESOLUTIONS}
@@ -646,11 +659,6 @@ pixels of the cell boundary.
   support to the cell boundary.}
 \label{fig:fig4}
 \end{figure}
-
-\begin{figure}
-\includegraphics[width=\linewidth]{gridspacefig}
-\end{figure}
-
 
 
 \section{Reconstruction of stress fields from displacements 
