@@ -12,6 +12,8 @@ from matplotlib.backends.backend_pdf import PdfPages
 from tractionforce.elasticity import *
 import gc
 from tractionforce.norms import *
+from tractionforce.problem import *
+
 from cvxpy.atoms.elementwise.log import log as cvxlog
 from cvxpy.atoms.elementwise.power import power as cvxpower
 
@@ -106,6 +108,11 @@ def main():
     n_in = len(x_in)
     n_out = len(x_out)
 
+    spacing = 1
+
+    G_in_in_xx, G_in_in_xy, G_out_in_xx, G_out_in_xy, G_in_in_yy, G_in_in_yx, G_out_in_yy, G_out_in_yx, Dx, Dy = gen_matrices(
+        x_in, y_in, x_out, y_out, dx * spacing, dy * spacing, loworder=True)
+
     print("Size of the problem is " + str( n_in + n_out))
 
     """
@@ -115,106 +122,7 @@ def main():
     """
 
 
-    deltax_in_in = x_in[...,np.newaxis] - x_in[np.newaxis, ...]  # should be x-x'
-    deltax_out_in = x_out[...,np.newaxis] - x_in[np.newaxis, ...]  # should be x-x'
-    deltay_in_in = y_in[...,np.newaxis] - y_in[np.newaxis, ...]  # y - y'
-    deltay_out_in = y_out[...,np.newaxis] - y_in[np.newaxis,...] # y - y'
 
-    l2_in_plus_in_plus = (np.array([deltax_in_in*dx - dx/2.0, deltay_in_in*dy - dy/2.0])**2).sum(axis=0)**0.5
-    l2_in_plus_in_minus = (np.array([deltax_in_in*dx - dx/2.0, deltay_in_in*dy + dy/2.0])**2).sum(axis=0)**0.5
-    l2_in_minus_in_plus = (np.array([deltax_in_in*dx + dx/2.0, deltay_in_in*dy - dy/2.0])**2).sum(axis=0)**0.5
-    l2_in_minus_in_minus = (np.array([deltax_in_in*dx + dx/2.0, deltay_in_in*dy+ dy/2.0]) ** 2).sum(axis=0) ** 0.5
-
-    l2_out_plus_in_plus = (np.array([deltax_out_in*dx - dx/2.0, deltay_out_in*dy - dy/2.0])**2).sum(axis=0)**0.5
-    l2_out_plus_in_minus = (np.array([deltax_out_in*dx - dx/2.0, deltay_out_in*dy + dy/2.0])**2).sum(axis=0)**0.5
-    l2_out_minus_in_plus = (np.array([deltax_out_in*dx + dx/2.0, deltay_out_in*dy - dy/2.0])**2).sum(axis=0)**0.5
-    l2_out_minus_in_minus = (np.array([deltax_out_in*dx + dx/2.0, deltay_out_in*dy + dy/2.0]) ** 2).sum(axis=0) ** 0.5
-
-    x_adjacency = sparse.csr_matrix((deltax_in_in == -1)*(deltay_in_in == 0)*-1 + (deltax_in_in == 1)*(deltay_in_in == 0)*1)
-    y_adjacency = sparse.csr_matrix((deltay_in_in == -1)*(deltax_in_in == 0)*-1 + (deltay_in_in == 1)*(deltax_in_in == 0)*1)
-
-    A_in_in = fxx(deltax_in_in*dx-dx/2. , deltay_in_in*dy-dy/2.0 , l2_in_plus_in_plus) - \
-              fxx(deltax_in_in*dx-dx/2. , deltay_in_in*dy+dy/2.0, l2_in_plus_in_minus) -\
-              fxx(deltax_in_in*dx+dx/2. , deltay_in_in*dy-dy/2.0, l2_in_minus_in_plus) + \
-              fxx(deltax_in_in*dx+dx/2. , deltay_in_in*dy+dy/2.0, l2_in_minus_in_minus)
-
-    A_out_in = fxx(deltax_out_in*dx-dx/2. , deltay_out_in*dy-dy/2.0 , l2_out_plus_in_plus) - \
-              fxx(deltax_out_in*dx-dx/2. , deltay_out_in*dy+dy/2.0, l2_out_plus_in_minus) -\
-              fxx(deltax_out_in*dx+dx/2. , deltay_out_in*dy-dy/2.0, l2_out_minus_in_plus) + \
-              fxx(deltax_out_in*dx+dx/2. , deltay_out_in*dy+dy/2.0, l2_out_minus_in_minus)
-
-    D_in_in = fxy(deltax_in_in*dx-dx/2. , deltay_in_in*dy-dy/2.0 , l2_in_plus_in_plus) - \
-              fxy(deltax_in_in*dx-dx/2. , deltay_in_in*dy+dy/2.0, l2_in_plus_in_minus) - \
-              fxy(deltax_in_in*dx+dx/2. , deltay_in_in*dy-dy/2.0, l2_in_minus_in_plus) + \
-              fxy(deltax_in_in*dx+dx/2. , deltay_in_in*dy+dy/2.0, l2_in_minus_in_minus)
-
-    D_out_in = fxy(deltax_out_in*dx-dx/2. , deltay_out_in*dy-dy/2.0 , l2_out_plus_in_plus) - \
-               fxy(deltax_out_in*dx-dx/2. , deltay_out_in*dy+dy/2.0, l2_out_plus_in_minus) - \
-               fxy(deltax_out_in*dx+dx/2. , deltay_out_in*dy-dy/2.0, l2_out_minus_in_plus) + \
-               fxy(deltax_out_in*dx+dx/2. , deltay_out_in*dy+dy/2.0, l2_out_minus_in_minus)
-
-
-    B_in_in = x_in[..., np.newaxis]*A_in_in - fxxx(deltax_in_in-dx/2. , deltay_in_in-dy/2.0 , l2_in_plus_in_plus) + \
-              fxxx(deltax_in_in-dx/2. , deltay_in_in+dy/2.0, l2_in_plus_in_minus) +\
-              fxxx(deltax_in_in+dx/2. , deltay_in_in-dy/2.0, l2_in_minus_in_plus) - \
-              fxxx(deltax_in_in+dx/2. , deltay_in_in+dy/2.0, l2_in_minus_in_minus)
-
-    B_out_in = x_out[..., np.newaxis]*A_out_in - fxxx(deltax_out_in-dx/2. , deltay_out_in-dy/2.0 , l2_out_plus_in_plus) + \
-              fxxx(deltax_out_in-dx/2. , deltay_out_in+dy/2.0, l2_out_plus_in_minus) +\
-              fxxx(deltax_out_in+dx/2. , deltay_out_in-dy/2.0, l2_out_minus_in_plus) - \
-              fxxx(deltax_out_in+dx/2. , deltay_out_in+dy/2.0, l2_out_minus_in_minus)
-
-    C_in_in = y_in[..., np.newaxis]*A_in_in - fxxy(deltax_in_in-dx/2. , deltay_in_in-dy/2.0 , l2_in_plus_in_plus) + \
-              fxxy(deltax_in_in-dx/2. , deltay_in_in+dy/2.0, l2_in_plus_in_minus) + \
-              fxxy(deltax_in_in+dx/2. , deltay_in_in-dy/2.0, l2_in_minus_in_plus) - \
-              fxxy(deltax_in_in+dx/2. , deltay_in_in+dy/2.0, l2_in_minus_in_minus)
-
-    C_out_in = y_out[..., np.newaxis]*A_out_in - fxxy(deltax_out_in-dx/2. , deltay_out_in-dy/2.0 , l2_out_plus_in_plus) + \
-               fxxy(deltax_out_in-dx/2. , deltay_out_in+dy/2.0, l2_out_plus_in_minus) + \
-               fxxy(deltax_out_in+dx/2. , deltay_out_in-dy/2.0, l2_out_minus_in_plus) - \
-               fxxy(deltax_out_in+dx/2. , deltay_out_in+dy/2.0, l2_out_minus_in_minus)
-
-    E_in_in = x_in[..., np.newaxis] * D_in_in - fxyx(deltax_in_in - dx / 2., deltay_in_in - dy / 2.0,
-                                                     l2_in_plus_in_plus) + \
-              fxyx(deltax_in_in - dx / 2., deltay_in_in + dy / 2.0, l2_in_plus_in_minus) + \
-              fxyx(deltax_in_in + dx / 2., deltay_in_in - dy / 2.0, l2_in_minus_in_plus) - \
-              fxyx(deltax_in_in + dx / 2., deltay_in_in + dy / 2.0, l2_in_minus_in_minus)
-
-    E_out_in = x_out[..., np.newaxis] * D_out_in - fxyx(deltax_out_in - dx / 2., deltay_out_in - dy / 2.0,
-                                                       l2_out_plus_in_plus) + \
-               fxyx(deltax_out_in - dx / 2., deltay_out_in + dy / 2.0, l2_out_plus_in_minus) + \
-               fxyx(deltax_out_in + dx / 2., deltay_out_in - dy / 2.0, l2_out_minus_in_plus) - \
-               fxyx(deltax_out_in + dx / 2., deltay_out_in + dy / 2.0, l2_out_minus_in_minus)
-
-    F_in_in = y_in[..., np.newaxis]*D_in_in - fxyx(deltax_in_in-dx/2. , deltay_in_in-dy/2.0 , l2_in_plus_in_plus) + \
-              fxyx(deltax_in_in-dx/2. , deltay_in_in+dy/2.0, l2_in_plus_in_minus) + \
-              fxyx(deltax_in_in+dx/2. , deltay_in_in-dy/2.0, l2_in_minus_in_plus) - \
-              fxyx(deltax_in_in+dx/2. , deltay_in_in+dy/2.0, l2_in_minus_in_minus)
-
-    F_out_in = y_out[..., np.newaxis]* D_out_in - fxyx(deltax_out_in-dx/2. , deltay_out_in-dy/2.0 , l2_out_plus_in_plus) + \
-               fxyx(deltax_out_in-dx/2. , deltay_out_in+dy/2.0, l2_out_plus_in_minus) + \
-               fxyx(deltax_out_in+dx/2. , deltay_out_in-dy/2.0, l2_out_minus_in_plus) - \
-               fxyx(deltax_out_in+dx/2. , deltay_out_in+dy/2.0, l2_out_minus_in_minus)
-
-    # make derivative matrices Lx Ly
-
-    Dx = sparse.csr_matrix((deltax_in_in == 0)*(deltay_in_in == 0)*-1 + (deltax_in_in == 1)*(deltay_in_in == 0)*1)
-    rowsums = np.squeeze(np.asarray((Dx.sum(axis=1) != 0)))
-    Dx[rowsums,:] = 0
-    Dx.eliminate_zeros()
-    Dx = Constant(Dx)
-
-    Dy = sparse.csr_matrix(
-        (deltay_in_in == 0) * (deltax_in_in == 0) * -1 + (deltay_in_in == 1) * (deltax_in_in == 0) * 1)
-    rowsums = np.squeeze(np.asarray((Dy.sum(axis=1) != 0)))
-    Dy[rowsums,:] = 0
-    Dy.eliminate_zeros()
-    Dy = Constant(Dy)
-
-    del deltax_in_in, deltay_in_in, deltax_out_in, deltay_out_in
-    del l2_in_plus_in_plus, l2_in_plus_in_minus, l2_in_minus_in_plus, l2_in_minus_in_minus
-    del l2_out_plus_in_plus, l2_out_plus_in_minus, l2_out_minus_in_plus, l2_out_minus_in_minus
-    gc.collect()
 
 
 
@@ -230,13 +138,13 @@ def main():
     sigma_xz = Variable(n_in)
     sigma_yz = Variable(n_in)
     # predicted_in = A_in_in*sigma_xz + D_in_in*sigma_yz # add higher order terms
-    predicted_in = (A_in_in + B_in_in + C_in_in )* sigma_xz + (D_in_in + E_in_in + F_in_in )* sigma_yz
-    # predicted_out =  A_out_in*sigma_xz + D_out_in*sigma_yz
-    predicted_out = (A_out_in + B_out_in + C_out_in)* sigma_xz + (D_out_in + E_out_in + F_out_in)* sigma_yz
-
+    predicted_in_x = G_in_in_xx * sigma_xz + G_in_in_xy * sigma_yz
+    predicted_out_x = G_out_in_xx * sigma_xz + G_out_in_xy * sigma_yz
+    predicted_in_y = G_in_in_yx * sigma_xz + G_in_in_yy * sigma_yz
+    predicted_out_y = G_out_in_yx * sigma_xz + G_out_in_yy * sigma_yz
     gamma_vals = np.logspace(-3, 2, N_SOLUTIONS)
 
-    error = sum_squares(u_x_in - predicted_in) + sum_squares(u_x_out - predicted_out)
+    error = sum_squares(u_x_in - predicted_in_x) + sum_squares(u_x_out - predicted_out_x)
 
     if REGULARIZATION == "tvtrace":
         regularity_penalty = tvnorm_trace_2d(sigma_xz,sigma_yz,Dx,Dy)
@@ -308,8 +216,8 @@ def main():
             force[condition_inside,1] = sigma_yz.value.reshape((n_in,))
 
             u_x = np.zeros(coords.shape[0])
-            u_x[condition_inside] = predicted_in.value
-            u_x[condition_outside] = predicted_out.value
+            u_x[condition_inside] = predicted_in_x.value
+            u_x[condition_outside] = predicted_out_x.value
 
             maxmagnitude = np.max(np.abs(force))
 
