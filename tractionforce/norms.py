@@ -12,6 +12,11 @@ from cvxpy.atoms.log_det import log_det
 from cvxpy.atoms.affine.diag import diag
 from cvxpy.atoms.affine.reshape import reshape
 from cvxpy.atoms.elementwise.log import log
+from cvxpy.atoms.elementwise.power import power
+from cvxpy.expressions.expression import Expression
+from cvxpy.atoms.affine.hstack import hstack
+
+
 import numpy as np
 
 
@@ -99,7 +104,24 @@ def l1_trace_2d(value1, value2):
     value2 = Expression.cast_to_const(value2)
     len = value1.size[0]
 
-    return sum_entries(cvxnorm(value1+value2, p='fro'))
+    return cvxnorm(vstack(value1,value2))
+
+def l1_aniso_2d(value1, value2):
+    """\sum \sqrt{value1^2 + value2^2}
+    Parameters
+    ----------
+    value : Expression or numeric constant
+        The value to take the total variation of.
+    Returns
+    -------
+    Expression
+        An Expression representing the total variation.
+    """
+    value1 = Expression.cast_to_const(value1)
+    value2 = Expression.cast_to_const(value2)
+    len = value1.size[0]
+
+    return sum_entries(cvxnorm(value1+value2, p='1'))
 
 class log2(log):
     """Elementwise :math:`\log x**2`.
