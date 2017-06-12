@@ -1,5 +1,5 @@
 \RequirePackage{lineno}
-\documentclass[aps,prl,reprint,twocolumn,groupedaddress,showpacs]{revtex4-1}
+\documentclass[aps,prl,reprint,twocolumn,groupedaddress,showpacs]{revtex4}
 \usepackage[pdftex]{graphicx}
 \usepackage{epstopdf}
 \usepackage{bm}
@@ -72,12 +72,11 @@
   force-generating domains using physical constraints and $L^{1}$
   regularization}
 
-\author{Joshua C. Chang, Yanli Liu, and Tom Chou}
-\affiliation{Epidemiology and Biostatistics Section, Rehabilitation
+\author{Joshua C. Chang$^{1}$, Yanli Liu$^{2}$, and Tom Chou$^{2,3}$}
+\affiliation{$^{1}$Epidemiology and Biostatistics Section, Rehabilitation
   Medicine, Clinical Center, The National Institutes of Health,
-  Bethesda MD, 20892} \affiliation{Depts. of Biomathematics and
-  Mathematics, UCLA, Los Angeles, CA 90095-1766}
-
+  Bethesda MD, 20892} \affiliation{Dept. of Mathematics, UCLA, Los Angeles, CA 90095-1555}
+\affiliation{Dept. of Biomathematics, UCLA, Los Angeles, CA 90095-1766}
 
 %\maketitle 
 
@@ -87,27 +86,27 @@
 %\runninglinenumbers*
 
 \begin{abstract}
-We develop a method to reconstruct, from measured displacements of the
+We develop a method to reconstruct, from measured displacements of an
 underlying elastic substrate, the spatially dependent forces that
 cells or tissues impart on it.  Given newly available high-resolution
 methods to image substrate displacements, it is desirable to be able
 to reconstruct small scale, compactly supported focal adhesions, which
 are localized and can exist only within the footprint of the cell or
-tissue.  We solve this inverse problem using methods of $L^{1}$
-optimization often used in image segmentation. In addition to the
-standard quadratic data mismatch terms that defines least-squares
-fitting, we motivate a term in the objective function which penalizes
-variations in the tensor invariants of the reconstructed stress while
-preserving boundaries.  By minimizing the objective function subject
-to appropriate physical constraints, we are able to efficiently
-reconstruct stress fields with localized structure from simulated and
-experimental substrate displacements. We provide a numerical method
-for setting up a discretized inverse problem that is solvable by
-standard convex optimization techniques. Our method incorporates the
-exact solution for the stress tensor accurate to first-order
-finite-differences, motivates the use of distance-based cutoffs for
-data inclusion, and finds--under loose regularity conditions--the
-reconstruction error that results.
+tissue.  We solve this inverse problem using methods of convex
+regularization. In addition to the standard quadratic data mismatch
+terms that defines least-squares fitting, we motivate a term in the
+objective function which penalizes variations in the vectorial invariants
+of the reconstructed surface stress while preserving boundaries.  By
+minimizing the objective function subject to appropriate physical
+constraints, we are able to efficiently reconstruct stress fields with
+localized structure from simulated and experimental substrate
+displacements. We provide a numerical method for setting up a
+discretized inverse problem that is solvable by standard convex
+optimization techniques. Our method incorporates the exact solution
+for the stress tensor accurate to first-order finite-differences,
+motivates the use of distance-based cutoffs for data inclusion, and
+finds--under loose regularity conditions--the reconstruction error
+that results.
 \end{abstract}
 \maketitle
 
@@ -136,10 +135,10 @@ the pulling force that leads to migration in wound healing assays.
 \begin{center}
 \includegraphics[width=\linewidth]{Fig1.pdf}
 \caption{A schematic of an isolated cell. (a) The boundary of the cell
-  footprint is denoted by the dashed curve, the support of the stress field is
-  represented by the red regions that impart a stress ${\bf F}(x,y)$
-  on the surface. Displacements ${\bf u}(\r_{i})$ of the elastic
-  medium are measured at position $\r_{i} =
+  footprint is denoted by the dashed curve, the support of the stress
+  field is represented by the red regions that impart a stress ${\bf
+    f}(x,y)$ on the surface. Displacements ${\bf u}(\r_{i})$ of the
+  elastic medium are measured at position $\r_{i} =
   x_{i}\hat{x}+y_{i}\hat{y}+z_{i}\hat{z}$ (blue dots) that can be
   inside or outside the cell footprint, on the surface ($z_{i}=0$), or
   below the surface ($z_{i}<0$). (b). A perspective view of the
@@ -178,7 +177,7 @@ novel method for elastic stress source recovery using ideas developed
 for image segmentation \cite{OSHER}.  This class of methods relies on
 optimization that uses an $L^{1}$ regularization term in the objective
 function \cite{CHAN}.  This type of regularization term is not derived
-from a fundamental physical law, but represents a prior knowledge that
+from any fundamental physical law, but represents a prior knowledge that
 the function to be recovered is sparse in content except near
 edges. In addition, the overall objective function will be constructed
 to obey physical constraints and symmetries.
@@ -197,7 +196,7 @@ boundaries of the stress structures.
 
 \section{Elastic Model}
 
-We first derive the linear elastic green's function associated with a
+We first derive the linear elastic Green's function associated with a
 point force applied to the surface of a semi-infinite half-space, as
 shown in Fig.~\ref{FIG1}(b). We assume that the elastic medium is
 infinite in both depth ($d\to \infty$) and lateral extent. The Green's
@@ -221,14 +220,13 @@ G_{sz, zs}(x,y,z) =
 where $s\equiv x,y$. The equation with $\pm$ corresponds to $G_{sz}$
 and $G_{zs}$, respectively, and $R_{\perp} \equiv \sqrt{x^{2}
   +y^{2}}$. The Young's modulus and Poisson ratio of the elastic
-substrate are denoted by $E$ and $\nu$, respectively.  
-For Matrigel, $E\approx4\pm3\times10^2\textrm{ Pa}$ and
-$\nu\approx0.5$~\cite{SOOFIA2009}. Throughout the rest of 
-this manuscript, we will express stress in units of $E$. 
-
-The displacement of a material point at $(x,y,z\leq 0)$ in the medium
-due to a stress distribution ${\bf F}$ is simply the convolution
-$\u(\r) \equiv [u_x \ u_y\ u_z]^\intercal = {\bf G}\Conv\F$.
+substrate are denoted by $E$ and $\nu$, respectively.  For Matrigel,
+$E\approx4\pm3\times10^2\textrm{ Pa}$ and
+$\nu\approx0.5$~\cite{SOOFIA2009}. Throughout the rest of this
+manuscript, we will express stress in units of $E$.  The displacement
+of a material point at $(x,y,z\leq 0)$ in the medium due to a stress
+distribution ${\bf f}$ is simply the convolution $\u(\r) \equiv [u_x
+  \ u_y\ u_z]^\intercal = {\bf G}\Conv\f$.
 %
 %, while for a surface-localized force distribution, 
 %$\F=(F_{x}(x,y,z=0),F_{y}(x,y,z=0),F_{z}(x,y,z=0))$ the displacement would be
@@ -259,27 +257,28 @@ $\u(\r) \equiv [u_x \ u_y\ u_z]^\intercal = {\bf G}\Conv\F$.
 %$\r_{\perp}'= x'\hat{x} + y'\hat{y}$.  We will use this expression for
 %the displacement as the model for the data term in the objective
 %function for our inverse problem.
-%
+
+
 For our specific problem, we shall restrict the forces to surface
-stresses $\sigma_{x,y}$ that act on the plane perpendicular to the
+stresses $\f$ that act on the plane perpendicular to the
 $\hat{z}$ axis. We define the in-plane stress distribution, at depth $z$, as
-$\bs(x,y,z) = \sigma_{xz}(x,y,z)\hat{x} + \sigma_{yz}(x,y,z)\hat{y}$. 
+$\f(x,y) = f_{x}(x,y)\hat{x} + f_{y}(x,y)\hat{y}$. 
 The resulting surface-level displacement fields become
 
 \begin{equation}
-u_{s}(x,y) = \sum_{k=x,y}\int_\Omega \dd x'\dd y'G_{sk}(x-x',y-y')\sigma_{kz}(x',y') 
+u_{s}(x,y,z) = \sum_{k=x,y,z}\int_\Omega \dd x'\dd y'G_{sk}(x-x',y-y',z)f_{k}(x',y').
 \label{eq:UMODEL1s}
 %\nonumber\\
 %&\qquad +  \int_\Omega \dd x'\dd y'G_{xy}(x-x',y-y')\sigma_{yz}(x',y') \label{eq:UMODEL1x}  \\
 %u_y(x,y) &= \int_\Omega \dd x'\dd y'G_{yx}(x-x',y-y')\sigma_{xz}(x',y') \nonumber\\
 %&\qquad +  \int_\Omega \dd x'\dd y'G_{yy}(x-x',y-y')\sigma_{yz}(x',y'),  \label{eq:UMODEL1y}  
 \end{equation}
-
-where $G_{ij}(x,y) \equiv G_{ij}(x,y,z=0)$ and $\sigma_{sz}(x,y)
-\equiv \sigma_{sz}(x,y,z=0)$.  Note that tangential stresses can lead
-to displacement in the normal direction.
-
-
+%
+%where $G_{ij}(x,y) \equiv G_{ij}(x,y,z=0)$ and $\sigma_{sz}(x,y)
+%\equiv \sigma_{sz}(x,y,z=0)$.  
+Note that tangential stresses can induce
+displacements in the direction normal to the surface.
+For cells on flat surface, we assume that $f_{z}=0$.
 \section{Inverse problem}
 
 Next, we develop an objective function for which the minimizing
@@ -289,34 +288,36 @@ quadratic data mismatch term defined by the sum over the displacements
 measured at the $N$ measurement positions at $\r_{i}$:
 
 \begin{equation}
-\Phi_{\rm data}[\bs] = \sum_{i}^{N}\vert \u^{\rm
-  data}(\r_{i})- \u(\r_i)\vert^{2}.
+\Phi_{\rm data}[\f] = \sum_{i}^{N}\vert \u^{\rm
+  data}(\r_{i})- \u(\r_i\vert \f)\vert^{2}.
+\label{PHIDATA}
 \end{equation}
 %
-Since $\u^{\rm data}(\r_{i})$ is given, and $\u(\r_{i})$ is given by the linear model 
-of Eq.~\ref{eq:UMODEL1s}, this contribution to the objective function is
-a functional over the surface-stress function $\bs(\r_{\perp})$.  For
-simplicity, we will assume that the data points are sampled over an
-uniform grid with coordinates given $\{ (x_j,y_k) :
-j\in\{1,2,\ldots,J\}, k\in\{1,2,\ldots,K\}\}.$
+Since $\u^{\rm data}(\r_{i})$ is given, and $\u(\r_{i}\vert \f)$ is
+given by the linear model of Eq.~\ref{eq:UMODEL1s}, this contribution
+to the objective function is a functional over the surface force
+$\f(x,y)$.  For simplicity, we will assume that the data points are
+measured only at the interface $z=0$ over an uniform grid with
+coordinates given $\{ (x_j,y_k) : j\in\{1,2,\ldots,J\},
+k\in\{1,2,\ldots,K\}\}.$
 
-In Eqs~\ref{eq:UMODEL1s}, we have restricted the domain of integration
+In Eq.~\ref{eq:UMODEL1s}, we have restricted the domain of integration
 to lie within the cell footprint $\Omega$, further emphasizing that
-$\boldsymbol\sigma$ has compact support. As a consequence of compact
+$\f(x,y)$ has compact support. As a consequence of compact
 support, for a fixed, discretized approximation of
-$\sigma_{xz},\sigma_{yz}$, the displacements can be obtained exactly
+$\f(x,y)$, the displacements can be obtained exactly
 by solving an equivalent system of linear equations of finite
 dimension.
 
-Here we explicitly define this system of linear equations given a
+Here, we explicitly define this system of linear equations given a
 piecewise-affine approximation of the stress field. Let us consider
-the first-order approximation of $\sigma_{xz}$ and $\sigma_{yz}$ using
+the first-order approximation of $f_{x}(x,y)$ and $f_{y}(x,y)$ using
 central finite differences, for $x\in[x_j - \delta x/2, x_j+\delta
   x/2) \cap y\in[y_j-\delta y/2, y_j + \delta y /2)$,
 \begin{align}
-\lefteqn{\sigma_{xz}(x,y) =\sigma_{xz}(x_i , y_j)  }\nonumber \\
-& \qquad+ (x-x_i)\frac{\sigma_{xz}(x_{i+1},y_j) -\sigma_{xz}(x_{i-1},y_j) }{2\delta x}  \nonumber\\
-&\qquad + (y-y_j)\frac{\sigma_{xz}(x_i,y_{j+1}) - \sigma_{xz}(x_i,y_{j-1}) }{2\delta y} \nonumber\\
+\lefteqn{f_{x}(x,y) =f_{x}(x_i , y_j)  }\nonumber \\
+& \qquad+ (x-x_i)\frac{f_{x}(x_{i+1},y_j) -f_{x}(x_{i-1},y_j) }{2\delta x}  \nonumber\\
+&\qquad + (y-y_j)\frac{f_{x}(x_i,y_{j+1}) - f_{x}(x_i,y_{j-1}) }{2\delta y} \nonumber\\
 &\qquad + \mathcal{O}(\delta x)^2 + \mathcal{O}(\delta y)^2,\label{eq:sigma_affine}
 \end{align}
 where $i,j$ denotes a tuple of grid coordinates. In effect, we are
@@ -326,11 +327,11 @@ fully-determined by its values at the grid vertices.
 Upon using Eq.~\ref{eq:sigma_affine}, we can rewrite
 Eq.~\ref{eq:UMODEL1s} by decomposing the integral into a sum of
 integrals over grid cells.  After further regrouping terms, we find a
-linear system of equations for $u_x$ at all grid points
-simultaneously,
+linear system of equations for $u_{s}(x,y)$ at all grid points
+simultaneously. For example, 
 
 \begin{equation}
-u_{x}(x_{n},y_{m}) = X^{nmjk}\sigma_{xz}(x_j,y_k) + Y^{nmjk}\sigma_{yz}(x_j,y_k),
+u_{x}(x_{n},y_{m}) = X^{nmjk}f_{x}(x_j,y_k) + Y^{nmjk}f_{y}(x_j,y_k),
 \label{eq:linearsystem1}
 \end{equation}
 %
@@ -349,76 +350,144 @@ precision. To resolve these issues, we introduce a number of
 physically consistent constraints and regularization terms relevant to
 this system.
 
-\subsection{Physical regularization}
+\subsection{Physical constraints and regularization}
 
-To better condition the inference of $\bsigma(x,y)$, we regularize
-this problem by forcing the reconstruction to obey some physically
-relevant characteristics of the surface stress. First, since we are
+The remaining components of the objective function should contain
+information about the the known physical constraints as well as
+regularization terms that better condition the overall optimization
+problem. Various regularization terms have been motivated, but they
+can also be associated with prior knowledge on the solution
+\cite{PATHINTEGRAL}. 
+
+First, we consider explicit physical constraints. Since we are
 assuming inertial effects are negligible, we require that the net
 force is zero, or that
 \begin{equation}
-\int_\Omega\sigma_{xz}(x,y)\dd x \dd y= \int_\Omega\sigma_{yz}(x,y)\dd x \dd y = 0.
+\int_\Omega f_{x}(x,y)\dd x \dd y= \int_\Omega f_{y}(x,y)\dd x \dd y = 0.
 \label{NOFORCE}
 \end{equation}
 Likewise, we require that there is no net torque, or that
 \begin{equation}
-\int_\Omega x \sigma_{yz}(x,y) \dd x \dd y  = \int_\Omega y\sigma_{xz}(x,y) \dd x \dd y.
+\int_\Omega x f_{y}(x,y) \dd x \dd y  = \int_\Omega y f_{x}(x,y) \dd x \dd y.
 \label{NOTORQUE}
 \end{equation}
 %
-Finally, we would like to impose regularity on the reconstructed
-fields while preserving both rotational invariance and the sharp
-stress boundaries. To this end we employ a variant of a penalty used often in
-image processing applications, where we wish to penalize the $L^1$
-norm of the variation in the fields, or the total variation. To do
-this in a manner that is consistent with the philosophy that
-rotation of the data should not affect the result, we penalize the
-total variation norm of the invariants of the stress tensor. In the
-case of two-dimensional tensors, of which the surface stress is an
-example, the tensor invariants are the trace
+Another physical constraint is the requirement that surface stress at
+locations outside of the cell footprint vanish.  In regions where
+there is no contact between the cell and the substrate, no mechanism
+can impart stress.  Thus, the stress field is compactly supported
+within the cell footprint.  The stress field may be further localized
+through cellular focal adhesions within the cell footprint
+
+To better condition the inference of $\f(x,y)$, we regularize
+this problem by forcing the reconstruction to obey some physically
+relevant characteristics of the surface stress. In many other types of
+inverse problems, for example, in the inference of the potential of
+mean force of a molecular bond, a contraint on differentiability is
+typically imposed on the function to be inferred \cite{PATHDFS}. A
+typical constraint of this nature may be a quadratic penalty on the
+gradients of the function to be inferred.  However, such $L^{2}$
+functional regularization often leads to ringing and inaccurate
+functional reconstruction especially when the underlying function is
+highly localized or compactly supported.
+
+Thus, $L^{1}$ regularization on the function or on its variations have
+been developed.  These approaches are suitable for problems such as
+segmentation of images where boundaries are are sharp \cite{CHAN}.  In
+these problems, the data is sparse in the sense that definition of
+boundaries in an image contain most of the information.  Likewise, in
+the stress recovery problem at hand, the data consisting of
+displacements at a finite number of measurement positions may be
+considered sparse.
+
+%We also compared reconstruction of the surface stress using our
+%rotationally invariant norms of Eq.~\ref{eq:PhiL1Tr} and
+%Eq.~\ref{eq:PhiTVTr} against alternate isotropic norms. As an
+%alternative to the $L^1$ norm on the trace we compared
+
+To this end we employ a variant of a penalty used often in
+image processing applications, where one penalizes the $L^1$
+norm of the variation in the fields, or the total variation.
+In analogy with image processing, one might choose regularization terms 
+$\Phi_{\rm reg}$ of the form
+
 \begin{equation}
-\textrm{Tr}(\bsigma) = \sigma_{xz} + \sigma_{yz}
-\end{equation}
-and the determinant
+\Phi_{L^{1}} = \int_\Omega \left(\vert f_{x}(x,y)\vert  +\vert f_{y}(x,y)\vert\right) \d\r,
+\label{L10}
+\end{equation} 
+
 \begin{equation}
-\textrm{Det}(\bsigma) = \sigma_{xz} \sigma_{yz}.
+ \Phi_{{\rm TV}_1} = \int_\Omega \left( \vert\nabla f_{x}(x,y) \vert +
+ \vert\nabla f_{y}(x,y) \vert\right)\d\r
+ \label{eq:PhiTV1}
 \end{equation}
+and
+\begin{equation}
+\Phi_{{\rm TV}_2} = \int_\Omega \left(\vert\partial_x f_{x}\vert 
++ \vert\partial_y f_{x}\vert + \vert\partial_x f_{y}\vert
++ \vert\partial_y f_{y}\vert\right)\d\r,
+ \label{eq:PhiTV2}
+\end{equation}
+%
+representing an $L^{1}$ regularization of the surface stress and two
+forms of its total variation, respectively.  Since these
+regularization terms are not based on any fundamental physical law,
+there is some freedom of in choosing their form.  However, we do not
+want rotational anisotropy in the measurement grid to affect the final
+result. The regularization terms should not induce any additional
+anisotropy over that of the displacement field.  Thus, appropriate
+regularizations should be invariant under coordinate rotation. The
+coordinate-independent regularizer can be 
+constructed from the magnitude of the force vector at the surface
+\begin{equation}
+\vert\f(x,y) \vert  = \sqrt{f_{x}^{2} + f_{y}^{2}}.
+\end{equation}
+
+%Similarly, for the variation of $\bsigma$, the trace and determinant
+%of $\partial_{i}\sigma_{jz}$ are rotational invariants:
+
+%\begin{equation}
+%\textrm{Tr}(\nabla \bsigma) = \partial_{x}\sigma_{xz} + \partial_{y}\sigma_{yz},
+%\end{equation}
+
+%\begin{equation}
+%\textrm{Det}(\nabla\bsigma) = \partial_{x}\sigma_{xz} \partial_{y}\sigma_{yz}-
+%\partial_{x}\sigma_{yz}\partial_{y}\sigma_{yz}.
+%\end{equation}
+%
 Any regularization penalty imposed on the reconstruction problem must
 be a functional of these invariants in order to maintain rotational
-invariance relative to the choice of observation frame of the
-reconstructed stress tensor.
- 
-Since there are no physical principles or symmetries to exploit beyond
-using the trace and determinant, there is some choice in the form of
-the the regularization term $\Phi_{\rm reg}$.  In this manuscript, we
-will restrict ourselves to regularizers that are 
-functions of the trace of the stress tensor. In
-particular, we are interested in the $L^1$ norm of the trace
+invariance relative to the choice of how the displacements are
+sampled.  In this manuscript, for simplicity, we will focus on
+regularizers $\Phi_{\rm reg} = \tilde{\Phi}_{\rm reg}$ that are functions of the magnitude and
+trace; for example
 \begin{equation}
-\Phi_{L^1({\rm Tr})} = \int_\Omega \vert \sigma_{xz}(x,y) + \sigma_{yz}(x,y)  \vert \dd x\dd y
-\label{eq:PhiL1Tr}
+\tilde{\Phi}_{L^{1}} = \int_\Omega \vert\f(x,y) \vert \dd x\dd y
+\label{eq:mag}
 \end{equation}
-and total variation norm of the trace
+and
 %
 \begin{equation}
-\Phi_{\rm TV(Tr)} =  \int_\Omega | \nabla(\sigma_{xz}(x,y) + \sigma_{yz}(x,y) ) | \dd x\dd y.
+\tilde{\Phi}_{\rm TV} =  
+\int_\Omega \vert \nabla(\vert \f\vert)\vert\dd x\dd y.
 \label{eq:PhiTVTr}
 \end{equation}
 
 Using either of these expressions as the regularization norm
-$\Phi_{\textrm{reg}}$ suggests the penalized optimization problem
+suggests the penalized optimization problem
 
 \begin{equation}
-\hat{\bsigma} \big\vert \lambda = \arg\min_{\bsigma} \left\{ \Phi_{\textrm{data}}[\bsigma] + 
-\lambda\Phi_{\textrm{reg}}[\bsigma] \right\},
+\hat{\f} \big\vert \lambda = \arg\min_{\f} \left\{ \Phi_{\textrm{data}}[\f] + 
+\lambda\Phi_{\textrm{reg}}[\f] \right\},
 \label{eq:objective}
 \end{equation}
 %
-subject to the no-force and no-torque constraints (Eqs.~\ref{NOFORCE}
-and \ref{NOTORQUE}) mentioned above, where $\lambda>0$ is a tunable
-parameter. This problem is in a standard form that is directly
-solvable using a variety of optimization routines.  In our
-implementation, we use a second-order quadratic cone solver~\cite{cvxpy}.
+subject to the no-force, no-torque, and footprint constraints
+(Eqs.~\ref{NOFORCE} and \ref{NOTORQUE}) on $\f$ mentioned above.
+In Eq.~\ref{eq:objective}, $\lambda>0$ is a tunable parameter. This
+problem is in a standard form that is directly solvable using a
+variety of optimization routines.  In our implementation, we use a
+second-order quadratic cone solver~\cite{cvxpy}.
 
 %\subsection{Numerical cut-off and error}
 To reduce the size of the system of equations described in
@@ -461,7 +530,7 @@ The decay of the influence of stress on the system provides
 justification for setting distance-based cut-offs of the linear
 system. The effect of the cut-off is to limit the left-hand side of
 Eq.~\ref{eq:linearsystem1} to locations only within some maximal
-distance $R$ from the outline of the cell.
+distance $R_{\perp}$ from the outline of the cell.
 
 %The error in the solution of the inverse problem is dependent on the
 %precision of the observations, the physical constants that describe
@@ -478,6 +547,8 @@ distance $R$ from the outline of the cell.
 %\sup \vert \hat{\bsigma}^R(\r) - \hat{\bsigma}^\infty(\r) \vert \leq \frac{C}{R^2}
 %\end{equation}
 
+
+
 \section{Results}
 
 We implemented our regularized inversion method in Python version 3.5,
@@ -485,172 +556,179 @@ where optimization is performed using the \texttt{cvxpy} package with
 the \texttt{ecos} solver.  Our implementation is available at
 \url{https://github.com/joshchang/tractionforce}. 
 
-First we tested our method on simulated data derived from the two
-different force- and torque-free test stress fields shown in
-Fig.~\ref{TESTS}. The first test stress field we consider is
-
-\begin{equation}
-\sigma_{rz}(r,\theta) = f_{r} \sin (m\theta),\quad 
-\sigma_{\theta z}(r,\theta) = f_{\theta} \cos (n\theta),
-\end{equation}
-%
-for $a < r < 1$, and zero otherwise. Here, $m,n$ are integers and
-if we normalize the stresses by the Young's modulus $E$, $f_{r}$ and
-$f_{\theta}$ are constants.
-
-\begin{figure}[h!]
+\begin{figure*}[ht]
 \begin{center}
-%\input{Fig1.pstex_t}
-\includegraphics[width=2.5in]{tests.pdf}
-\includegraphics[width=3.4in]{displacements}
-
-\caption{\textbf{Test stress fields and surface displacements.} (a) An
-  annular stress distribution of forces in the $\theta$ and $r$
-  directions. (b) Four focal adhesions under mutual tension
-  represented by the green lines representing filaments. The red
-  borders represent the extent of the cell footprint and can be
-  determined experimentally as part of the imaging.  Mathematically,
-  the cell boundary forms the basis for a constraint on the stress
-  distribution and we explore the dependence of the quality of
-  reconstruction on the footprint constraint. (c) and (d) show the
-  surface displacement field associated with the stress distributions
-  in (a) and (b), respectively.}
-\label{TESTS}
+\includegraphics[width=5.2in]{4-pad.pdf}
+%\includegraphics[width=4.2in]{displacements}
+%
+\caption{\textbf{Test stress fields and surface displacements.} (a)
+  Four focal adhesions attached by filaments indicated by the green
+  lines. The red border represents the extent of the cell footprint
+  and can be determined experimentally as part of the imaging.
+  Mathematically, the cell boundary forms the basis for a constraint
+  on the stress distribution and we explore the dependence of the
+  quality of reconstruction on the footprint constraint. The faint
+  blue grid represents the regular points at which displacements might
+  be measured. (b) and (c) show the corresponding surface
+  displacements $u_{x}(x,y)$ and $u_{y}(x,y)$,
+  respectively.\label{TEST}}
 \end{center}
-\end{figure}
+\end{figure*}
+%\end{widetext}
 %
 
-The second stress field we test consists of four separated circular
-stress pads, or focal adhesions, with radii $r_{1} = 1/5$, $r_{2} =
-1/6$, $r_{3} = 1/8$, and $r_{4} = 1/4$, and centers at positions
-$(x_{1},y_{1}) = (-1,-1/2)$, $(x_{2},y_{2}) = (0,-1)$, $(x_{3},y_{3}) =
-(2,1)$, and $(x_{4},y_{4}) = (0,1)$.  The pads 2,3, and 4 are
-connected in a triangle as shown, while pad 1 is connected only to pad
-2.  The tensions along these connections give rise to surface stresses
-imparted by the pads onto the substrate.  We will assume that the
-stress fields in pads 1,2, and 3 are uniformly distributed within the
-circular disks. For pad 4, we assume that the filaments connected to
-it distributed according to a cone-like density function. Thus, the
-stress field within pad 4 linearly decrease along the radial
-direction. The stresses $\bsigma^{(i)}$ under each patch $i$ are
-decomposed into contributions arising from the total tension $T_{ij}$
-connecting them with pad $j$ and can be expressed in the form
+First, we tested our method on simulated data derived from a force-
+and torque-free test stress field shown in Fig.~\ref{TESTS}. The test
+pattern consists of four separated circular stress pads, or focal
+adhesions, with radii $r_{1} = 1/5$, $r_{2} = 1/6$, $r_{3} = 1/8$, and
+$r_{4} = 1/4$, and centers at positions $(x_{1},y_{1}) = (-1,-1/2)$,
+$(x_{2},y_{2}) = (0,-1)$, $(x_{3},y_{3}) = (2,1)$, and $(x_{4},y_{4})
+= (0,1)$.  The pads 2,3, and 4 are connected in a triangle as shown,
+while pad 1 is connected only to pad 2.  The tensions along these
+connections give rise to surface stresses imparted by the pads onto
+the substrate.  We will assume that the stress fields in pads 1,2, and
+3 are uniformly distributed within the circular disks. For pad 4, we
+assume that the filaments connected to it distributed according to a
+cone-like density function. Thus, the stress field within pad 4
+linearly decrease along the radial direction. The stresses $\f^{(i)}$
+under each patch $i$ are decomposed into contributions arising from
+the total tension $T_{ij}$ connecting them with pad $j$ and can be
+expressed in the form
 
 \begin{align}
-\bsigma^{(1)} & = a_{12}\left(\hat{x} -{\hat{y}\over 2}\right) \label{SIGMA1}\\
-\bsigma^{(2)} & = {G_{4}\over A_{2}}\hat{y} - a_{12}{A_{1}\over A_{2}}\left(\hat{x} 
+\f^{(1)} & = a_{12}\left(\hat{x} -{\hat{y}\over 2}\right) \label{SIGMA1}\\
+\f^{(2)} & = {G_{4}\over A_{2}}\hat{y} - a_{12}{A_{1}\over A_{2}}\left(\hat{x} 
 -{\hat{y}\over 2}\right) + a_{23}(\hat{x}+\hat{y}) \label{SIGMA2} \\
-\bsigma^{(3)} & = -\hat{x}{G_{4}\over A_{3}} - a_{23}{A_{2}\over A_{3}}(\hat{x}+\hat{y}) 
+\f^{(3)} & = -\hat{x}{G_{4}\over A_{3}} - a_{23}{A_{2}\over A_{3}}(\hat{x}+\hat{y}) 
 \label{SIGMA3}\\
-\bsigma^{(4)} & = g_{4}\left(1- {r \over r_{4}}\right)(\hat{x}-\hat{y})
+\f^{(4)} & = g_{4}\left(1- {r \over r_{4}}\right)(\hat{x}-\hat{y})\label{SIGMA4}
 \end{align}
 %
 where $a_{12}, a_{23}, g_{4} >0$ are constant amplitudes, 
 $A_{i} = \pi r_{i}^{2}$ are the pad areas, and 
 
 \begin{equation}
-G_{4} = g_{4}\int_{0}^{r_{4}}\left(1-{r\over r_{4}}\right) \dd \r = {g_{4}\pi r_{4}^{2}\over 3}
+G_{4} = 2\pi g_{4}\int_{0}^{r_{4}}\left(1-{r\over r_{4}}\right)r\dd r = {g_{4}\pi r_{4}^{2}\over 3}
 \end{equation}
 %
 is the total force on pad 4 in each direction. Note that both test
 stress fields are constructed to be force- and torque-free. We first
 generate the displacement fields using the Green's function 
 (\textit{i.e.}, Eq.~\ref{eq:UMODEL1s} for surface values $\u(x,y,z=0)$)
-and then recover $\bsigma(\r)$ from these displacements.
+and then recover $\f(\r)$ from these displacements.
 
-\begin{figure}[t]
-\begin{center}
+%\begin{figure}[t]
+%\begin{center}
 %\input{Fig1.pstex_t}
 %\includegraphics[width=3.4in]{}
-\caption{\textbf{Inversion results for test stress fields.} (a)
-  Inversion for the annular stress field with $m=3$, $n=5$ and
-  ...using different cell boundaries.... }
-\label{RESULTS_TEST}
-\end{center}
-\end{figure}
+%\caption{\textbf{Inversion results for test stress fields.} (a)
+%  Inversion for the annular stress field with $m=3$, $n=5$ and
+%  ...using different cell boundaries.... }
+%\label{RESULTS_TEST}
+%\end{center}
+%\end{figure}
 
 \begin{figure}
-\includegraphics[width=\linewidth]{gridspacefig}
-\caption{\textbf{Grid coarsening} Using every $2^n$ lattice points of observations.}
+%\includegraphics[width=\linewidth]{compare}
+\caption{\textbf{Comparing different regularizers.} Reconstruction of the test
+  patterns using the different forms of $\Phi_{\rm reg}$:
+  $\Phi_{L^{1}},\Phi_{{\rm TV}_1},\Phi_{{\rm TV}_2}$,$\tilde{\Phi}_{L^{1}}$ and
+  $\tilde{\Phi}_{\rm {TV}_{1}}$. The optimal values of $\lambda$ are shown
+  in.....}
+\label{COMPARE}
 \end{figure}
-
-
-\begin{figure}
-\includegraphics[width=\linewidth]{unidirectionfig}
-\caption{\textbf{Unidirectional displacement measurements} Sets of reconstructions using displacements under only $\hat{x}$ or $\hat{y}$ directions}
-\end{figure}
-
-
-\vspace{1cm}
-{\bf DO SOME RECONSTRUCTIONS FOR DIFFERENT REGULARIZATIONS, FOOTPRINTS, AND GRID RESOLUTIONS}
-\vspace{1cm}
-
-We also compared reconstruction of the surface stress using our
-rotationally invariant norms of Eq.~\ref{eq:PhiL1Tr} and
-Eq.~\ref{eq:PhiTVTr} against alternate isotropic norms. As an
-alternative to the $L^1$ norm on the trace we compared
-\begin{equation}
-\Phi_{L1} = \int_\Omega \left\vert \sigma_{xz}(x,y) +\sigma_{yz}(x,y) \right\vert\d\r,
-\end{equation} 
-and as alternatives to the total variation on the trace we looked at
-
-\begin{equation}
- \Phi_{{\rm TV}_1} = \int_\Omega \left( \vert\nabla\sigma_{xz}(x,y) \vert +
- \vert\nabla\sigma_{yz}(x,y) \vert\right)\d\r
- \label{eq:PhiTV1}
-\end{equation}
-and
-\begin{equation}
-\Phi_{{\rm TV}_2} = \int_\Omega  \left( \vert\partial_x\sigma_{xz}\vert + \vert\partial_y\sigma_{xz}\vert + \vert\partial_x\sigma_{yz}\vert+ \vert\partial_y\sigma_{yz}\vert\right)\d\r.
- \label{eq:PhiTV2}
-\end{equation}
 %
+Figure~\ref{COMPARE} compares the reconstruction achieved from using
+the different forms of $\Phi_{\rm reg}$. We see that 
+all forms of regularization give reasonable reconstructions but ....
+%
+%that 
+%$\Phi_{L^{1}}$ gives a more ``compressed'' reconstruction than 
+%$\Phi_{L^{1}{\rm (Tr)}}$.  
+\vspace{1cm}
+%
+In all of these reconstructions, we have imposed that the surface
+stress is both force-free and torque-free, and also that the support
+of the stress is within given cell boundaries.
+
 The adjustable parameter $\lambda$ was chosen in each instance by
 examining the balance between data mismatch and regularity using
-trade-off curves shown in Fig.~\ref{fig:fig2}, and taking the value
+trade-off curves shown in Fig.~\ref{compare}, and taking the value
 for $\lambda$ that yields a point farthest away from the line segment
-joining the ends of the plot. In Fig.~\ref{fig:fig2}, the chosen value
+joining the ends of the plot. In Fig.~\ref{compare}, the chosen value
 of $\lambda$ corresponds to the given balance between regularity and
 data fidelity marked by the red circle. The solution corresponding to
 this particular value of $\lambda$ is shown in the middle column on
 the right. For reference, under-regularized solutions, corresponding
 to the green circle in the trade-off plot, and over-regularized
 solutions, corresponding to black circle, are also given. Each row in
-Fig.~\ref{fig:fig2} corresponds to the use of a different
-regularization penalty functional. In all of these reconstructions, we
-have imposed that the surface stress is both force-free and torque
-free, and also that the support of the stress is within given cell
-boundaries.
+Fig.~\ref{compare} corresponds to the use of a different
+regularization penalty functional. 
 
-To explore the effect of the constraints on our reconstructions, we
-systematically removed them in solving the rotationally invariant
-$L^1$ regularized problem In Fig.~\ref{fig:fig3}, we present
-reconstructions where net torque is free to vary but force is
-constrained, where net force is free to vary but torque is
-constrained, and where net torque and force are both free to vary. In
-each of these reconstructions the unconstrained quantity did not sum
-to zero, as desired.
+Figure \ref{GRID} shows reconstructions of the 4-pad test patterns
+using $\tilde{\Phi}_{L^{1}}$ as a function of the coarseness of the
+displacement data. The general features of the stress patterns are
+preserved under coarsening but sufficient density of data points are
+needed to resolve fine scale variations in the stress field. Here, we
+applied the boundary constraint corresponding to the cell footprints
+shown in Fig.~\ref{TEST}(a).
 
-Additionally, our reconstructions are implicitly constrained by the
-assumption of compact support where the support of the stress tensor
-is within the cell boundary. Examining Fig.~\ref{fig:fig2}, it appears
-that this constraint is active as much of the stress is concentrated
-at boundaries. In Fig.~\ref{fig:fig4}, we loosened the boundary
-constraint by allowing the support of the stress to fall within 10
-pixels of the cell boundary.
+\begin{figure}
+\includegraphics[width=\linewidth]{gridspacefig}
+\caption{\textbf{Grid coarsening.} Using every $n\in\{1,2,4\}$
+  lattice points of observations. The reconstruction is also performed
+  at the same resolution.  In general, the optimization is stable and
+  the qualitative features of the reconstructed $\f(x,y)$ are robust
+  to modest data coarsening.}
+\label{GRID}
+\end{figure}
+
+We also test loss of information by assuming that 
+displacements only in the $\hat{x}$ or $\hat{y}$ directions 
+are measured. In Fig.~\ref{XYONLY} we show reconstructions using only 
+$u_{x}$ or $u_{y}$ for both the annulus and 4-pad test patterns.
+
+\begin{figure}
+\includegraphics[width=\linewidth]{unidirectionfig}
+\caption{\textbf{Unidirectional displacement measurements} Sets of
+  reconstructions using displacements under only $\hat{x}$ or
+  $\hat{y}$ directions. DESCRIPTION OF WHAT HAPPENS.}
+\label{XYONLY}
+\end{figure}
+
+
+%To explore the effect of the constraints on our reconstructions, we
+%systematically removed them in solving the rotationally invariant
+%$L^1$ regularized problem In Fig.~\ref{fig:fig3}, we present
+%reconstructions where net torque is free to vary but force is
+%constrained, where net force is free to vary but torque is
+%constrained, and where net torque and force are both free to vary. In
+%each of these reconstructions the unconstrained quantity did not sum
+%to zero, as desired.
+
+Next, we illustrate the effects of relaxing the no-force and no-torque
+constraints.  Fig.~\ref{fig:fig3} shows optimal-$\lambda$
+resonstructions using $\tilde{\Phi}_{L^{1}}$, but without force or
+torque constraints.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{fig3}
-\caption{\textbf{Omission of constraints} leads to solutions that do
-  not naturally obey the constraints. Plotted are best reconstructions
-  under the isotropic $L^1$ penalty and the difference between these
-  reconstructions and the corresponding fully constrained
-  reconstruction of Fig.~\ref{fig:fig2}. }
+\caption{\textbf{Constraints matter.} Physical constraints are not satisfied unless they are enforced. Plotted are best reconstructions
+  under $\tilde{\Phi}_{L^{1}}$ penalty and the difference between
+  these reconstructions and the corresponding fully constrained
+  reconstruction in Fig.~\ref{COMPARE}. }
 \label{fig:fig3}
 \end{figure}
 
+Finally, we explore the effects of relaxing the footprint constraint. 
+By artificially expanding the footprint, we relax the 
+constraint. In the 4-pad example, using the $\tilde{\Phi}_{L^{1}}$
+regularizer, the footprint constraint is not 
+especially critical. However, as we shall see, for stresses that are concentrated 
+near the periphery of the cell footprint, 
+
 \begin{figure}
-\includegraphics[width=\linewidth]{fig4}
+%\includegraphics[width=\linewidth]{4-pad_boundary}
 \caption{\textbf{Boundary constraint weakening} leads to solutions
   where the support does not fall naturally within the cell
   boundary. In the unconstrained reconstruction, the support of the
@@ -661,14 +739,14 @@ pixels of the cell boundary.
 \end{figure}
 
 
-\section{Reconstruction of stress fields from displacements 
-generated by Osteocytes(?)}
+\section{Reconstruction from single cell data}
 
-Next, we consider experimental displacements resulting from stress
-generated by a single cell. The surface displacements were measured
-using Hilbert space dynamometry which uses phase information of the
-periodic signal arising from a chemically patterned grid on the
-substrate \cite{POPESCU}.  Both $x$ and $y$-displacements at a
+To apply our method on high-resolution experimental data, we consider
+the displacements resulting from stress generated by a single isolated
+mesenchymal stem cell. The surface displacements were measured using
+Hilbert space dynamometry which uses phase information of the periodic
+signal arising from a chemically patterned grid on the substrate
+\cite{POPESCU}.  In this dataset only $x$-displacements at a
 resolution of the patterned grid spacing can be measured, as shown in
 Fig.~\ref{DATA}
 
@@ -676,55 +754,90 @@ Fig.~\ref{DATA}
 \includegraphics[width=\linewidth]{fig0a}
 \caption{\textbf{Bright field image and displacements.} (a) Raw bight
   field image of a mesenchymal stem cell. The cell footprint boundary
-  is estimated from segmentation. (b) and (c) The $x-$ and
-  $y-$displacement fields at the surface of the substrate.}
+  is estimated from segmentation of the image. (b) The
+  $x-$displacement fields at the surface of the substrate. (c) The
+  displacements of the patterned lines.}
 \label{DATA}
 \end{figure}
 %
-The results of reconstruction of the stress field using our method are
-shown in Fig.~\ref{fig:fig2}.
+The $\lambda-$optimal results for the reconstructed stress field
+$\hat{\f}$ using the $\tilde{\Phi}_{L^{1}}$ regularization and the
+full set of constraints are shown in Fig.~\ref{DATA2}.
 
-\begin{figure*}
+\begin{figure}
 \includegraphics[width=\linewidth]{fig2}
-\caption{\textbf{Reconstruction of experimental surface stress field} for various
-  choices of regularization. The first and third rows are
-  physically-consistent regularizations. The best reconstruction
-  balances regularity and data matching and corresponds to the value
-  for $\lambda$ that is near a phase transition in the trade off plot
-  between these two penalties (circled in red). The under-regularized
-  solution corresponds to the point circled in green and the
-  over-regulated solution corresponds to the point circled in black.}
-\label{fig:fig2}
-\end{figure*}
+\caption{\textbf{Reconstruction of experimental surface stress field.}
+  Reconstruction of $\f$ from the measured displacements shown in
+  Fig.~\ref{DATA}.}
+\label{DATA2}
+\end{figure}
+
+As evident from the reconstructions, the surface forces are
+concentrated near the border of the cell footprint. For such
+boundary-dominated stress fields, the footprint constraint is expected
+to be important in the recovery of $\f$. Fig.~\ref{DATA3} compares the
+reconstruction with that computed with an artifically expanded
+footprint. Using an incorrect footprint results in a force
+distribution $\hat{\f}$ that differs from the ``true'' distribution,
+especially near the borders.
+\begin{figure}
+\includegraphics[width=\linewidth]{fig4}
+\caption{\textbf{Relaxation of footprint constraint.} Comparing the
+  surface force reconstruction using the estimated cell footprint
+  (from the bright field image) with the reconstruction derived from a
+  false cell footprint. Since the forces are concentrated near the
+  cell border, the reconstruction is sensitive to the location of the
+  border.}
+\label{DATA3}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Discussion and Conclusions}
+\section{Summary and Conclusions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We have presented a comprehensive method for solving the inverse
-problem of surface stress reconstruction the incorporates physical
-knowledge as constraints.  Under piecewise affine approximations of
-the stress tensor, we provided an exact solution to the forward
-problem as a system of linear equations. Using the multipole
-expansion, we motivated the use of a cut-off in the solution of the
-forward problem that greatly reduces the rank of the inverse problem
-thereby decreasing both the computational complexity of the problem
-and the memory requirements. The numerical stability of the problem
-was also improved using regularization which obeys the geometric 
-constraint that the problem should be rotationally invariant.
+We presented a systematic approach to solving the inverse problem
+associated with the reconstruction--from displacements of the
+underlying substrate--of surface stresses imparted by isolated cells.
+Under piecewise affine approximations of the surface force, we
+provided an exact solution to the forward problem as a system of
+linear equations. This approximation to the forward problem is used in
+a data mismatch term $\Phi_{\rm data}$ (Eq.~\ref{PHIDATA}).
+In the numerical implementation of the optimization problem, we also
+motivated the use of a cut-off in the solution of the forward problem
+that greatly reduces the rank of the inverse problem thereby
+decreasing both the computational complexity of the problem and the
+memory requirements. This cut-off approach is appropriate only in
+scenarios in which the stress-generating cell is localized and far
+from the system boundaries. Assays in which cells or layers that
+extend to the boundary of the sample, or in which the substrate is of
+finite depth will required the careful implementation of boundary
+conditions defined by the sample size.  
 
-Our method exploits physical constraints that allows for superior
-reconstruction of complex surface stress fields.  We also showed how
-the known footprint boundary can imapct the reconstruction. In
-general, footprints that extend beyond the extend of the support of
-the stress field worsens the inversion, allowing for ``leakage'' of
-stress beyond its actual support. Our method can naturally apply to
-related systems such as scratch wound assays. 
+Upon further consideration of physical and geometric features, 
+we motivated additional important terms the objective function.   
+The fundamental optimization problem involves minimizing an objective
+function containing $L^{1}$ regularization terms that are invariant to
+coordinate rotation. The anisotropy of $\hat{\f}$ derives soley from
+the anisotropy in the data. Important physical constraints including
+vanishing net force/net torque and zero stress outside the cell
+footprint are also imposed. By exploring the mathematical features of
+the stress inference problem, we find that properly identifying and
+implementing physical constraints (such as no-force and no-torque) are
+key to accurate stress recovery.
 
+We also showed how the known footprint boundary can impact the
+reconstruction, especially when adhesion sites are concentrated near
+the cell boundary. Such focal adhesion configurations are commonly
+observed in cells grown on 2D substrates. In general, cell boundaries
+that artificially extend beyond the true footprint worsens the
+inversion, allowing for ``leakage'' of stress beyond its actual
+support.
 
-\vspace{1cm}
+%In our test cases and in the analysis of an experimental dataset, we
+%have assumed that the elastic properties of the substrate (Young's
+%modulus and Poisson ratio) are known. These experimetal parameters can 
+%also be inferred 
 
-{\bf DISCUSS HOW  $E$, $\nu$, AND THE CELL BOUNDARY CAN ALSO BE SIMULTANEOUSLY INFERRED}
 
 
 \bibliography{refs}
@@ -772,27 +885,27 @@ substrate are denoted by $E$ and $\nu$, respectively.
 
 Here, we show the explicit expressions relating displacements $\u(x_{n}, y_{m})$ at 
 grid points $(x_{n},y_{m})$ in terms of stress fields at the same locations. Using 
-the interpolation of $\sigma(x,y)$ defined by Eq.~\ref{eq:sigma_affine} in 
+the interpolation of $\f(x,y)$ defined by Eq.~\ref{eq:sigma_affine} in 
 Eq.~\ref{eq:UMODEL1s}, we find
 %
 \begin{align}
 \lefteqn{u_x(x_n,y_m) =}  \nonumber\\
- & \quad \sum_{(x_j,y_k)\in\Omega} \Bigg\{ \Bigg[\sigma_{xz}(x_j,y_k)
-- x_j\left(\frac{\sigma_{xz}(x_{j+1},y_k) - \sigma_{xz}(x_{j-1},y_k)}{2\delta x}\right)
- -y_k\left( \frac{\sigma_{xz}(x_j,y_{k+1}) -
-\sigma_{xz}(x_j,y_{k-1})}{2\delta y}\right) \Bigg]{\langle G_{xx} \rangle}^{nmjk} \nonumber \\
-& \qquad\qquad +\left[ \frac{\sigma_{xz}(x_{j+1},y_k) -
-\sigma_{xz}(x_{j-1},y_k)}{2\delta x}\right]\langle xG_{xx} \rangle^{nmjk} + \left[  \frac{\sigma_{xz}(x_j,y_{k+1}) - \sigma_{xz}(x_j,y_{k-1}) }{2\delta y} \right]
+ & \quad \sum_{(x_j,y_k)\in\Omega} \Bigg\{ \Bigg[f_{x}(x_j,y_k)
+- x_j\left(\frac{f_{x}(x_{j+1},y_k) - f_{x}(x_{j-1},y_k)}{2\delta x}\right)
+ -y_k\left( \frac{f_{x}(x_j,y_{k+1}) -
+f_{x}(x_j,y_{k-1})}{2\delta y}\right) \Bigg]{\langle G_{xx} \rangle}^{nmjk} \nonumber \\
+& \qquad\qquad +\left[ \frac{f_{x}(x_{j+1},y_k) -
+f_{x}(x_{j-1},y_k)}{2\delta x}\right]\langle xG_{xx} \rangle^{nmjk} 
++ \left[  \frac{f_{x}(x_j,y_{k+1}) - f_{x}(x_j,y_{k-1}) }{2\delta y} \right]
 \langle yG_{xx} \rangle^{nmjk}\nonumber\\
-&\qquad\qquad + \Bigg[\sigma_{yz}(x_j,y_k)-x_j\left(\frac{\sigma_{yz}(x_{j+1},y_k)-
-\sigma_{yz}(x_{j-1},y_k) }{2\delta x}\right)-y_k\left( \frac{\sigma_{yz}(x_j,y_{k+1}) 
--\sigma_{yz}(x_j,y_{k-1}) }{2\delta y}\right) \Bigg] \langle G_{xy} \rangle^{nmjk}\nonumber \\
-&\qquad\qquad +\left[ \frac{\sigma_{yz}(x_{j+1},y_k) - 
-\sigma_{yz}(x_{j-1},y_k) }{2\delta x}\right]  
+&\qquad\qquad + \Bigg[f_{y}(x_j,y_k)-x_j\left(\frac{f_{y}(x_{j+1},y_k)-
+f_{y}(x_{j-1},y_k) }{2\delta x}\right)-y_k\left( \frac{f_{y}(x_j,y_{k+1}) 
+-f_{y}(x_j,y_{k-1}) }{2\delta y}\right) \Bigg] \langle G_{xy} \rangle^{nmjk}\nonumber \\
+&\qquad\qquad +\left[ \frac{f_{y}(x_{j+1},y_k) - f_{y}(x_{j-1},y_k) }{2\delta x}\right]  
 %\int_{y_k-\delta y/2}^{y_k+\delta y/2}\!\!
 \langle xG_{xy} \rangle^{nmjk} + 
-\left[\frac{\sigma_{yz}(x_j,y_{k+1}) - 
-\sigma_{yz}(x_j,y_{k-1}) }{2\delta y}\right]\langle yG_{xy} \rangle^{nmjk} \Bigg\},
+\left[\frac{f_{y}(x_j,y_{k+1}) - 
+f_{y}(x_j,y_{k-1}) }{2\delta y}\right]\langle yG_{xy} \rangle^{nmjk} \Bigg\},
 \label{eq:ux_decomposed}
 \end{align}
 %
@@ -809,7 +922,7 @@ G_{uv}(x_n-x',y_m-y')\dd x'\dd y', \label{eq:G_ave}
 except that at the edges where we use one-sided differences so that we
 are only differentiating within $\Omega$. A similar expression can be
 found for solving for $u_y$ (not shown). Collecting terms, we 
-write $u_{x,y}(x_{n},y_{m})$ in terms of $\sigma(x_{j}, y_{k})$ 
+write $u_{x,y}(x_{n},y_{m})$ in terms of $\f(x_{j}, y_{k})$ 
 in Eq.~\ref{eq:linearsystem1}, where 
 
 \begin{align}
@@ -844,52 +957,53 @@ y_{mk}^+ = y_m - (y_k+\delta y/2)$, and $\Delta y_{mk}^+ = y_m -
 (y_k-\delta y/2)$, we find
 
 \begin{align}
-\langle G_{uv}\rangle^{nmjk} &=   f_{uv}( \Delta x_{nj}^+,\Delta y_{mk}^+) - f_{uv}( \Delta x_{nj}^+,\Delta y_{mk}^-)
--f_{uv}(\Delta x_{nj}^-, \Delta y_{mk}^+) + f_{uv}(\Delta x_{nj}^- , \Delta y_{mk}^-)
+\langle G_{uv}\rangle^{nmjk} &=   g_{uv}( \Delta x_{nj}^+,\Delta y_{mk}^+) - g_{uv}( \Delta x_{nj}^+,\Delta y_{mk}^-)
+-g_{uv}(\Delta x_{nj}^-, \Delta y_{mk}^+) + g_{uv}(\Delta x_{nj}^- , \Delta y_{mk}^-)
 \end{align}
 where
 \begin{align}
-f_{xx}(x,y) &= \frac{\nu+1}{\pi E}\Bigg[ x(1-\nu ) \log\left( \sqrt{x^2+y^2}+y\right)
+g_{xx}(x,y) &= \frac{\nu+1}{\pi E}\Bigg[ x(1-\nu ) \log\left( \sqrt{x^2+y^2}+y\right)
 + y \log\left(\sqrt{x^2+y^2} +x\right)-y  \Bigg] \label{eq:fxx} \\
-f_{yy}(x,y) &= \frac{\nu+1}{\pi E}\Bigg[ y(1-\nu ) \log\left( \sqrt{x^2+y^2}+x\right)
+g_{yy}(x,y) &= \frac{\nu+1}{\pi E}\Bigg[ y(1-\nu ) \log\left( \sqrt{x^2+y^2}+x\right)
 + x \log\left(\sqrt{x^2+y^2} +y\right)-x  \Bigg] \label{eq:fyy} \\
-f_{xy}(x,y) &= -\frac{\nu(\nu+1)}{\pi E}\sqrt{x^2+y^2}. \label{eq:fxy}
+g_{xy}(x,y) &= -\frac{\nu(\nu+1)}{\pi E}\sqrt{x^2+y^2}. \label{eq:fxy}
 \end{align}
 %
 The first moments are
 
 \begin{align}
-\langle xG_{xx}(x,y) \rangle^{nmjk} & =\Big[f_{xx}(\Delta x_{nj}^+,\Delta y_{mk}^+)
-- f_{xx}(\Delta x_{nj}^+,\Delta y_{mk}^-)
--f_{xx}(\Delta x_{nj}^-, \Delta y_{mk}^+)+ f_{xx}
+\langle xG_{xx}(x,y) \rangle^{nmjk} & =\Big[g_{xx}(\Delta x_{nj}^+,\Delta y_{mk}^+)
+- g_{xx}(\Delta x_{nj}^+,\Delta y_{mk}^-)
+-g_{xx}(\Delta x_{nj}^-, \Delta y_{mk}^+)+ g_{xx}
 (\Delta x_{nj}^- , \Delta y_{mk}^-)\Big] x_n\nonumber\\
-\: &\qquad - \Big[ f^x_{xx}( \Delta x_{nj}^+ , \Delta y_{mk}^+)- 
-f^x_{xx}(\Delta x_{nj}^+ , \Delta y_{mk}^-)-
-f^x_{xx}(\Delta x_{nj}^-, \Delta y_{mk}^+) + f^x_{xx}(\Delta x_{nj}^- , \Delta y_{mk}^-)\Big],
+\: &\qquad - \Big[g^x_{xx}( \Delta x_{nj}^+ , \Delta y_{mk}^+)- 
+g^x_{xx}(\Delta x_{nj}^+ , \Delta y_{mk}^-)-
+g^x_{xx}(\Delta x_{nj}^-, \Delta y_{mk}^+) + 
+g^x_{xx}(\Delta x_{nj}^- , \Delta y_{mk}^-)\Big],
 \end{align}
 %
 where
 
 \begin{align}
-f^x_{xx}(x,y) &= \frac{\nu+1}{2\pi E} \Big[ (\nu+1)y\sqrt{x^2 + y^2}
+g^x_{xx}(x,y) &= \frac{\nu+1}{2\pi E} \Big[ (\nu+1)y\sqrt{x^2 + y^2}
 - (\nu-1) x^2\log\left(\sqrt{x^2 + y^2} +y  \right)  \Big],\label{eq:fxxx}
 \end{align}
 
 \begin{align}
 \langle yG_{xx}(x,y) \rangle^{nmjk} & = 
-\Big[f_{xx}(\Delta x_{nj}^{+},\Delta y_{mk}^+)-f_{xx}(\Delta x_{nj}^+,\Delta y_{mk}^-)
--f_{xx}(\Delta x_{nj}^{-}, \Delta y_{mk}^+) + 
-f_{xx}(\Delta x_{nj}^{-}, \Delta y_{mk}^-)\Big] y_m\nonumber\\
-\: &\qquad - \Big[ f^y_{xx}(\Delta x_{nj}^+,\Delta y_{mk}^+) 
-- f^y_{xx}(\Delta x_{nj}^+,\Delta y_{mk}^-)
-- f^y_{xx}(\Delta x_{nj}^-,\Delta y_{mk}^+) 
-+ f^y_{xx}(\Delta x_{nj}^-,\Delta y_{mk}^-)\Big],
+\Big[g_{xx}(\Delta x_{nj}^{+},\Delta y_{mk}^+)-g_{xx}(\Delta x_{nj}^+,\Delta y_{mk}^-)
+-g_{xx}(\Delta x_{nj}^{-}, \Delta y_{mk}^+) + 
+g_{xx}(\Delta x_{nj}^{-}, \Delta y_{mk}^-)\Big] y_m\nonumber\\
+\: &\qquad - \Big[ g^y_{xx}(\Delta x_{nj}^+,\Delta y_{mk}^+) 
+- g^y_{xx}(\Delta x_{nj}^+,\Delta y_{mk}^-)
+- g^y_{xx}(\Delta x_{nj}^-,\Delta y_{mk}^+) 
++ g^y_{xx}(\Delta x_{nj}^-,\Delta y_{mk}^-)\Big],
 \end{align}
 %
 where
 
 \begin{align}
-f^y_{xx}(x,y) &=\frac{\nu+1}{2\pi E} \Bigg[y^2\log\left(\sqrt{x^2+y^2}+x \right)
+g^y_{xx}(x,y) &=\frac{\nu+1}{2\pi E} \Bigg[y^2\log\left(\sqrt{x^2+y^2}+x \right)
 -\sqrt{x^2+y^2}\left((2\nu-1)x + \frac{1}{2}\sqrt{x^2+y^2} \right)  \Bigg], \label{eq:fyxx}
 \end{align}
 %
@@ -897,16 +1011,16 @@ and
 
 \begin{align}
 \langle xG_{xy}(x,y)\rangle^{nmjk} & = 
-\Big[f_{xy}(\Delta x_{nj}^{-},\Delta y_{mk}^+)-f_{xy}(\Delta x_{nj}^{-},\Delta y_{mk}^-)
-- f_{xy}(\Delta x_{nj}^{+},\Delta y_{mk}^+) + f_{xy}(\Delta x_{nj}^+,\Delta y_{mk}^-) \Big]x_n \nonumber\\
-\: & \qquad -\Big[f_{xy}^x(\Delta x_{nj}^{+},\Delta y_{mk}^+) - f_{xy}^x(\Delta x_{nj}^{+},\Delta y_{mk}^-)
--f_{xy}^x(\Delta x_{nj}^{-},\Delta y_{mk}^+)+f_{xy}^x(\Delta x_{nj}^{-},\Delta y_{mk}^-)\Big]
+\Big[g_{xy}(\Delta x_{nj}^{-},\Delta y_{mk}^+)-g_{xy}(\Delta x_{nj}^{-},\Delta y_{mk}^-)
+- g_{xy}(\Delta x_{nj}^{+},\Delta y_{mk}^+) + g_{xy}(\Delta x_{nj}^+,\Delta y_{mk}^-) \Big]x_n \nonumber\\
+\: & \qquad -\Big[g_{xy}^x(\Delta x_{nj}^{+},\Delta y_{mk}^+) - g_{xy}^x(\Delta x_{nj}^{+},\Delta y_{mk}^-)
+-g_{xy}^x(\Delta x_{nj}^{-},\Delta y_{mk}^+)+g_{xy}^x(\Delta x_{nj}^{-},\Delta y_{mk}^-)\Big]
 \end{align}
 %
 where
 
 \begin{align}
-f_{xy}^x(x,y) &=\frac{\nu(\nu+1)}{\pi E}\Big[ \frac{y^2}{2}\log\left(\sqrt{x^2+y^2} +x\right)
+g_{xy}^x(x,y) &=\frac{\nu(\nu+1)}{\pi E}\Big[ \frac{y^2}{2}\log\left(\sqrt{x^2+y^2} +x\right)
 -\frac{1}{4}\sqrt{x^2+y^2}\left(\sqrt{x^2+y^2}+2x\right) \Big]. \label{eq:fxxy}
 \end{align}
 All of these expressions may be found through direct iterated
@@ -919,7 +1033,9 @@ In the special case where $n=m$ and $j=k$, these formulae also
 hold. This fact is found by decomposing the integration domain to
 exclude the origin, for instance in the manner
 \begin{equation}
-\int_{ -\Delta y/2 }^{\Delta y/2 }\int_{- \Delta x/2 }^{\Delta x/2 } \d\r = \lim_{\varepsilon\to0} \left( \int_\varepsilon^{\Delta y/2}  +  \int_{-\Delta y/2}^\varepsilon   \right)\int_{\Delta x/2}^{\Delta x/2} \d\r.~\label{eq:splitdomain}
+\int_{ -\Delta y/2 }^{\Delta y/2 }\int_{- \Delta x/2 }^{\Delta x/2 } \d\r = 
+\lim_{\varepsilon\to0} \left( \int_\varepsilon^{\Delta y/2}  
++  \int_{-\Delta y/2}^\varepsilon   \right)\int_{\Delta x/2}^{\Delta x/2} \d\r.~\label{eq:splitdomain}
 \end{equation}
 Since the antiderivatives of
 Eqs~\ref{eq:fxx},~\ref{eq:fyy},~\ref{eq:fxy},~\ref{eq:fxxx},~\ref{eq:fyxx},
@@ -928,7 +1044,7 @@ discontinuities at the origin, integrals of the Green's functions
 defined through Eq.~\ref{eq:splitdomain} all converge about the origin
 and the equations above also hold in the case where $n=m$ and $j=k$.
 These explicit expressions allow us to accurately evaluate
-$\u(\r_{i})$ in $\Phi_{\rm data}[\bsigma]$.
+$\u(\r_{i})$ in $\Phi_{\rm data}[\f]$.
 
 \section{Appendix C: Decay of displacement fields}
 
@@ -938,7 +1054,8 @@ can be written as
 
 \begin{align}
 u_x(\r) & = \frac{1+\nu}{\pi E} \int \frac{\dd \r}{|\r-\r'|} 
-\Bigg\{ \left[ \frac{\nu(x - x')^2}{|\r-\r'|^2} + 1-\nu \right]\sigma_{x}(\r') +\nu\frac{(x-x')(y-y')}{|\r-\r'|^2} \sigma_y(\r')  \Bigg\} \nonumber\\
+\Bigg\{ \left[ \frac{\nu(x - x')^2}{|\r-\r'|^2} + 1-\nu \right]f_{x}(\r') +
+\nu\frac{(x-x')(y-y')}{|\r-\r'|^2} f_y(\r')  \Bigg\} \nonumber\\
 & \equiv \frac{1+\nu}{\pi E}   \int\frac{\rho_x(\r,\r')}{|\r-\r'|} \dd \r'  \label{eq:rhoeq}
 \end{align}
 where $\rho_x(\r,\r')$ is $\mathcal{O}(1)$ as
@@ -960,14 +1077,14 @@ that the magnitude of $u_x(\r)$ is $\mathcal{O}(|\r|^{-q})$, it
 suffices to show that $\int \rho(\r,\r')\dd\r' \leq
 {\cal O}(|\r|^{-q+1})$.
 
-Using the fact that $\int \bsigma(\r)\d\r = \mathbf{0}$, one finds that
+Using the fact that $\int \f(\r)\d\r = \mathbf{0}$, one finds that
 %
 \begin{align}
-\int \rho_{x}(\r,\r')\d\r'  & =  \int (1-\nu)\sigma_x(\r')\d\r'
-+\nu\int\left[\frac{(x - x')^2}{|\r-\r'|^2} \sigma_{x}(\r') +
-\frac{(x-x')(y-y')}{|\r-\r'|^2} \sigma_y(\r')  \right]\d\r' \nonumber\\
-\: &= \frac{\nu}{|\r|^2}\int\Bigg[(x - x')^2\sigma_{x}(\r')
-+ (x-x')(y-y')\sigma_y(\r')  \Bigg]
+\int \rho_{x}(\r,\r')\d\r'  & =  \int (1-\nu)f_x(\r')\d\r'
++\nu\int\left[\frac{(x - x')^2}{|\r-\r'|^2} f_{x}(\r') +
+\frac{(x-x')(y-y')}{|\r-\r'|^2} f_y(\r')  \right]\d\r' \nonumber\\
+\: &= \frac{\nu}{|\r|^2}\int\Bigg[(x - x')^2f_{x}(\r')
++ (x-x')(y-y')f_y(\r')  \Bigg]
 \sum_{k=0}^\infty \left[\frac{2\r\cdot\r' - |\r'|^2}{|\r|^2} \right]^k \d\r'.
 \end{align}
 %
@@ -975,10 +1092,11 @@ Expanding the leading order term of this expression, we see that
 
 \begin{align*}
 \int\rho_{x}(\r,\r')\d\r 
-&= \frac{\nu}{|\r|^2}\int\Bigg[(x- x')^2\sigma_{x}(\r')+(x-x')(y-y')\sigma_y(\r')\Bigg]
+&= \frac{\nu}{|\r|^2}\int\Bigg[(x- x')^2f_{x}(\r')+(x-x')(y-y')f_y(\r')\Bigg]
 \d\r' \nonumber\\
-\: &= \frac{\nu}{|\r|^2}  \Bigg[  -2x\int x'\sigma_x(\r')\d\r'  + \int x'^2\sigma_x(\r')\d\r'- x\int y' \sigma_y(\r') \d\r'- y\int x'\sigma_y(\r')\d\r'
-+ \int x'y' \sigma_y(\r') \d\r'\Bigg] \nonumber \\
+\: &= \frac{\nu}{|\r|^2}  \Bigg[  -2x\int x' f_x(\r')\d\r'  + \int x'^2 f_x(\r')\d\r'- x\int y' f_y(\r') \d\r'
+- y\int x' f_y(\r')\d\r'
++ \int x'y' f_y(\r') \d\r'\Bigg] \nonumber \\
 \: & =\mathcal{O}(|\r|^{-1}).
 \end{align*}
 %
@@ -987,10 +1105,10 @@ where to the leading order we have
 
 \begin{align}
 \lefteqn{u_x(\r) = \frac{1+\nu}{\pi E |\r|^2}
-\Bigg[ -2\nu\frac{x}{|\r|}\int x'\sigma_x(\r')\d\r'
--\frac{x\nu}{|\r|}\int y' \sigma_y(\r') \d\r'  }\nonumber\\
-&\qquad- \frac{y\nu}{|\r|}\int x'\sigma_y(\r')\d\r' 
-+ (1-\nu)\frac{\r}{|\r|}\cdot\int \r'\sigma_x(\r') \d\r'\Bigg] + \mathcal{O}(|\r|^{-3})
+\Bigg[ -2\nu\frac{x}{|\r|}\int x' f_x(\r')\d\r'
+-\frac{x\nu}{|\r|}\int y' f_y(\r') \d\r'  }\nonumber\\
+&\qquad- \frac{y\nu}{|\r|}\int x' f_y(\r')\d\r' 
++ (1-\nu)\frac{\r}{|\r|}\cdot\int \r' f_x(\r') \d\r'\Bigg] + \mathcal{O}(|\r|^{-3})
 \end{align}
 
 
