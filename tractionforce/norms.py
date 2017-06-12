@@ -15,6 +15,7 @@ from cvxpy.atoms.elementwise.log import log
 from cvxpy.atoms.elementwise.power import power
 from cvxpy.expressions.expression import Expression
 from cvxpy.atoms.affine.hstack import hstack
+from cvxpy import pnorm
 
 
 import numpy as np
@@ -66,10 +67,10 @@ def tvnorm_trace_2d(value1, value2,  Dx, Dy):
     return sum_entries(cvxnorm(stack, p='fro', axis=0))
 
 def tvnorm_anisotropic_2d(signal, Dx,Dy):
-    magnitudes = cvxnorm(signal,2,axis=1)
+    magnitudes = pnorm(signal,2,axis=1)
     diffs = [Dx*magnitudes, Dy*magnitudes]
-    stack = vstack( *[reshape(diff, 1, len) for diff in diffs])
-    return sum_entries(cvxnorm(stack, p='fro', axis=0))
+    stack = vstack( *[reshape(diff, 1, magnitudes.size[0]) for diff in diffs])
+    return sum_entries(pnorm(stack,2,axis=0))
 
 def l1_aniso_2d(value1, value2):
     """\sum \sqrt{value1^2 + value2^2}
