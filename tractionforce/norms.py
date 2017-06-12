@@ -65,46 +65,11 @@ def tvnorm_trace_2d(value1, value2,  Dx, Dy):
     stack = vstack( *[reshape(diff, 1, len) for diff in diffs])
     return sum_entries(cvxnorm(stack, p='fro', axis=0))
 
-def l2_trace_2d(value1, value2,  Dx, Dy):
-    """Total variation of a vector, matrix, or list of matrices.
-    Uses L1 norm of discrete gradients for vectors and
-    L2 norm of discrete gradients for matrices.
-    Parameters
-    ----------
-    value : Expression or numeric constant
-        The value to take the total variation of.
-    Returns
-    -------
-    Expression
-        An Expression representing the total variation.
-    """
-    value1 = Expression.cast_to_const(value1)
-    value2 = Expression.cast_to_const(value2)
-    len = value1.size[0]
-
-    diffs = [ Dx*(value1 + value2) , Dy*(value1+value2)]
-
+def tvnorm_anisotropic_2d(signal, Dx,Dy):
+    magnitudes = cvxnorm(signal,2,axis=1)
+    diffs = [Dx*magnitudes, Dy*magnitudes]
     stack = vstack( *[reshape(diff, 1, len) for diff in diffs])
-    return sum_squares(cvxnorm(stack, p=2, axis=0))
-
-def l1_trace_2d(value1, value2):
-    """Total variation of a vector, matrix, or list of matrices.
-    Uses L1 norm of discrete gradients for vectors and
-    L2 norm of discrete gradients for matrices.
-    Parameters
-    ----------
-    value : Expression or numeric constant
-        The value to take the total variation of.
-    Returns
-    -------
-    Expression
-        An Expression representing the total variation.
-    """
-    value1 = Expression.cast_to_const(value1)
-    value2 = Expression.cast_to_const(value2)
-    len = value1.size[0]
-
-    return cvxnorm(vstack(value1,value2))
+    return sum_entries(cvxnorm(stack, p='fro', axis=0))
 
 def l1_aniso_2d(value1, value2):
     """\sum \sqrt{value1^2 + value2^2}
@@ -122,6 +87,9 @@ def l1_aniso_2d(value1, value2):
     len = value1.size[0]
 
     return sum_entries(cvxnorm(value1+value2, p='1'))
+
+def l1_anisotropic_2d(signal):
+    return sum_entries(cvxnorm(signal,2,axis=1))
 
 class log2(log):
     """Elementwise :math:`\log x**2`.
