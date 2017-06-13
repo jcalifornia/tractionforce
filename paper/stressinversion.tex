@@ -69,7 +69,7 @@
 \begin{document}
 
 \title{High-resolution spatial reconstruction of cellular
-  force-generating domains using physical constraints and $L^{1}$
+  force-generating domains using physical constraints and rotationally invariant $L^{1}$
   regularization}
 
 \author{Joshua C. Chang$^{1}$, Yanli Liu$^{2}$, and Tom Chou$^{2,3}$}
@@ -636,7 +636,7 @@ and then recover $\f(\r)$ from these displacements.
   $\tilde{\Phi}_{\rm {TV}_{1}}$. The optimal values of $\lambda$ are shown
   in.....}
 \label{COMPARE}
-\end{figure*
+\end{figure*}
 %
 Figure~\ref{COMPARE} compares the reconstruction achieved from using
 the different forms of $\Phi_{\rm reg}$. We see that 
@@ -713,7 +713,7 @@ reconstructions using $\tilde{\Phi}_{L^{1}}$, but without force or
 torque constraints.
 
 \begin{figure}
-\includegraphics[width=\linewidth]{fig3}
+%\includegraphics[width=\linewidth]{fig6}
 \caption{\textbf{Constraints are unsatisfied unless enforced.} Plotted are best reconstructions
   under $\tilde{\Phi}_{L^{1}}$ penalty and the difference between
   these reconstructions and the corresponding fully constrained
@@ -752,12 +752,17 @@ resolution of the patterned grid spacing can be measured, as shown in
 Fig.~\ref{DATA}
 
 \begin{figure}
-\includegraphics[width=\linewidth]{fig0a}
-\caption{\textbf{Bright field image and displacements.} (a) Raw bight
-  field image of a mesenchymal stem cell. The cell footprint boundary
-  is estimated from segmentation of the image. (b) The
-  $x-$displacement fields at the surface of the substrate. (c) The
-  displacements of the patterned lines.}
+\includegraphics[width=\linewidth]{fig8}
+\caption{\textbf{Unidirectional displacement field.} Displacement
+field along $\hat{x}$ (the horizontal axis) measured due to mesenchymal stem cell
+placed on a matrigel substrate. Boundary of the cell (yellow) was hand-drawn
+based on bright-field image of the cell.
+%Raw bight
+%field image of a mesenchymal stem cell. The cell footprint boundary
+%is estimated from hand segmentation of the image. (b) The
+%$x-$displacement fields (horizontal displacements) at the surface of the substrate. (c) The
+%displacements of the patterned lines.
+}
 \label{DATA}
 \end{figure}
 %
