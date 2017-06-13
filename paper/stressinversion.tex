@@ -103,10 +103,9 @@ localized structure from simulated and experimental substrate
 displacements. We provide a numerical method for setting up a
 discretized inverse problem that is solvable by standard convex
 optimization techniques. Our method incorporates the exact solution
-for the stress tensor accurate to first-order finite-differences,
-motivates the use of distance-based cutoffs for data inclusion, and
-finds--under loose regularity conditions--the reconstruction error
-that results.
+for the stress tensor accurate to first-order finite-differences and
+motivates the use of distance-based cutoffs for data inclusion and problem 
+sparcification.
 \end{abstract}
 \maketitle
 
@@ -578,7 +577,7 @@ the \texttt{ecos} solver.  Our implementation is available at
 %
 
 First, we tested our method on simulated data derived from a force-
-and torque-free test stress field shown in Fig.~\ref{TESTS}. The test
+and torque-free test stress field shown in Fig.~\ref{TEST}. The test
 pattern consists of four separated circular stress pads, or focal
 adhesions, with radii $r_{1} = 1/5$, $r_{2} = 1/6$, $r_{3} = 1/8$, and
 $r_{4} = 1/4$, and centers at positions $(x_{1},y_{1}) = (-1,-1/2)$,
@@ -754,7 +753,7 @@ Fig.~\ref{DATA}
 
 
 \begin{figure}
-%\includegraphics[width=\linewidth]{fig7}
+\includegraphics[width=\linewidth]{fig7}
 \caption{\textbf{Footprint misspecification.} Reconstructions performed under footprint of the wrong orientation}
 \label{DATA}
 \end{figure}
