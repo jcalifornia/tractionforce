@@ -628,7 +628,7 @@ and then recover $\f(\r)$ from these displacements.
 %\end{center}
 %\end{figure}
 
-\begin{figure*}
+\begin{figure}
 \includegraphics[width=\linewidth]{fig3}
 \caption{\textbf{Comparing different regularizers.} Reconstruction of the test
   patterns using the different forms of $\Phi_{\rm reg}$:
@@ -636,7 +636,7 @@ and then recover $\f(\r)$ from these displacements.
   $\tilde{\Phi}_{\rm {TV}_{1}}$. The optimal values of $\lambda$ are shown
   in.....}
 \label{COMPARE}
-\end{figure*}
+\end{figure}
 %
 Figure~\ref{COMPARE} compares the reconstruction achieved from using
 the different forms of $\Phi_{\rm reg}$. We see that 
@@ -653,7 +653,7 @@ of the stress is within given cell boundaries.
 
 The adjustable parameter $\lambda$ was chosen in each instance by
 examining the balance between data mismatch and regularity using
-trade-off curves shown in Fig.~\ref{compare}, and taking the value
+trade-off curves shown in Fig.~\ref{COMPARE}, and taking the value
 for $\lambda$ that yields a point farthest away from the line segment
 joining the ends of the plot. In Fig.~\ref{compare}, the chosen value
 of $\lambda$ corresponds to the given balance between regularity and
@@ -752,10 +752,9 @@ resolution of the patterned grid spacing can be measured, as shown in
 Fig.~\ref{DATA}
 
 \begin{figure}
-\includegraphics[width=\linewidth]{fig8}
-\caption{\textbf{Unidirectional displacement field.} Displacement
-field along $\hat{x}$ (the horizontal axis) measured due to mesenchymal stem cell
-placed on a matrigel substrate. Boundary of the cell (yellow) was hand-drawn
+\includegraphics[width=\linewidth]{fig7}
+\caption{\textbf{Mesenchymal stem cell displacement field.} Measured
+ along $\hat{x}$ (the horizontal axis). Boundary of the cell (yellow) was hand-drawn
 based on bright-field image of the cell.
 %Raw bight
 %field image of a mesenchymal stem cell. The cell footprint boundary
@@ -775,7 +774,7 @@ full set of constraints are shown in Fig.~\ref{DATA2}.
 \caption{\textbf{Reconstruction of experimental surface stress field.}
   Reconstruction of $\f$ from the measured displacements shown in
   Fig.~\ref{DATA} using the norms defined in the manuscript. In each 
-  case, $\lambda$ was chosen using the L-curve method as in ~\ref{Fig3}.}
+  case, $\lambda$ was chosen using the L-curve method as in the appendices.}
 \label{DATA2}
 \end{figure}
 
@@ -789,7 +788,7 @@ distribution $\hat{\f}$ that differs from the ``true'' distribution,
 especially near the borders.
 \begin{figure}
 %\includegraphics[width=\linewidth]{fig9}
-\caption{\textbf{Relaxation of footprint constraint.} Comparing the
+\caption{\textbf{Modification of footprint constraint.} Comparing the
   surface force reconstruction using the estimated cell footprint
   (from the bright field image) with the reconstruction derived from a
   false cell footprint. Since the forces are concentrated near the
@@ -845,6 +844,10 @@ support.
 %modulus and Poisson ratio) are known. These experimetal parameters can 
 %also be inferred 
 
+%%%%%%%%%%%%%%%%%%
+\section{Acknowledgements}
+
+This work was supported in part by the Intramural Research Program of the NIH.
 
 
 \bibliography{refs}
