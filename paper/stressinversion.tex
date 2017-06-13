@@ -558,7 +558,7 @@ the \texttt{ecos} solver.  Our implementation is available at
 
 \begin{figure*}[ht]
 \begin{center}
-\includegraphics[width=5.2in]{4-pad.pdf}
+\includegraphics[width=5.2in]{fig2.pdf}
 %\includegraphics[width=4.2in]{displacements}
 %
 \caption{\textbf{Test stress fields and surface displacements.} (a)
@@ -674,7 +674,7 @@ applied the boundary constraint corresponding to the cell footprints
 shown in Fig.~\ref{TEST}(a).
 
 \begin{figure}
-\includegraphics[width=\linewidth]{gridspacefig}
+\includegraphics[width=\linewidth]{fig4}
 \caption{\textbf{Grid coarsening.} Using every $n\in\{1,2,4\}$
   lattice points of observations. The reconstruction is also performed
   at the same resolution.  In general, the optimization is stable and
@@ -689,7 +689,7 @@ are measured. In Fig.~\ref{XYONLY} we show reconstructions using only
 $u_{x}$ or $u_{y}$ for both the annulus and 4-pad test patterns.
 
 \begin{figure}
-\includegraphics[width=\linewidth]{unidirectionfig}
+\includegraphics[width=\linewidth]{fig5}
 \caption{\textbf{Unidirectional displacement measurements,} where displacements
 are only measured along a single axis, may be used for reconstruction. Reconstructionsn 
 of both components of the four-pad surface stress shown under measures along only $\hat{x}$
@@ -713,7 +713,7 @@ reconstructions using $\tilde{\Phi}_{L^{1}}$, but without force or
 torque constraints.
 
 \begin{figure}
-%\includegraphics[width=\linewidth]{fig6}
+\includegraphics[width=\linewidth]{fig6}
 \caption{\textbf{Constraints are unsatisfied unless enforced.} Plotted are best reconstructions
   under $\tilde{\Phi}_{L^{1}}$ penalty and the difference between
   these reconstructions and the corresponding fully constrained
@@ -728,16 +728,16 @@ regularizer, the footprint constraint is not
 especially critical. However, as we shall see, for stresses that are concentrated 
 near the periphery of the cell footprint, 
 
-\begin{figure}
-%\includegraphics[width=\linewidth]{4-pad_boundary}
-\caption{\textbf{Boundary constraint weakening} leads to solutions
-  where the support does not fall naturally within the cell
-  boundary. In the unconstrained reconstruction, the support of the
-  stress was allowed to extend an additional $10$ pixels outside of
-  the cell boundary. The reconstruction did not naturally limit its
-  support to the cell boundary.}
-\label{fig:fig4}
-\end{figure}
+%\begin{figure}
+%%\includegraphics[width=\linewidth]{4-pad_boundary}
+%\caption{\textbf{Boundary constraint weakening} leads to solutions
+%  where the support does not fall naturally within the cell
+%  boundary. In the unconstrained reconstruction, the support of the
+%  stress was allowed to extend an additional $10$ pixels outside of
+%  the cell boundary. The reconstruction did not naturally limit its
+%  support to the cell boundary.}
+%\label{fig:fig4}
+%\end{figure}
 
 
 \section{Reconstruction from single cell data}
@@ -771,7 +771,7 @@ $\hat{\f}$ using the $\tilde{\Phi}_{L^{1}}$ regularization and the
 full set of constraints are shown in Fig.~\ref{DATA2}.
 
 \begin{figure}
-\includegraphics[width=\linewidth]{fig9}
+\includegraphics[width=\linewidth]{fig8}
 \caption{\textbf{Reconstruction of experimental surface stress field.}
   Reconstruction of $\f$ from the measured displacements shown in
   Fig.~\ref{DATA} using the norms defined in the manuscript. In each 
@@ -788,7 +788,7 @@ footprint. Using an incorrect footprint results in a force
 distribution $\hat{\f}$ that differs from the ``true'' distribution,
 especially near the borders.
 \begin{figure}
-\includegraphics[width=\linewidth]{fig4}
+%\includegraphics[width=\linewidth]{fig9}
 \caption{\textbf{Relaxation of footprint constraint.} Comparing the
   surface force reconstruction using the estimated cell footprint
   (from the bright field image) with the reconstruction derived from a
