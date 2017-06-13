@@ -628,7 +628,7 @@ and then recover $\f(\r)$ from these displacements.
 %\end{center}
 %\end{figure}
 
-\begin{figure}
+\begin{figure*}
 %\includegraphics[width=\linewidth]{compare}
 \caption{\textbf{Comparing different regularizers.} Reconstruction of the test
   patterns using the different forms of $\Phi_{\rm reg}$:
@@ -636,7 +636,7 @@ and then recover $\f(\r)$ from these displacements.
   $\tilde{\Phi}_{\rm {TV}_{1}}$. The optimal values of $\lambda$ are shown
   in.....}
 \label{COMPARE}
-\end{figure}
+\end{figure*
 %
 Figure~\ref{COMPARE} compares the reconstruction achieved from using
 the different forms of $\Phi_{\rm reg}$. We see that 
@@ -690,9 +690,10 @@ $u_{x}$ or $u_{y}$ for both the annulus and 4-pad test patterns.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{unidirectionfig}
-\caption{\textbf{Unidirectional displacement measurements} Sets of
-  reconstructions using displacements under only $\hat{x}$ or
-  $\hat{y}$ directions. DESCRIPTION OF WHAT HAPPENS.}
+\caption{\textbf{Unidirectional displacement measurements,} where displacements
+are only measured along a single axis, may be used for reconstruction. Reconstructionsn 
+of both components of the four-pad surface stress shown under measures along only $\hat{x}$
+or only $\hat{y},$ using the $\tilde{\Phi}_{L^1}$ regularizatnorm.}
 \label{XYONLY}
 \end{figure}
 
@@ -708,12 +709,12 @@ $u_{x}$ or $u_{y}$ for both the annulus and 4-pad test patterns.
 
 Next, we illustrate the effects of relaxing the no-force and no-torque
 constraints.  Fig.~\ref{fig:fig3} shows optimal-$\lambda$
-resonstructions using $\tilde{\Phi}_{L^{1}}$, but without force or
+reconstructions using $\tilde{\Phi}_{L^{1}}$, but without force or
 torque constraints.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{fig3}
-\caption{\textbf{Constraints matter.} Physical constraints are not satisfied unless they are enforced. Plotted are best reconstructions
+\caption{\textbf{Constraints are unsatisfied unless enforced.} Plotted are best reconstructions
   under $\tilde{\Phi}_{L^{1}}$ penalty and the difference between
   these reconstructions and the corresponding fully constrained
   reconstruction in Fig.~\ref{COMPARE}. }
@@ -765,10 +766,11 @@ $\hat{\f}$ using the $\tilde{\Phi}_{L^{1}}$ regularization and the
 full set of constraints are shown in Fig.~\ref{DATA2}.
 
 \begin{figure}
-\includegraphics[width=\linewidth]{fig2}
+\includegraphics[width=\linewidth]{fig9}
 \caption{\textbf{Reconstruction of experimental surface stress field.}
   Reconstruction of $\f$ from the measured displacements shown in
-  Fig.~\ref{DATA}.}
+  Fig.~\ref{DATA} using the norms defined in the manuscript. In each 
+  case, $\lambda$ was chosen using the L-curve method as in ~\ref{Fig3}.}
 \label{DATA2}
 \end{figure}
 
