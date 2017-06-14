@@ -632,35 +632,37 @@ and then recover $\f(\r)$ from these displacements.
 \caption{\textbf{Comparing different regularizers.} Reconstruction of the test
   patterns using the different forms of $\Phi_{\rm reg}$:
   $\Phi_{L^{1}},\Phi_{{\rm TV}_1},\Phi_{{\rm TV}_2}$,$\tilde{\Phi}_{L^{1}}$ and
-  $\tilde{\Phi}_{\rm {TV}_{1}}$. The optimal values of $\lambda$ are shown
-  in.....}
+  $\tilde{\Phi}_{\rm {L}_{2}}$. Regularization parameters chosen as in Fig.~\ref{LAMBDA}.}
 \label{COMPARE}
 \end{figure}
 %
 Figure~\ref{COMPARE} compares the reconstruction achieved from using
-the different forms of $\Phi_{\rm reg}$. We see that 
-all forms of regularization give reasonable reconstructions but ....
+the different forms of $\Phi_{\rm reg}$. In all of these reconstructions, we have imposed that the surface
+stress is both force-free and torque-free, and also that the support
+of the stress is within given cell boundaries.
+ We see that 
+all forms of regularization recover the signal due to the four pads. The
+reconstruction using the
+isotropic $L^1$ penalty is seen to be more sparse than that of the
+isotropic $L^1$ penalty.
 %
 %that 
 %$\Phi_{L^{1}}$ gives a more ``compressed'' reconstruction than 
 %$\Phi_{L^{1}{\rm (Tr)}}$.  
 \vspace{1cm}
 %
-In all of these reconstructions, we have imposed that the surface
-stress is both force-free and torque-free, and also that the support
-of the stress is within given cell boundaries.
+
+
 
 The adjustable parameter $\lambda$ was chosen in each instance by
 examining the balance between data mismatch and regularity using
-trade-off curves shown in Fig.~\ref{COMPARE}, and taking the value
+trade-off curves shown in Supplemental Fig.~\ref{LAMBDA}, and taking the value
 for $\lambda$ that yields a point farthest away from the line segment
-joining the ends of the plot. In Fig.~\ref{compare}, the chosen value
+joining the ends of the plot. In Fig.~\ref{LAMBDA}, the chosen value
 of $\lambda$ corresponds to the given balance between regularity and
 data fidelity marked by the red circle. The solution corresponding to
-this particular value of $\lambda$ is shown in the middle column on
-the right. For reference, under-regularized solutions, corresponding
-to the green circle in the trade-off plot, and over-regularized
-solutions, corresponding to black circle, are also given. Each row in
+this particular value of $\lambda$ is shown in Fig.~\ref{COMPARE}. 
+Each row in
 Fig.~\ref{compare} corresponds to the use of a different
 regularization penalty functional. 
 
@@ -690,9 +692,9 @@ $u_{x}$ or $u_{y}$ for both the annulus and 4-pad test patterns.
 \begin{figure}
 \includegraphics[width=\linewidth]{fig5}
 \caption{\textbf{Unidirectional displacement measurements,} where displacements
-are only measured along a single axis, may be used for reconstruction. Reconstructionsn 
+are only measured along a single axis, may be used for reconstruction. Reconstructions 
 of both components of the four-pad surface stress shown under measures along only $\hat{x}$
-or only $\hat{y},$ using the $\tilde{\Phi}_{L^1}$ regularizatnorm.}
+or only $\hat{y},$ using the $\tilde{\Phi}_{L^1}$ norm.}
 \label{XYONLY}
 \end{figure}
 
@@ -754,7 +756,7 @@ Fig.~\ref{DATA}
 
 \begin{figure}
 \includegraphics[width=\linewidth]{fig7}
-\caption{\textbf{Footprint misspecification.} Reconstructions performed under footprint of the wrong orientation}
+\caption{\textbf{Footprint misspecification.} Reconstructions performed under footprint drawn in an incorrect orientation. }
 \label{DATA}
 \end{figure}
 
@@ -1181,6 +1183,14 @@ where to the leading order we have
 %where the first $M$ data points are all within a maximal cut off distance of $R$ within the boundary of the cell and the remaining $N-M$ datapoints lie outside this distance.
 %
 %
+
+\section{Choice of regularization penalty parameter $\lambda$}
+
+\begin{figure}
+\includegraphics[width=\linewidth]{fig11}
+\caption{\textbf{Choice of $\lambda$} by plotting the tradeoff between regularity and data mismatch.}
+\label{LAMBDA}
+\end{figure}
 
 \end{widetext}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
