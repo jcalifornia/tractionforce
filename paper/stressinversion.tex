@@ -123,7 +123,7 @@ cell biology.
 Cell motility and response to signals have hitherto typically been
 studied in two-dimensional geometries in which cells are placed on a
 flat elastic substrate.  Dynamic adhesion between the cells and the
-substrate are realized through {\it e.g.}, lamellapodia, filapodia,
+substrate are realized through {\it e.g.}, lamellipodia, filopodia,
 and dynamically reorganizing focal adhesions \cite{MBOC}.  Such structures are
 spatially localized, as shown in Fig.~\ref{FIG1}. Similarly, on larger
 length scales, a collection of cells can give rise to localized stress
@@ -152,8 +152,8 @@ as incorporation of fluorescent dyes. Therefore, other methods for
 inferring their positions and magnitudes have been developed. Methods
 using deformation of pillar structures \cite{PILLAR} or textured
 substrates have been developed \cite{PATTERN}.  These methods require
-the cell to attach to a nonflat interface.  The simplest method
-compabible with a flat interface relies on measuring the displacement
+the cell to attach to a non-flat interface.  The simplest method
+compatible with a flat interface relies on measuring the displacement
 of fiduciary markers, such as gold nanoparticles, embedded in the
 elastic substrate~\cite{WANG2007}. The measured displacements are an
 indirect probe of the force-generating structures, \textit{e.g.},
@@ -163,7 +163,7 @@ should ideally be able to capture potentially sharp boundaries of the
 stress-generating structures. However, fiduciary markers embedded in
 the 3D substrate are typically too sparse to reveal a displacement
 field with sufficient resolution to infer small cellular focal
-adhesion structures. To image such subcellular stress structures, high
+adhesion structures. To image such sub-cellular stress structures, high
 resolution reconstructions are required \cite{USCHWARZ}.
 Experimentally, a new high-resolution imaging method has been
 developed using 9$\mu$m-period grid patterning of the substrate
@@ -382,15 +382,15 @@ To better condition the inference of $\f(x,y)$, we regularize
 this problem by forcing the reconstruction to obey some physically
 relevant characteristics of the surface stress. In many other types of
 inverse problems, for example, in the inference of the potential of
-mean force of a molecular bond, a contraint on differentiability is
+mean force of a molecular bond, a constraint on differentiability is
 typically imposed on the function to be inferred \cite{PATHDFS}. A
 typical constraint of this nature may be a quadratic penalty on the
 gradients of the function to be inferred.  However, such $L^{2}$
 functional regularization often leads to ringing and inaccurate
-functional reconstruction especially when the underlying function is
+functional reconstruction, especially when the underlying function is
 highly localized or compactly supported.
 
-Thus, $L^{1}$ regularization on the function or on its variations have
+Thus, $L^{1}$ regularization on the function, or on its variations, have
 been developed.  These approaches are suitable for problems such as
 segmentation of images where boundaries are are sharp \cite{CHAN}.  In
 these problems, the data is sparse in the sense that definition of
@@ -399,17 +399,11 @@ the stress recovery problem at hand, the data consisting of
 displacements at a finite number of measurement positions may be
 considered sparse.
 
-%We also compared reconstruction of the surface stress using our
-%rotationally invariant norms of Eq.~\ref{eq:PhiL1Tr} and
-%Eq.~\ref{eq:PhiTVTr} against alternate isotropic norms. As an
-%alternative to the $L^1$ norm on the trace we compared
-
-To this end we employ a variant of a penalty used often in
+To this end one may employ a variant of a penalities used often in
 image processing applications, where one penalizes the $L^1$
-norm of the variation in the fields, or the total variation.
-In analogy with image processing, one might choose regularization terms 
+norm of the vector field or its variations using regularization terms 
 $\Phi_{\rm reg}$ of the form
-
+%
 \begin{equation}
 \Phi_{L^{1}} = \int_\Omega \left(\vert f_{x}(x,y)\vert  +\vert f_{y}(x,y)\vert\right) \d\r,
 \label{L10}
@@ -429,11 +423,14 @@ and
 \end{equation}
 %
 representing an $L^{1}$ regularization of the surface stress and two
-forms of its total variation, respectively.  Since these
+forms of its total variation, respectively.  
+
+Since these
 regularization terms are not based on any fundamental physical law,
-there is some freedom of in choosing their form.  However, we do not
-want rotational anisotropy in the measurement grid to affect the final
-result. The regularization terms should not induce any additional
+there is some freedom of in choosing their form.  However,
+we do not want the choice of parameterization for the data grid
+to affect the reconstruction results. Hence,
+the regularization terms should not induce any additional
 anisotropy over that of the displacement field.  Thus, appropriate
 regularizations should be invariant under coordinate rotation. The
 coordinate-independent regularizer can be 
@@ -455,25 +452,24 @@ constructed from the magnitude of the force vector at the surface
 %\end{equation}
 %
 Any regularization penalty imposed on the reconstruction problem must
-be a functional of these invariants in order to maintain rotational
+be a functional of this quantity in order to maintain rotational
 invariance relative to the choice of how the displacements are
-sampled.  In this manuscript, for simplicity, we will focus on
-regularizers $\Phi_{\rm reg} = \tilde{\Phi}_{\rm reg}$ that are functions of the magnitude and
-trace; for example
+sampled.  In this manuscript, we will focus on the isotropic
+$L^1$ norm
 \begin{equation}
-\tilde{\Phi}_{L^{1}} = \int_\Omega \vert\f(x,y) \vert \dd x\dd y
+\tilde{\Phi}_{L^{1}} = \int_\Omega \vert\f(x,y) \vert \dd x\dd y.
 \label{eq:mag}
 \end{equation}
-and
+Other regularizations are possible; for example, one may also use the isotropic $L^2$ norm
 %
 \begin{equation}
 \tilde{\Phi}_{\rm L^2} =  
  \int_\Omega \vert\f(x,y) \vert^2 \dd x\dd y.
-\label{eq:PhiTVTr}
+\label{eq:L2}
 \end{equation}
 
-Using either of these expressions as the regularization norm
-suggests the penalized optimization problem
+Using either of these expressions as the regularization norm,
+we define the the penalized optimization problem
 
 \begin{equation}
 \hat{\f} \big\vert \lambda = \arg\min_{\f} \left\{ \Phi_{\textrm{data}}[\f] + 
@@ -553,9 +549,13 @@ distance $R_{\perp}$ from the outline of the cell.
 We implemented our regularized inversion method in Python version 3.5,
 where optimization is performed using the \texttt{cvxpy} package with
 the \texttt{ecos} solver.  Our implementation is available at
-\url{https://github.com/joshchang/tractionforce}. 
+\url{https://github.com/joshchang/tractionforce}.  For all reconstructions,
+we assumed that $\nu=0.5$ and reported all results in normalized
+units of the Young's modulus.
 
-\begin{figure*}[ht]
+\subsection{Simulated data}
+
+\begin{figure*}
 \begin{center}
 \includegraphics[width=5.2in]{fig2.pdf}
 %\includegraphics[width=4.2in]{displacements}
@@ -611,21 +611,14 @@ G_{4} = 2\pi g_{4}\int_{0}^{r_{4}}\left(1-{r\over r_{4}}\right)r\dd r = {g_{4}\p
 \end{equation}
 %
 is the total force on pad 4 in each direction. Note that both test
-stress fields are constructed to be force- and torque-free. We first
-generate the displacement fields using the Green's function 
-(\textit{i.e.}, Eq.~\ref{eq:UMODEL1s} for surface values $\u(x,y,z=0)$)
-and then recover $\f(\r)$ from these displacements.
+stress fields are constructed to be force- and torque-free.
 
-%\begin{figure}[t]
-%\begin{center}
-%\input{Fig1.pstex_t}
-%\includegraphics[width=3.4in]{}
-%\caption{\textbf{Inversion results for test stress fields.} (a)
-%  Inversion for the annular stress field with $m=3$, $n=5$ and
-%  ...using different cell boundaries.... }
-%\label{RESULTS_TEST}
-%\end{center}
-%\end{figure}
+In our examples, we used $a_{12} = 10^{-4}$, $a_{23} = 2\times10^{-4}$, and $g_4 = 9\times10^{-5}$.
+ We generated displacement fields by solving the forward problem of
+(\textit{i.e.}, Eq.~\ref{eq:UMODEL1s} for surface values $\u(x,y,z=0)$)
+and then corrupting the displacements with Gaussian white noise with standard deviation $10^{-5}$. From these noisy displacements, we reconstructed $f(\r)$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}
 \includegraphics[width=\linewidth]{fig3}
@@ -640,39 +633,28 @@ Figure~\ref{COMPARE} compares the reconstruction achieved from using
 the different forms of $\Phi_{\rm reg}$. In all of these reconstructions, we have imposed that the surface
 stress is both force-free and torque-free, and also that the support
 of the stress is within given cell boundaries.
- We see that 
-all forms of regularization recover the signal due to the four pads. The
-reconstruction using the
-isotropic $L^1$ penalty is seen to be more sparse than that of the
-isotropic $L^1$ penalty.
-%
-%that 
-%$\Phi_{L^{1}}$ gives a more ``compressed'' reconstruction than 
-%$\Phi_{L^{1}{\rm (Tr)}}$.  
-\vspace{1cm}
-%
-
-
-
 The adjustable parameter $\lambda$ was chosen in each instance by
 examining the balance between data mismatch and regularity using
 trade-off curves shown in Supplemental Fig.~\ref{LAMBDA}, and taking the value
 for $\lambda$ that yields a point farthest away from the line segment
-joining the ends of the plot. In Fig.~\ref{LAMBDA}, the chosen value
+joining the ends of the plot. The chosen value
 of $\lambda$ corresponds to the given balance between regularity and
-data fidelity marked by the red circle. The solution corresponding to
-this particular value of $\lambda$ is shown in Fig.~\ref{COMPARE}. 
+data fidelity. The solution corresponding to
+each particular value of $\lambda$ is shown in Fig.~\ref{COMPARE}. 
 Each row in
-Fig.~\ref{compare} corresponds to the use of a different
-regularization penalty functional. 
+Fig.~\ref{COMPARE} corresponds to the use of a different
+regularization penalty. 
 
-Figure \ref{GRID} shows reconstructions of the 4-pad test patterns
-using $\tilde{\Phi}_{L^{1}}$ as a function of the coarseness of the
-displacement data. The general features of the stress patterns are
-preserved under coarsening but sufficient density of data points are
-needed to resolve fine scale variations in the stress field. Here, we
-applied the boundary constraint corresponding to the cell footprints
-shown in Fig.~\ref{TEST}(a).
+ We see in Fig.~\ref{COMPARE} that 
+all forms of regularization yield reconstruction of the four pads, albeit at
+different levels of scarcity in reconstruction of the surrounding regions. The
+reconstruction using the
+isotropic $L^1$ penalty is seen to be more sparse than that of the
+isotropic $L^2$ penalty, whereas the other penalties all yielded comparable
+reconstructions. In the remainder of the paper we concentrate 
+on using $\tilde{\Phi}_{L^{1}}$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}
 \includegraphics[width=\linewidth]{fig4}
@@ -684,10 +666,20 @@ shown in Fig.~\ref{TEST}(a).
 \label{GRID}
 \end{figure}
 
-We also test loss of information by assuming that 
-displacements only in the $\hat{x}$ or $\hat{y}$ directions 
-are measured. In Fig.~\ref{XYONLY} we show reconstructions using only 
-$u_{x}$ or $u_{y}$ for both the annulus and 4-pad test patterns.
+In such inverse problems, computational complexity is a technical issue
+either due to memory constraints or computational time. A tactic
+for reducing computational complexity is to coarsen the reconstruction
+problem so that one reduces the rank of the linear system to solve.
+Figure \ref{GRID} shows reconstructions of the 4-pad test patterns
+using $\tilde{\Phi}_{L^{1}}$ as a function of the coarseness of the
+displacement data. We coarsened the data by taking only every $n\in\{1,2,4\}$
+lattice points in each dimension, noting that doing so reduces the rank
+of the problem by a factor of $n^2$.
+ The general features of the stress patterns are
+preserved under coarsening but sufficient density of data points are
+needed to resolve fine scale variations in the stress field. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}
 \includegraphics[width=\linewidth]{fig5}
@@ -698,47 +690,64 @@ or only $\hat{y},$ using the $\tilde{\Phi}_{L^1}$ norm.}
 \label{XYONLY}
 \end{figure}
 
+In some applications, displacements are only measurable along a
+single axis. Reconstruction of the surface forces using this type of data
+is a problem of missing data or information loss.
+We tested reconstruction under these circumstances by assuming that 
+displacements only in either the $\hat{x}$ or the $\hat{y}$ directions 
+are measured. In Fig.~\ref{XYONLY} we show reconstructions using only 
+$u_{x}$ or $u_{y}$ data. In both cases, the reconstruction of the force
+in the direction perpendicular to the measured displacements is
+most affected by information loss. This effect is seen in the presence of
+fictitious boundary forces in both cases as the cell boundary is visible
+in these reconstructions. Yet, the pads are clearly visible in both sets of
+reconstructions, along both axes.
 
-%To explore the effect of the constraints on our reconstructions, we
-%systematically removed them in solving the rotationally invariant
-%$L^1$ regularized problem In Fig.~\ref{fig:fig3}, we present
-%reconstructions where net torque is free to vary but force is
-%constrained, where net force is free to vary but torque is
-%constrained, and where net torque and force are both free to vary. In
-%each of these reconstructions the unconstrained quantity did not sum
-%to zero, as desired.
-
-Next, we illustrate the effects of relaxing the no-force and no-torque
-constraints.  Fig.~\ref{fig:fig3} shows optimal-$\lambda$
-reconstructions using $\tilde{\Phi}_{L^{1}}$, but without force or
-torque constraints.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}
 \includegraphics[width=\linewidth]{fig6}
 \caption{\textbf{Constraints are unsatisfied unless enforced.} Plotted are best reconstructions
   under $\tilde{\Phi}_{L^{1}}$ penalty and the difference between
   these reconstructions and the corresponding fully constrained
   reconstruction in Fig.~\ref{COMPARE}. }
-\label{fig:fig3}
+\label{CONSTRAINTS}
 \end{figure}
 
-Finally, we explore the effects of relaxing the footprint constraint. 
-By artificially expanding the footprint, we relax the 
-constraint. In the 4-pad example, using the $\tilde{\Phi}_{L^{1}}$
-regularizer, the footprint constraint is not 
-especially critical. However, as we shall see, for stresses that are concentrated 
-near the periphery of the cell footprint, 
 
-%\begin{figure}
-%%\includegraphics[width=\linewidth]{4-pad_boundary}
-%\caption{\textbf{Boundary constraint weakening} leads to solutions
-%  where the support does not fall naturally within the cell
-%  boundary. In the unconstrained reconstruction, the support of the
-%  stress was allowed to extend an additional $10$ pixels outside of
-%  the cell boundary. The reconstruction did not naturally limit its
-%  support to the cell boundary.}
-%\label{fig:fig4}
-%\end{figure}
+In all reconstructions so far, we have enforced the physical no-force
+and no-torque constraints. Fig.~\ref{CONSTRAINTS} explores the influence
+of these constraints by providing 
+the differences in the reconstructions between the physically
+constrained problem and unconstrained problems. In the first row, 
+the force constraint is not enforced. In the second row, the torque constraint
+is not enforced. In the last row, neither force nor torque constraints are enforced.
+In all cases, we see that the constraints are active; removing the constraints
+affect the quantitative results of the reconstruction.  In all cases,
+constraints are not satisfied automatically. For example, without enforcing
+the force constraint, net forces on the magnitude of $10^{-6}$ exist.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{figure}
+\includegraphics[width=\linewidth]{fig7}
+\caption{\textbf{Footprint misspecification.} Reconstructions performed under footprint drawn in an incorrect orientation. }
+\label{FOOTPRINT}
+\end{figure}
+
+The other type of constraint that we have imposed on this problem is 
+the compactness constraint that is given by enforcing zero force outside
+a given cell boundary. We see from Fig.~\ref{COMPARE} that the reconstruction
+of the four-pad test pattern is not likely to be sensitive to expansions of the cell boundary.
+However, the effect of failing to enclose all of the pads within a given cell boundary
+is unclear. In Fig.~\ref{FOOTPRINT}, we performed reconstructions where
+the footprint was drawn in an incorrect orientation along the $\hat{y}$ axis,
+thereby failing to localize two of the pads into the cell. In these reconstructions,
+the two remaining pads are successfully recovered whereas the two 
+missing pads seem to cause what looks like traction forces at the boundary 
+of the erroneously-drawn cell.
+
+
 
 
 \section{Reconstruction from single cell data}
@@ -754,11 +763,7 @@ Fig.~\ref{DATA}
 
 
 
-\begin{figure}
-\includegraphics[width=\linewidth]{fig7}
-\caption{\textbf{Footprint misspecification.} Reconstructions performed under footprint drawn in an incorrect orientation. }
-\label{DATA}
-\end{figure}
+
 
 \begin{figure}
 \includegraphics[width=\linewidth]{fig8}
@@ -774,8 +779,9 @@ based on bright-field image of the cell.
 \label{DATA}
 \end{figure}
 %
-The $\lambda-$optimal results for the reconstructed stress field
-$\hat{\f}$ using the $\tilde{\Phi}_{L^{1}}$ regularization and the
+As we have done for the simulation data in Fig.~\ref{COMPARE},
+the $\lambda-$optimal results for the reconstructed stress field
+$\hat{\f}$ using the experimental data and the
 full set of constraints are shown in Fig.~\ref{DATA2}.
 
 \begin{figure}
@@ -787,14 +793,18 @@ full set of constraints are shown in Fig.~\ref{DATA2}.
 \label{DATA2}
 \end{figure}
 
-As evident from the reconstructions, the surface forces are
-concentrated near the border of the cell footprint. For such
-boundary-dominated stress fields, the footprint constraint is expected
-to be important in the recovery of $\f$. Fig.~\ref{DATA3} compares the
-reconstruction with that computed with an artifically expanded
-footprint. Using an incorrect footprint results in a force
-distribution $\hat{\f}$ that differs from the ``true'' distribution,
-especially near the borders.
+In contrast with our simulated example, these results are highly dependent
+on the choice of regularization. They also illustrate the importance of
+using isotropic regularization, particularly in reconstruction problems using
+these type of data where only unidirectional displacements are available. 
+In the reconstructions using anisotropic penalties, the forces are qualitatively
+distinct along the two directions. This behavior is undesirable as it appears that
+the choice of observation axis heavily influences the outcome of the reconstruction 
+procedure. The isotropic $L^1$ norm, by contrast, is robust.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{figure}
 \includegraphics[width=\linewidth]{fig10}
 \caption{\textbf{Modification of footprint constraint.} Comparing the
@@ -805,6 +815,22 @@ especially near the borders.
   border.}
 \label{DATA3}
 \end{figure}
+
+
+As evident from the reconstructions, the surface forces are
+concentrated near the border of the cell footprint. For such
+boundary-dominated stress fields, the footprint constraint is expected
+to be important in the recovery of $\f$. Fig.~\ref{DATA3} compares the
+reconstruction with that computed with an artificially expanded
+footprint. Using an incorrect footprint results in a force
+distribution $\hat{\f}$ that differs from the ``true'' distribution,
+especially near the borders.
+
+
+
+
+ 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Summary and Conclusions}
@@ -832,7 +858,7 @@ Upon further consideration of physical and geometric features,
 we motivated additional important terms the objective function.   
 The fundamental optimization problem involves minimizing an objective
 function containing $L^{1}$ regularization terms that are invariant to
-coordinate rotation. The anisotropy of $\hat{\f}$ derives soley from
+coordinate rotation. The anisotropy of $\hat{\f}$ derives solely from
 the anisotropy in the data. Important physical constraints including
 vanishing net force/net torque and zero stress outside the cell
 footprint are also imposed. By exploring the mathematical features of
@@ -1186,9 +1212,10 @@ where to the leading order we have
 
 \section{Choice of regularization penalty parameter $\lambda$}
 
-\begin{figure}
+\begin{figure}[h]
 \includegraphics[width=\linewidth]{fig11}
-\caption{\textbf{Choice of $\lambda$} by plotting the tradeoff between regularity and data mismatch.}
+\caption{\textbf{Choice of $\lambda$} by plotting the tradeoff between regularity and data mismatch for different values of $\lambda$. The ``optimal'' value (red circle) is chosen by to be the point farthest away from the line segment joining the two ends of the plot (green and black circles).  Reconstructions under the different values of $\lambda$ given by these circles are shown. The green circle corresponds to solution with low regularity and is hence ``under-regularized.'' The black circle
+coincides with a solution of high regularity and is hence ``over-regularized.''}
 \label{LAMBDA}
 \end{figure}
 
